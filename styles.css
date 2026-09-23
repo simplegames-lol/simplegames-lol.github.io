@@ -35,16 +35,67 @@ a {
   background: #102b49;
 }
 
-.brand {
+.header-inner {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: min(calc(100% - 40px), var(--content-width));
   min-height: 60px;
   margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
   color: var(--text);
   font-size: 1.15rem;
   font-weight: 700;
   text-decoration: none;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.header-right a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.local-time {
+  min-width: 76px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.updates-list {
+  max-width: 720px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.update-entry {
+  margin-bottom: 14px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  background: var(--surface);
+}
+
+.update-entry h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.update-entry p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .page-shell {
@@ -152,6 +203,11 @@ a {
   font-size: 1.15rem;
   text-align: center;
   transform: translateX(-50%);
+}
+
+.game-toolbar .local-time {
+  margin-left: auto;
+  color: var(--muted);
 }
 
 .back-link {
