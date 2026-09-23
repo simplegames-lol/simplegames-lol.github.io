@@ -148,11 +148,17 @@ a {
 }
 
 .game-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: none;
+  transition: filter 140ms ease;
+}
+
+.game-card img.game-card__image--crop {
   width: 110%;
   height: 110%;
-  object-fit: cover;
   transform: translate(-5%, -5%);
-  transition: filter 140ms ease;
 }
 
 .game-card img.game-card__image--contain {
