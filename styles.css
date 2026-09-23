@@ -99,6 +99,14 @@ a {
   transition: filter 140ms ease;
 }
 
+.game-card img.game-card__image--contain {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: none;
+  background: #111;
+}
+
 .game-card:hover img,
 .game-card:focus-within img {
   filter: brightness(0.88);
