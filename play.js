@@ -1,3 +1,4 @@
+(() => {
 const games = {
   "/bouncy-basketball/": "https://rocketsoccerderby.gitlab.io/go/class-282.html",
   "/speed-stars/": "https://pizzaedition.com/g/speedstars",
@@ -63,7 +64,7 @@ function closeGame() {
 const pages = {
   updates: {
     title: "Update Log",
-    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026</h2><p>Added Bouncy Basketball.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added Speed Stars.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added search, favorites, themes, settings, request and bug forms, keyboard shortcuts, loading and connection indicators, new-game badges, mobile navigation, local device stats, and a custom 404 page.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, and Crossy Road.</p></li><li class="update-entry"><h2>September 23, 2026</h2><p>Added Monkey Mart and Basketball Stars.</p></li></ol>'
+    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026</h2><p>Added Bouncy Basketball.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added Speed Stars.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added search, favorites, themes, settings, request and bug forms, keyboard shortcuts, loading indicators, new-game badges, mobile navigation, local device stats, and a custom 404 page.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, and Crossy Road.</p></li><li class="update-entry"><h2>September 23, 2026</h2><p>Added Monkey Mart and Basketball Stars.</p></li></ol>'
   },
   announcements: {
     title: "Announcements",
@@ -98,3 +99,4 @@ document.addEventListener("keydown", (event) => {
   if (!overlay.hidden) closeGame();
   if (!infoOverlay.hidden) closeInfo();
 });
+})();

@@ -1,3 +1,4 @@
+(() => {
 const storage = {
   read(key, fallback) {
     try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
@@ -147,15 +148,6 @@ window.addEventListener("simplegames:play", () => {
 });
 player?.addEventListener("load", () => { loader.hidden = true; });
 
-function updateConnection() {
-  const status = document.querySelector("#connection-status");
-  status.textContent = navigator.onLine ? "Online" : "Offline";
-  status.classList.toggle("offline", !navigator.onLine);
-}
-addEventListener("online", updateConnection);
-addEventListener("offline", updateConnection);
-updateConnection();
-
 const updateVersion = "2026-09-24-features";
 const updateDot = document.querySelector("#update-dot");
 updateDot.hidden = storage.read("sg-seen-update", "") === updateVersion;
@@ -168,9 +160,8 @@ function formMarkup(type) {
   const isRequest = type === "request";
   return `<section class="intro"><h1>${isRequest ? "Request a game" : "Report a bug"}</h1></section>
     <form class="form-card" id="site-form" data-kind="${type}">
-      <label class="form-field">${isRequest ? "Game name" : "What is broken?"}<input name="subject" required maxlength="100"></label>
-      <label class="form-field">${isRequest ? "Game link" : "Game or page"}<input name="link" type="url" placeholder="https://"></label>
-      <label class="form-field">Details<textarea name="details" required maxlength="1500"></textarea></label>
+      <label class="form-field">Game name<input name="subject" required maxlength="100"></label>
+      <label class="form-field">${isRequest ? "Why do you want this game?" : "What is wrong?"}<textarea name="details" required maxlength="1500"></textarea></label>
       <button class="submit-button" type="submit">Open GitHub request</button>
       <p class="result-count">This opens a pre-filled GitHub Issue so the site owner can see it.</p>
     </form>`;
@@ -195,10 +186,9 @@ infoContent?.addEventListener("submit", (event) => {
   const data = new FormData(form);
   const kind = form.dataset.kind;
   const subject = data.get("subject");
-  const link = data.get("link") || "Not provided";
   const details = data.get("details");
   const title = kind === "request" ? `Game request: ${subject}` : `Bug report: ${subject}`;
-  const body = `Link/page: ${link}\n\nDetails:\n${details}`;
+  const body = `${kind === "request" ? "Why this game" : "What is wrong"}:\n${details}`;
   window.open(`https://github.com/vjaxxon/vjaxxon.github.io/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`, "_blank", "noopener");
 });
 
@@ -219,3 +209,4 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.key === "Escape") closeSettings();
 });
+})();
