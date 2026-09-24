@@ -6,7 +6,7 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
   </head>
   <body>
     <header class="site-header">
@@ -30,13 +30,13 @@
       <section class="game-grid" aria-label="Games">
         <article class="game-card">
           <a class="game-card__image-link" href="/polytrack/" aria-label="Play PolyTrack">
-            <img src="assets/polytrack.png" alt="PolyTrack game cover" />
+            <img class="game-card__image--contain" src="assets/polytrack.png" alt="PolyTrack game cover" />
           </a>
           <div class="game-card__body"><h2><a href="/polytrack/">PolyTrack</a></h2></div>
         </article>
         <article class="game-card">
           <a class="game-card__image-link" href="/drift-boss/" aria-label="Play Drift Boss">
-            <img class="game-card__image--crop" src="assets/drift-boss.png" alt="Drift Boss game cover" />
+            <img class="game-card__image--borderless" src="assets/drift-boss.png" alt="Drift Boss game cover" />
           </a>
           <div class="game-card__body"><h2><a href="/drift-boss/">Drift Boss</a></h2></div>
         </article>
@@ -140,6 +140,6 @@
       <main class="page-shell info-content" id="info-content"></main>
     </section>
     <script src="clock.js"></script>
-    <script src="play.js?v=7"></script>
+    <script src="play.js?v=9"></script>
   </body>
 </html>

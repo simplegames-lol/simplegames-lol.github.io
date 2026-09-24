@@ -169,6 +169,12 @@ a {
   background: #111;
 }
 
+.game-card img.game-card__image--borderless {
+  width: 114%;
+  height: 114%;
+  transform: translate(-6.15%, -6.15%);
+}
+
 .game-card:hover img,
 .game-card:focus-within img {
   filter: brightness(0.88);

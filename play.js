@@ -1,6 +1,6 @@
 const games = {
-  "/polytrack/": "https://nerdtown.cc/play/games/Poly_Track/index.html",
-  "/drift-boss/": "https://www.mortgagecalculator.org/money-games/drift-boss/",
+  "/polytrack/": "https://poly-track-online.github.io/polytrack/",
+  "/drift-boss/": "https://driftbossonline.github.io/file/",
   "/block-blast/": "https://blockblast-2.io/embed/block-blast-unblocked?preroll=0&pub_id=",
   "/escape-road/": "https://escape-road.global.ssl.fastly.net/",
   "/monkey-mart/": "https://gaming-escape.github.io/public/assets/games/monkey-mart/",
