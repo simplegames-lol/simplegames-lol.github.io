@@ -1,3 +1,4 @@
+(() => {
 const clocks = document.querySelectorAll('.local-time');
 
 let favicon = document.querySelector('link[rel="icon"]');
@@ -11,7 +12,11 @@ if (!favicon) {
 
 function updateClocks() {
   const now = new Date();
-  const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  let savedZone = "auto";
+  try { savedZone = JSON.parse(localStorage.getItem("sg-timezone")) || "auto"; } catch {}
+  const options = { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' };
+  if (savedZone !== "auto") options.timeZone = savedZone;
+  const time = now.toLocaleTimeString([], options);
   clocks.forEach((clock) => {
     clock.textContent = time;
     clock.dateTime = now.toISOString();
@@ -20,3 +25,5 @@ function updateClocks() {
 
 updateClocks();
 setInterval(updateClocks, 1000);
+addEventListener("simplegames:timezone", updateClocks);
+})();

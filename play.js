@@ -1,7 +1,7 @@
 (() => {
 const games = {
-  "/bouncy-basketball/": "https://rocketsoccerderby.gitlab.io/go/class-282.html",
-  "/speed-stars/": "https://pizzaedition.com/g/speedstars",
+  "/bouncy-basketball/": "https://trueedu20.github.io/g177/class-282",
+  "/speed-stars/": "https://pizzaedition.com/embed/speedstars",
   "/tomb-of-the-mask/": "https://games.pizzaedition.com/tomb-of-the-mask/h/index.html",
   "/crossy-road/": "https://games.pizzaedition.com/crossyroadnormal/g/index.html",
   "/stickman-hook/": "https://games.pizzaedition.com/stickman-hook/i/index.html",
@@ -64,7 +64,7 @@ function closeGame() {
 const pages = {
   updates: {
     title: "Update Log",
-    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026</h2><p>Added Bouncy Basketball.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added Speed Stars.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added search, favorites, themes, settings, request and bug forms, keyboard shortcuts, loading indicators, new-game badges, mobile navigation, local device stats, and a custom 404 page.</p></li><li class="update-entry"><h2>September 24, 2026</h2><p>Added Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, and Crossy Road.</p></li><li class="update-entry"><h2>September 23, 2026</h2><p>Added Monkey Mart and Basketball Stars.</p></li></ol>'
+    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026 — Big Site Update</h2><p>Added Bouncy Basketball, Speed Stars, Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, Crossy Road, Monkey Mart, and Basketball Stars. Also added search, favorites, themes, customizable accent and background colors, custom background images, timezone selection with automatic detection, Mac battery percentage, settings, game requests, bug reports, keyboard shortcuts, loading indicators, new-game badges, mobile navigation, and a custom 404 page.</p></li></ol>'
   },
   announcements: {
     title: "Announcements",

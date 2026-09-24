@@ -19,7 +19,12 @@ const infoContent = document.querySelector("#info-content");
 const settingsPanel = document.querySelector("#settings-panel");
 const themeSelect = document.querySelector("#theme-select");
 const cardSize = document.querySelector("#card-size");
-const reduceMotion = document.querySelector("#reduce-motion");
+const timezoneSelect = document.querySelector("#timezone-select");
+const detectedTimezone = document.querySelector("#detected-timezone");
+const accentColor = document.querySelector("#accent-color");
+const backgroundColor = document.querySelector("#background-color");
+const backgroundImage = document.querySelector("#background-image");
+const backgroundStyle = document.querySelector("#background-style");
 const loader = document.querySelector("#game-loader");
 const player = document.querySelector("#game-player");
 
@@ -113,12 +118,40 @@ cardSize?.addEventListener("change", () => {
   storage.write("sg-card-size", cardSize.value);
 });
 
-reduceMotion.checked = storage.read("sg-reduce-motion", false);
-root.classList.toggle("reduce-motion", reduceMotion.checked);
-reduceMotion?.addEventListener("change", () => {
-  root.classList.toggle("reduce-motion", reduceMotion.checked);
-  storage.write("sg-reduce-motion", reduceMotion.checked);
+const automaticTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local timezone";
+detectedTimezone.textContent = `Detected automatically: ${automaticTimezone}`;
+const timezoneChoices = typeof Intl.supportedValuesOf === "function"
+  ? Intl.supportedValuesOf("timeZone")
+  : ["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "Europe/London", "UTC"];
+timezoneSelect.add(new Option(`Automatic (${automaticTimezone})`, "auto"));
+timezoneChoices.forEach((zone) => timezoneSelect.add(new Option(zone.replaceAll("_", " "), zone)));
+timezoneSelect.value = storage.read("sg-timezone", "auto");
+timezoneSelect.addEventListener("change", () => {
+  storage.write("sg-timezone", timezoneSelect.value);
+  dispatchEvent(new Event("simplegames:timezone"));
 });
+
+function applyAppearance() {
+  const accent = storage.read("sg-accent", "#173f6d");
+  const background = storage.read("sg-background", "#202225");
+  const image = storage.read("sg-background-image", "");
+  const style = storage.read("sg-background-style", "cover");
+  accentColor.value = accent;
+  backgroundColor.value = background;
+  backgroundImage.value = image;
+  backgroundStyle.value = style;
+  root.style.setProperty("--accent", accent);
+  root.style.setProperty("--background", background);
+  root.style.setProperty("--custom-background-image", image ? `url("${image.replaceAll('"', '%22')}")` : "none");
+  root.style.setProperty("--custom-background-size", style === "repeat" ? "auto" : style);
+  root.style.setProperty("--custom-background-repeat", style === "repeat" ? "repeat" : "no-repeat");
+}
+
+accentColor.addEventListener("input", () => { storage.write("sg-accent", accentColor.value); applyAppearance(); });
+backgroundColor.addEventListener("input", () => { storage.write("sg-background", backgroundColor.value); applyAppearance(); });
+backgroundImage.addEventListener("change", () => { storage.write("sg-background-image", backgroundImage.value.trim()); applyAppearance(); });
+backgroundStyle.addEventListener("change", () => { storage.write("sg-background-style", backgroundStyle.value); applyAppearance(); });
+applyAppearance();
 
 function openSettings() {
   settingsPanel.hidden = false;
@@ -129,26 +162,29 @@ document.querySelector("#settings-open")?.addEventListener("click", openSettings
 document.querySelector("#settings-close")?.addEventListener("click", closeSettings);
 settingsPanel?.addEventListener("click", (event) => { if (event.target === settingsPanel) closeSettings(); });
 document.querySelector("#reset-settings")?.addEventListener("click", () => {
-  ["sg-theme", "sg-card-size", "sg-reduce-motion", "sg-favorites"].forEach((key) => localStorage.removeItem(key));
+  ["sg-theme", "sg-card-size", "sg-favorites", "sg-timezone", "sg-accent", "sg-background", "sg-background-image", "sg-background-style"].forEach((key) => localStorage.removeItem(key));
   location.reload();
 });
 
-if (!sessionStorage.getItem("sg-session-counted")) {
-  storage.write("sg-sessions", storage.read("sg-sessions", 0) + 1);
-  sessionStorage.setItem("sg-session-counted", "yes");
-}
-document.querySelector("#session-stat").textContent = `Visits on this device: ${storage.read("sg-sessions", 1)}`;
-document.querySelector("#play-stat").textContent = `Games opened on this device: ${storage.read("sg-plays", 0)}`;
-
 window.addEventListener("simplegames:play", () => {
-  const plays = storage.read("sg-plays", 0) + 1;
-  storage.write("sg-plays", plays);
-  document.querySelector("#play-stat").textContent = `Games opened on this device: ${plays}`;
   loader.hidden = false;
 });
 player?.addEventListener("load", () => { loader.hidden = true; });
 
-const updateVersion = "2026-09-24-features";
+const batteryStatus = document.querySelector("#battery-status");
+const isMac = /Macintosh|Mac OS X/.test(navigator.userAgent);
+if (isMac && navigator.getBattery) {
+  navigator.getBattery().then((battery) => {
+    const updateBattery = () => {
+      batteryStatus.textContent = `Battery ${Math.round(battery.level * 100)}%${battery.charging ? " ⚡" : ""}`;
+    };
+    updateBattery();
+    battery.addEventListener("levelchange", updateBattery);
+    battery.addEventListener("chargingchange", updateBattery);
+  }).catch(() => { batteryStatus.textContent = "The battery feature only works on Mac"; });
+}
+
+const updateVersion = "2026-09-24-customization";
 const updateDot = document.querySelector("#update-dot");
 updateDot.hidden = storage.read("sg-seen-update", "") === updateVersion;
 document.querySelector("[data-page='updates']")?.addEventListener("click", () => {
