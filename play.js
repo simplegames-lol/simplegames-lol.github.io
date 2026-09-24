@@ -1,6 +1,9 @@
 const games = {
+  "/polytrack/": "https://nerdtown.cc/play/games/Poly_Track/index.html",
+  "/drift-boss/": "https://www.mortgagecalculator.org/money-games/drift-boss/",
+  "/block-blast/": "https://blockblast-2.io/embed/block-blast-unblocked?preroll=0&pub_id=",
+  "/escape-road/": "https://escape-road.global.ssl.fastly.net/",
   "/monkey-mart/": "https://gaming-escape.github.io/public/assets/games/monkey-mart/",
-  "/drive-mad/": "https://gaming-escape.github.io/public/assets/games/drive-mad/",
   "/basketball-stars/": "https://gaming-escape.github.io/public/assets/games/basketball-stars/",
   "/drift-hunters/": "https://unblokedgames.github.io/projects/drift-hunters/index.html",
   "/basket-random/": "https://2048taylorswift.github.io/basketrandom/",
@@ -49,11 +52,11 @@ function closeGame() {
 }
 
 const pages = {
-  "/updates/": {
+  updates: {
     title: "Update Log",
-    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 23, 2026</h2><p>Added Monkey Mart, Drive Mad, and Basketball Stars.</p></li></ol>'
+    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026</h2><p>Added Escape Road, Block Blast, Drift Boss, and PolyTrack.</p></li><li class="update-entry"><h2>September 23, 2026</h2><p>Added Monkey Mart and Basketball Stars.</p></li></ol>'
   },
-  "/announcements/": {
+  announcements: {
     title: "Announcements",
     content: '<section class="intro"><h1>Announcements</h1></section><div class="update-entry"><p>More games coming soon!</p></div>'
   }
@@ -62,8 +65,7 @@ const pages = {
 document.querySelector(".header-right")?.addEventListener("click", (event) => {
   const link = event.target.closest("a");
   if (!link) return;
-  const path = new URL(link.href, window.location.href).pathname;
-  const page = pages[path];
+  const page = pages[link.dataset.page];
   if (!page) return;
 
   event.preventDefault();
