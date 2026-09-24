@@ -13,6 +13,8 @@ const cards = [...document.querySelectorAll(".game-card")];
 const search = document.querySelector("#game-search");
 const favoritesFilter = document.querySelector("#favorites-filter");
 const resultCount = document.querySelector("#result-count");
+const libraryIntro = document.querySelector(".intro[aria-labelledby='featured-title']");
+const libraryTitle = document.querySelector("#featured-title");
 const infoOverlay = document.querySelector("#info-overlay");
 const infoTitle = document.querySelector("#info-title");
 const infoContent = document.querySelector("#info-content");
@@ -23,7 +25,8 @@ const timezoneSelect = document.querySelector("#timezone-select");
 const detectedTimezone = document.querySelector("#detected-timezone");
 const accentColor = document.querySelector("#accent-color");
 const backgroundColor = document.querySelector("#background-color");
-const backgroundImage = document.querySelector("#background-image");
+const backgroundImageFile = document.querySelector("#background-image-file");
+const backgroundImageStatus = document.querySelector("#background-image-status");
 const backgroundStyle = document.querySelector("#background-style");
 const loader = document.querySelector("#game-loader");
 const player = document.querySelector("#game-player");
@@ -83,7 +86,9 @@ search?.addEventListener("input", filterGames);
 favoritesFilter?.addEventListener("click", () => {
   favoritesOnly = !favoritesOnly;
   favoritesFilter.setAttribute("aria-pressed", String(favoritesOnly));
-  favoritesFilter.textContent = favoritesOnly ? "★ Favorites" : "☆ Favorites";
+  favoritesFilter.textContent = favoritesOnly ? "← Back to games" : "☆ Favorites";
+  libraryTitle.textContent = favoritesOnly ? "Favorites" : "Games";
+  libraryIntro.classList.toggle("favorites-view", favoritesOnly);
   filterGames();
 });
 filterGames();
@@ -138,7 +143,7 @@ function applyAppearance() {
   const style = storage.read("sg-background-style", "cover");
   accentColor.value = accent;
   backgroundColor.value = background;
-  backgroundImage.value = image;
+  backgroundImageStatus.textContent = image ? "Custom image selected" : "No custom image selected";
   backgroundStyle.value = style;
   root.style.setProperty("--accent", accent);
   root.style.setProperty("--background", background);
@@ -149,7 +154,36 @@ function applyAppearance() {
 
 accentColor.addEventListener("input", () => { storage.write("sg-accent", accentColor.value); applyAppearance(); });
 backgroundColor.addEventListener("input", () => { storage.write("sg-background", backgroundColor.value); applyAppearance(); });
-backgroundImage.addEventListener("change", () => { storage.write("sg-background-image", backgroundImage.value.trim()); applyAppearance(); });
+backgroundImageFile.addEventListener("change", () => {
+  const file = backgroundImageFile.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    const picture = new Image();
+    picture.addEventListener("load", () => {
+      const maxWidth = 1920;
+      const maxHeight = 1080;
+      const scale = Math.min(1, maxWidth / picture.width, maxHeight / picture.height);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(picture.width * scale));
+      canvas.height = Math.max(1, Math.round(picture.height * scale));
+      canvas.getContext("2d").drawImage(picture, 0, 0, canvas.width, canvas.height);
+      try {
+        localStorage.setItem("sg-background-image", JSON.stringify(canvas.toDataURL("image/webp", 0.82)));
+        applyAppearance();
+      } catch {
+        backgroundImageStatus.textContent = "That image is too large. Try a smaller one.";
+      }
+    });
+    picture.src = reader.result;
+  });
+  reader.readAsDataURL(file);
+});
+document.querySelector("#remove-background")?.addEventListener("click", () => {
+  localStorage.removeItem("sg-background-image");
+  backgroundImageFile.value = "";
+  applyAppearance();
+});
 backgroundStyle.addEventListener("change", () => { storage.write("sg-background-style", backgroundStyle.value); applyAppearance(); });
 applyAppearance();
 

@@ -6,7 +6,7 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=5" />
   </head>
   <body>
     <header class="site-header">
@@ -88,7 +88,7 @@
         </article>
         <article class="game-card">
           <a class="game-card__image-link" href="/polytrack/" aria-label="Play PolyTrack">
-            <img class="game-card__image--stretch" src="assets/polytrack.png" alt="PolyTrack game cover" />
+            <img src="assets/polytrack-new.png" alt="PolyTrack game cover" />
           </a>
           <div class="game-card__body"><h2><a href="/polytrack/">PolyTrack</a></h2></div>
         </article>
@@ -206,14 +206,15 @@
         <div class="settings-divider"><strong>Customize appearance</strong></div>
         <label>Accent color<input id="accent-color" type="color" value="#173f6d" /></label>
         <label>Background color<input id="background-color" type="color" value="#202225" /></label>
-        <label>Background image URL<input id="background-image" type="url" placeholder="https://example.com/background.jpg" /></label>
+        <label>Background image<input id="background-image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /><small id="background-image-status">No custom image selected</small></label>
         <label>Background style<select id="background-style"><option value="cover">Fill screen</option><option value="contain">Fit image</option><option value="repeat">Tile image</option></select></label>
+        <button class="secondary-button" id="remove-background" type="button">Remove background image</button>
         <button class="secondary-button" id="reset-settings" type="button">Reset saved settings</button>
       </div>
     </section>
     <div class="game-loader" id="game-loader" hidden><span></span><p>Loading game…</p></div>
     <script src="clock.js?v=2"></script>
-    <script src="features.js?v=6"></script>
+    <script src="features.js?v=8"></script>
     <script src="play.js?v=21"></script>
   </body>
 </html>
