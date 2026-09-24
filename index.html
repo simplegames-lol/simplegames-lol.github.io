@@ -111,6 +111,14 @@
         <iframe id="game-player" class="game-frame" title="Game" allow="autoplay; fullscreen; gamepad; pointer-lock" allowfullscreen></iframe>
       </div>
     </section>
+    <section class="info-overlay" id="info-overlay" hidden aria-label="Site information">
+      <header class="game-toolbar">
+        <button class="back-link game-close" id="info-close" type="button">← Games</button>
+        <h1 id="info-title">Simple Games</h1>
+        <time class="local-time" aria-label="Your local time"></time>
+      </header>
+      <main class="page-shell info-content" id="info-content"></main>
+    </section>
     <script src="clock.js"></script>
     <script src="play.js"></script>
   </body>

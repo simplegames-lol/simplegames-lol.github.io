@@ -273,6 +273,22 @@ a {
   background: #000;
 }
 
+.info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow-y: auto;
+  background: var(--background);
+}
+
+.info-overlay[hidden] {
+  display: none;
+}
+
+.info-content {
+  padding-top: 52px;
+}
+
 .game-overlay[hidden] {
   display: none;
 }

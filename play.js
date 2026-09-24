@@ -15,6 +15,14 @@ const overlay = document.querySelector("#game-overlay");
 const player = document.querySelector("#game-player");
 const title = document.querySelector("#game-title");
 const closeButton = document.querySelector("#game-close");
+const infoOverlay = document.querySelector("#info-overlay");
+const infoTitle = document.querySelector("#info-title");
+const infoContent = document.querySelector("#info-content");
+const infoClose = document.querySelector("#info-close");
+
+if (window.location.pathname.endsWith("/index.html")) {
+  history.replaceState(null, "", "/");
+}
 
 document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   const link = event.target.closest("a");
@@ -40,7 +48,42 @@ function closeGame() {
   document.body.classList.remove("game-is-open");
 }
 
+const pages = {
+  "/updates/": {
+    title: "Update Log",
+    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 23, 2026</h2><p>Added Monkey Mart, Drive Mad, and Basketball Stars.</p></li></ol>'
+  },
+  "/announcements/": {
+    title: "Announcements",
+    content: '<section class="intro"><h1>Announcements</h1></section><div class="update-entry"><p>More games coming soon!</p></div>'
+  }
+};
+
+document.querySelector(".header-right")?.addEventListener("click", (event) => {
+  const link = event.target.closest("a");
+  if (!link) return;
+  const path = new URL(link.href, window.location.href).pathname;
+  const page = pages[path];
+  if (!page) return;
+
+  event.preventDefault();
+  infoTitle.textContent = page.title;
+  infoContent.innerHTML = page.content;
+  infoOverlay.hidden = false;
+  document.body.classList.add("game-is-open");
+  infoClose.focus();
+});
+
+function closeInfo() {
+  infoOverlay.hidden = true;
+  document.body.classList.remove("game-is-open");
+}
+
+infoClose?.addEventListener("click", closeInfo);
+
 closeButton?.addEventListener("click", closeGame);
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !overlay.hidden) closeGame();
+  if (event.key !== "Escape") return;
+  if (!overlay.hidden) closeGame();
+  if (!infoOverlay.hidden) closeInfo();
 });
