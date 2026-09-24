@@ -264,6 +264,30 @@ a {
   text-align: center;
 }
 
+.game-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: #000;
+}
+
+.game-overlay[hidden] {
+  display: none;
+}
+
+.game-close {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.game-is-open {
+  overflow: hidden;
+}
+
 @media (max-width: 620px) {
   .page-shell {
     width: min(calc(100% - 28px), var(--content-width));

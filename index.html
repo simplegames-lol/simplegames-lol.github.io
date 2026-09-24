@@ -101,6 +101,17 @@
 
       </section>
     </main>
+    <section class="game-overlay" id="game-overlay" hidden aria-label="Game player">
+      <header class="game-toolbar">
+        <button class="back-link game-close" id="game-close" type="button">← All games</button>
+        <h1 id="game-title">Game</h1>
+        <time class="local-time" aria-label="Your local time"></time>
+      </header>
+      <div class="game-frame-wrap">
+        <iframe id="game-player" class="game-frame" title="Game" allow="autoplay; fullscreen; gamepad; pointer-lock" allowfullscreen></iframe>
+      </div>
+    </section>
     <script src="clock.js"></script>
+    <script src="play.js"></script>
   </body>
 </html>
