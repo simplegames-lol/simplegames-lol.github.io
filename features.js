@@ -28,6 +28,12 @@ const backgroundColor = document.querySelector("#background-color");
 const backgroundImageFile = document.querySelector("#background-image-file");
 const backgroundImageStatus = document.querySelector("#background-image-status");
 const backgroundStyle = document.querySelector("#background-style");
+const displaySettings = {
+  "show-menu-time": ".menu-time",
+  "show-menu-battery": ".menu-battery-status",
+  "show-game-time": ".game-time",
+  "show-game-battery": ".game-battery-status"
+};
 const loader = document.querySelector("#game-loader");
 const player = document.querySelector("#game-player");
 
@@ -136,6 +142,22 @@ timezoneSelect.addEventListener("change", () => {
   dispatchEvent(new Event("simplegames:timezone"));
 });
 
+function applyDisplaySettings() {
+  Object.entries(displaySettings).forEach(([id, selector]) => {
+    const control = document.querySelector(`#${id}`);
+    const visible = storage.read(`sg-${id}`, true);
+    control.checked = visible;
+    document.querySelectorAll(selector).forEach((element) => element.classList.toggle("user-hidden", !visible));
+  });
+}
+Object.keys(displaySettings).forEach((id) => {
+  document.querySelector(`#${id}`)?.addEventListener("change", (event) => {
+    storage.write(`sg-${id}`, event.target.checked);
+    applyDisplaySettings();
+  });
+});
+applyDisplaySettings();
+
 function applyAppearance() {
   const accent = storage.read("sg-accent", "#173f6d");
   const background = storage.read("sg-background", "#202225");
@@ -196,7 +218,7 @@ document.querySelector("#settings-open")?.addEventListener("click", openSettings
 document.querySelector("#settings-close")?.addEventListener("click", closeSettings);
 settingsPanel?.addEventListener("click", (event) => { if (event.target === settingsPanel) closeSettings(); });
 document.querySelector("#reset-settings")?.addEventListener("click", () => {
-  ["sg-theme", "sg-card-size", "sg-favorites", "sg-timezone", "sg-accent", "sg-background", "sg-background-image", "sg-background-style"].forEach((key) => localStorage.removeItem(key));
+  ["sg-theme", "sg-card-size", "sg-favorites", "sg-timezone", "sg-accent", "sg-background", "sg-background-image", "sg-background-style", "sg-show-menu-time", "sg-show-menu-battery", "sg-show-game-time", "sg-show-game-battery"].forEach((key) => localStorage.removeItem(key));
   location.reload();
 });
 
@@ -205,17 +227,18 @@ window.addEventListener("simplegames:play", () => {
 });
 player?.addEventListener("load", () => { loader.hidden = true; });
 
-const batteryStatus = document.querySelector("#battery-status");
+const batteryStatuses = document.querySelectorAll(".battery-status");
+const setBatteryText = (text) => batteryStatuses.forEach((status) => { status.textContent = text; });
 const isMac = /Macintosh|Mac OS X/.test(navigator.userAgent);
 if (isMac && navigator.getBattery) {
   navigator.getBattery().then((battery) => {
     const updateBattery = () => {
-      batteryStatus.textContent = `Battery ${Math.round(battery.level * 100)}%${battery.charging ? " ⚡" : ""}`;
+      setBatteryText(`Battery ${Math.round(battery.level * 100)}%${battery.charging ? " ⚡" : ""}`);
     };
     updateBattery();
     battery.addEventListener("levelchange", updateBattery);
     battery.addEventListener("chargingchange", updateBattery);
-  }).catch(() => { batteryStatus.textContent = "The battery feature only works on Mac"; });
+  }).catch(() => { setBatteryText("The battery feature only works on Mac"); });
 }
 
 const updateVersion = "2026-09-24-customization";

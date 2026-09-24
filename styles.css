@@ -434,6 +434,22 @@ html[data-card-size="compact"] .game-card__body {
   color: var(--muted);
 }
 
+.game-toolbar .game-battery-status {
+  margin-left: auto;
+}
+
+.game-toolbar .game-battery-status + .local-time {
+  margin-left: 0;
+}
+
+.game-toolbar .menu-battery-status {
+  margin-left: auto;
+}
+
+.game-toolbar .menu-battery-status + .local-time {
+  margin-left: 0;
+}
+
 .back-link {
   border: 0;
   background: transparent;
@@ -557,11 +573,14 @@ body.game-is-open {
 .settings-heading h2 { margin: 0; }
 .settings-heading button { border: 0; color: var(--text); background: transparent; font-size: 1.8rem; cursor: pointer; }
 .settings-card > label { display: grid; gap: 6px; margin-bottom: 15px; color: var(--muted); font-weight: 700; }
+.settings-card .check-setting { display: flex; align-items: center; gap: 9px; }
+.settings-card .check-setting input { width: auto; accent-color: var(--accent); }
 .settings-card input[type="file"] { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; color: var(--text); background: var(--background); font: inherit; font-weight: 700; cursor: pointer; }
 .settings-card input[type="color"] { width: 100%; height: 42px; border: 1px solid var(--border); border-radius: 6px; padding: 4px; background: var(--background); cursor: pointer; }
 .settings-card small { color: var(--muted); font-weight: 700; }
 .intro.favorites-view { text-align: center; }
 .settings-divider { margin: 20px 0 14px; padding-top: 16px; border-top: 1px solid var(--border); }
+.user-hidden { display: none !important; }
 
 .form-card {
   max-width: 640px;

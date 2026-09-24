@@ -21,8 +21,8 @@
         <a href="/" data-page="announcements">Announcements</a>
         <button class="header-button" id="theme-toggle" type="button" aria-label="Toggle light or dark theme">☀</button>
         <button class="header-button" id="settings-open" type="button">Settings</button>
-        <span class="battery-status" id="battery-status">The battery feature only works on Mac</span>
-        <time class="local-time" aria-label="Your local time"></time>
+        <span class="battery-status menu-battery-status" id="battery-status">The battery feature only works on Mac</span>
+        <time class="local-time menu-time" aria-label="Your local time"></time>
       </div>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
       </div>
@@ -183,7 +183,8 @@
       <header class="game-toolbar">
         <button class="back-link game-close" id="game-close" type="button">← All games</button>
         <h1 id="game-title">Game</h1>
-        <time class="local-time" aria-label="Your local time"></time>
+        <span class="battery-status game-battery-status">The battery feature only works on Mac</span>
+        <time class="local-time game-time" aria-label="Your local time"></time>
       </header>
       <div class="game-frame-wrap">
         <iframe id="game-player" class="game-frame" title="Game" allow="autoplay; fullscreen; gamepad; pointer-lock" allowfullscreen></iframe>
@@ -193,7 +194,8 @@
       <header class="game-toolbar">
         <button class="back-link game-close" id="info-close" type="button">← Games</button>
         <h1 id="info-title">Simple Games</h1>
-        <time class="local-time" aria-label="Your local time"></time>
+        <span class="battery-status menu-battery-status">The battery feature only works on Mac</span>
+        <time class="local-time menu-time" aria-label="Your local time"></time>
       </header>
       <main class="page-shell info-content" id="info-content"></main>
     </section>
@@ -203,6 +205,11 @@
         <label>Theme<select id="theme-select"><option value="dark">Dark</option><option value="light">Light</option><option value="system">System</option></select></label>
         <label>Card size<select id="card-size"><option value="normal">Normal</option><option value="compact">Compact</option></select></label>
         <label>Timezone<select id="timezone-select"></select><small id="detected-timezone"></small></label>
+        <div class="settings-divider"><strong>Header display</strong></div>
+        <label class="check-setting"><input id="show-menu-time" type="checkbox" checked /> Show time on menus and pages</label>
+        <label class="check-setting"><input id="show-menu-battery" type="checkbox" checked /> Show battery on menus and pages</label>
+        <label class="check-setting"><input id="show-game-time" type="checkbox" checked /> Show time while playing</label>
+        <label class="check-setting"><input id="show-game-battery" type="checkbox" checked /> Show battery while playing</label>
         <div class="settings-divider"><strong>Customize appearance</strong></div>
         <label>Accent color<input id="accent-color" type="color" value="#173f6d" /></label>
         <label>Background color<input id="background-color" type="color" value="#202225" /></label>
@@ -214,7 +221,7 @@
     </section>
     <div class="game-loader" id="game-loader" hidden><span></span><p>Loading game…</p></div>
     <script src="clock.js?v=2"></script>
-    <script src="features.js?v=8"></script>
+    <script src="features.js?v=10"></script>
     <script src="play.js?v=21"></script>
   </body>
 </html>
