@@ -590,6 +590,9 @@ body.game-is-open {
 .social-sidebar { padding-right: 18px; border-right: 1px solid var(--border); }
 .social-sidebar h3, .chat-heading h3 { margin: 18px 0 9px; }
 .friend-search { display: grid; gap: 8px; }
+.friend-filter-label input { width: 100%; margin-bottom: 9px; border: 1px solid var(--border); border-radius: 6px; padding: 9px 10px; color: var(--text); background: var(--background); font: inherit; }
+.group-form { display: grid; gap: 7px; margin-bottom: 9px; }
+.group-form input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 9px 10px; color: var(--text); background: var(--background); font: inherit; }
 .social-list { display: grid; gap: 7px; }
 .social-list-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px; border: 1px solid var(--border); border-radius: 6px; background: var(--background); }
 .social-list-item button { padding: 6px 8px; }
@@ -601,15 +604,29 @@ body.game-is-open {
 .presence-dot.online { background: #49d17d; box-shadow: 0 0 0 3px rgba(73,209,125,.13); }
 .friend-unread { min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; color: #fff; background: #e34747; font-size: .7rem; text-align: center; line-height: 20px; }
 .friend-profile-button { flex: 0 0 auto; padding: 6px !important; }
+.pin-mark { color: #ffcb65; }
 .chat-area { min-width: 0; }
 #chat-actions { display: flex; gap: 7px; }
 .message-list { height: 380px; overflow-y: auto; margin: 12px 0; padding: 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--background); }
 .message { width: fit-content; max-width: 78%; margin: 7px 0; padding: 9px 11px; border-radius: 10px; background: var(--surface); overflow-wrap: anywhere; }
 .message-delete { display: block; border: 0; padding: 4px 0 0; color: inherit; background: transparent; font: inherit; font-size: .68rem; opacity: .68; cursor: pointer; }
+.reaction-bar { display: flex; gap: 4px; margin-top: 5px; }
+.reaction-button { border: 1px solid transparent; border-radius: 999px; padding: 2px 6px; color: inherit; background: rgba(127,127,127,.16); font: inherit; font-size: .75rem; cursor: pointer; }
+.reaction-button.mine-reaction { border-color: #ffcb65; }
+.message-quote { display: block; margin-bottom: 6px; padding: 6px 8px; border-left: 3px solid #8fc2ff; border-radius: 3px; background: rgba(127,127,127,.15); font-size: .75rem; opacity: .9; }
+.message-image { display: block; width: min(260px,100%); max-height: 220px; margin-top: 7px; border-radius: 6px; object-fit: contain; background: #111; }
+.message-tools { display: flex; gap: 8px; margin-top: 4px; }
+.message-tool { border: 0; padding: 0; color: inherit; background: transparent; font: inherit; font-size: .68rem; opacity: .7; cursor: pointer; }
+.reply-preview { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; padding: 8px 10px; border-left: 3px solid #8fc2ff; background: var(--background); font-size: .78rem; }
+.reply-preview button { border: 0; color: var(--text); background: transparent; font-size: 1.2rem; cursor: pointer; }
+.attachment-button { display: grid; width: 42px; place-items: center; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; }
+.attachment-button input { display: none; }
 .message.mine { margin-left: auto; color: #fff; background: var(--accent); }
 .message small { display: block; margin-top: 4px; opacity: .72; font-size: .7rem; }
 .typing-status { min-height: 18px; margin: 2px 0 -8px; color: var(--muted); font-size: .78rem; }
 .message-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.message-form { grid-template-columns: 1fr auto auto; }
+.group-add-form { margin-top: 18px; }
 .text-button { border: 0; padding: 2px; color: #8fc2ff; background: transparent; font: inherit; cursor: pointer; }
 .social-subview { max-width: 620px; margin: 24px auto 0; padding: 22px; border: 1px solid var(--border); border-radius: 8px; background: var(--background); }
 .social-subview h3:first-child { margin-top: 0; }
@@ -621,6 +638,8 @@ body.game-is-open {
 .public-profile { display: grid; justify-items: center; gap: 8px; padding: 24px 0; text-align: center; }
 .public-profile .profile-avatar { width: 74px; height: 74px; font-size: 2.35rem; }
 .public-profile h3, .public-profile p { margin: 0; }
+.profile-link-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.profile-status-text { color: #8fc2ff; }
 .achievement-panel { margin-top: 28px; border-top: 1px solid var(--border); padding-top: 14px; }
 .achievement-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
 .achievement { padding: 11px; border: 1px solid var(--border); border-radius: 7px; color: var(--muted); background: var(--surface); }

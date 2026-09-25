@@ -82,12 +82,72 @@ service cloud.firestore {
         allow create: if signedIn()
           && request.resource.data.senderId == request.auth.uid
           && request.resource.data.text is string
-          && request.resource.data.text.size() > 0
           && request.resource.data.text.size() <= 500
+          && (request.resource.data.text.size() > 0
+            || (request.resource.data.get("attachment", {}).get("dataUrl", "") is string
+              && request.resource.data.get("attachment", {}).get("dataUrl", "").size() <= 260000
+              && request.resource.data.get("attachment", {}).get("type", "") in ["image/png", "image/jpeg", "image/webp", "image/gif"]))
           && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members)
           && exists(/databases/$(database)/documents/friendships/$(chatId));
         allow delete: if signedIn() && resource.data.senderId == request.auth.uid
           && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members);
+        allow update: if signedIn() && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members) && (
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(["reactions"])
+            && request.resource.data.reactions.diff(resource.data.get("reactions", {})).affectedKeys().hasOnly([request.auth.uid]))
+          || (resource.data.senderId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["text", "editedAt"])
+            && request.resource.data.text is string
+            && request.resource.data.text.size() <= 500)
+        );
+      }
+    }
+
+    match /groupChats/{groupId} {
+      allow read: if isMember(resource.data.members);
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.auth.uid in request.resource.data.members
+        && request.resource.data.members.size() >= 2
+        && request.resource.data.members.size() <= 8
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 30;
+      allow update: if isMember(resource.data.members)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && (
+          request.resource.data.members == resource.data.members
+          || (request.auth.uid == resource.data.ownerUid
+            && resource.data.ownerUid in request.resource.data.members
+            && request.resource.data.members.size() >= 2
+            && request.resource.data.members.size() <= 8)
+          || (request.auth.uid != resource.data.ownerUid
+            && !(request.auth.uid in request.resource.data.members)
+            && request.resource.data.members.hasOnly(resource.data.members)
+            && request.resource.data.members.size() == resource.data.members.size() - 1)
+        );
+      allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
+
+      match /messages/{messageId} {
+        allow read: if isMember(get(/databases/$(database)/documents/groupChats/$(groupId)).data.members);
+        allow create: if signedIn()
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() <= 500
+          && (request.resource.data.text.size() > 0
+            || (request.resource.data.get("attachment", {}).get("dataUrl", "") is string
+              && request.resource.data.get("attachment", {}).get("dataUrl", "").size() <= 260000
+              && request.resource.data.get("attachment", {}).get("type", "") in ["image/png", "image/jpeg", "image/webp", "image/gif"]))
+          && isMember(get(/databases/$(database)/documents/groupChats/$(groupId)).data.members);
+        allow update: if signedIn() && isMember(get(/databases/$(database)/documents/groupChats/$(groupId)).data.members) && (
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(["reactions"])
+            && request.resource.data.reactions.diff(resource.data.get("reactions", {})).affectedKeys().hasOnly([request.auth.uid]))
+          || (resource.data.senderId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["text", "editedAt"])
+            && request.resource.data.text is string
+            && request.resource.data.text.size() <= 500)
+        );
+        allow delete: if signedIn() && resource.data.senderId == request.auth.uid
+          && isMember(get(/databases/$(database)/documents/groupChats/$(groupId)).data.members);
       }
     }
 

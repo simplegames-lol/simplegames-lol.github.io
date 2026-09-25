@@ -32,8 +32,17 @@ The system includes:
 - Earned profile badges
 - Most-played and top-rated sorting
 - Game loading timeouts with retry controls
+- Searchable and pinnable conversations
+- Direct profile links using ?user=username
+- Emoji message reactions
+- Custom profile status text
+- Private group chats for up to 8 members
+- Group owner controls for renaming and member management
+- Group unread badges and notification sounds
+- Message editing and quoted replies
+- PNG, JPEG, WebP, and GIF sharing capped at 180 KB
 
 IMPORTANT: Publish the included firestore.rules again for ratings, message deletion,
-and username changes to work.
+username changes, reactions, group management, replies, edits, and attachments to work.
 
 Firebase Authentication stores passwords securely. The website never stores raw passwords.
