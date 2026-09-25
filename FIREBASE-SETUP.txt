@@ -15,5 +15,10 @@ The system includes:
 - Friend requests
 - Private real-time chat between friends
 - Blocking and reporting
+- Forgot-password emails and password changes
+- Unread message counters
+- Online and last-active status
+- Custom display names, emoji avatars, and bios
+- Friend game activity
 
 Firebase Authentication stores passwords securely. The website never stores raw passwords.

@@ -6,7 +6,7 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=6" />
+    <link rel="stylesheet" href="styles.css?v=7" />
   </head>
   <body>
     <header class="site-header">
@@ -19,7 +19,7 @@
         <a href="/" data-form="bug">Report bug</a>
         <a class="updates-link" href="/" data-page="updates">Updates<span class="update-dot" id="update-dot" aria-label="New updates"></span></a>
         <a href="/" data-page="announcements">Announcements</a>
-        <button class="header-button" id="account-open" type="button">Log in</button>
+        <button class="header-button account-button" id="account-open" type="button">Log in<span class="notification-badge" id="account-unread" hidden>0</span></button>
         <button class="header-button" id="theme-toggle" type="button" aria-label="Toggle light or dark theme">☀</button>
         <button class="header-button" id="settings-open" type="button">Settings</button>
         <time class="local-time menu-time" aria-label="Your local time"></time>
@@ -236,6 +236,7 @@
             <label>Email<input name="email" type="email" autocomplete="email" required /></label>
             <label>Password<input name="password" type="password" autocomplete="current-password" minlength="6" required /></label>
             <button class="submit-button" type="submit">Log in</button>
+            <button class="text-button" id="forgot-password" type="button">Forgot password?</button>
           </form>
           <form class="social-form" id="signup-form" hidden>
             <label>Username<input name="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" autocomplete="username" required /><small>3–20 letters, numbers, or underscores</small></label>
@@ -245,9 +246,12 @@
           </form>
         </div>
         <div id="social-view" hidden>
-          <div class="profile-row"><strong id="profile-username"></strong><button class="secondary-button" id="sign-out" type="button">Sign out</button></div>
+          <div class="profile-row">
+            <div class="profile-summary"><span class="profile-avatar" id="profile-avatar">🙂</span><div><strong id="profile-display-name"></strong><small id="profile-username"></small></div></div>
+            <div class="profile-actions"><button class="secondary-button social-view-button" data-social-view="friends" type="button">Friends</button><button class="secondary-button social-view-button" data-social-view="profile" type="button">Edit profile</button><button class="secondary-button social-view-button" data-social-view="settings" type="button">Account settings</button><button class="secondary-button" id="sign-out" type="button">Sign out</button></div>
+          </div>
           <div class="social-layout">
-            <aside class="social-sidebar">
+            <aside class="social-sidebar" id="friends-sidebar">
               <form class="friend-search" id="friend-search"><label>Add a friend<input name="username" placeholder="Exact username" minlength="3" required /></label><button class="submit-button" type="submit">Add</button></form>
               <h3>Requests</h3><div class="social-list" id="request-list"><p>No requests</p></div>
               <h3>Friends</h3><div class="social-list" id="friend-list"><p>No friends yet</p></div>
@@ -258,13 +262,32 @@
               <form class="message-form" id="message-form" hidden><input name="message" maxlength="500" autocomplete="off" placeholder="Write a message…" required /><button class="submit-button" type="submit">Send</button></form>
             </section>
           </div>
+          <section class="social-subview" id="profile-editor" hidden>
+            <h3>Customize your profile</h3>
+            <form class="social-form" id="profile-form">
+              <label>Display name<input name="displayName" maxlength="30" placeholder="What friends see" /></label>
+              <label>Avatar emoji<input name="avatar" maxlength="8" placeholder="🙂" /></label>
+              <label>Bio<textarea name="bio" maxlength="160" placeholder="Tell your friends a little about yourself"></textarea><small><span id="bio-count">0</span>/160</small></label>
+              <button class="submit-button" type="submit">Save profile</button>
+            </form>
+          </section>
+          <section class="social-subview" id="account-settings-view" hidden>
+            <h3>Account settings</h3>
+            <div class="account-email"><span>Email</span><strong id="account-email"></strong></div>
+            <button class="secondary-button" id="send-reset" type="button">Send password reset email</button>
+            <form class="social-form settings-password-form" id="password-form">
+              <label>New password<input name="password" type="password" minlength="6" autocomplete="new-password" required /><small>At least 6 characters</small></label>
+              <button class="submit-button" type="submit">Change password</button>
+            </form>
+            <h3>Blocked users</h3><div class="social-list" id="blocked-list"><p>No blocked users</p></div>
+          </section>
         </div>
       </div>
     </section>
     <div class="game-loader" id="game-loader" hidden><span></span><p>Loading game…</p></div>
     <script src="clock.js?v=2"></script>
     <script src="features.js?v=12"></script>
-    <script src="play.js?v=22"></script>
-    <script type="module" src="social.js?v=4"></script>
+    <script src="play.js?v=23"></script>
+    <script type="module" src="social.js?v=5"></script>
   </body>
 </html>

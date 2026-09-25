@@ -101,6 +101,10 @@ a {
   cursor: pointer;
 }
 
+.account-button { position: relative; }
+.notification-badge { display: inline-grid; min-width: 18px; height: 18px; margin-left: 6px; padding: 0 5px; place-items: center; border-radius: 999px; color: #fff; background: #e34747; font-size: .7rem; line-height: 1; }
+.notification-badge[hidden] { display: none; }
+
 .menu-toggle {
   display: none;
 }
@@ -578,6 +582,10 @@ body.game-is-open {
 .social-form input, .friend-search input, .message-form input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); background: var(--background); font: inherit; font-weight: 700; }
 .social-form small { color: var(--muted); }
 .profile-row, .chat-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.profile-summary, .profile-actions { display: flex; align-items: center; gap: 9px; }
+.profile-summary small { display: block; margin-top: 2px; color: var(--muted); }
+.profile-avatar { display: grid; width: 46px; height: 46px; place-items: center; border: 1px solid var(--border); border-radius: 50%; background: var(--background); font-size: 1.55rem; }
+.profile-actions { flex-wrap: wrap; justify-content: flex-end; }
 .social-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 20px; margin-top: 18px; }
 .social-sidebar { padding-right: 18px; border-right: 1px solid var(--border); }
 .social-sidebar h3, .chat-heading h3 { margin: 18px 0 9px; }
@@ -585,7 +593,13 @@ body.game-is-open {
 .social-list { display: grid; gap: 7px; }
 .social-list-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px; border: 1px solid var(--border); border-radius: 6px; background: var(--background); }
 .social-list-item button { padding: 6px 8px; }
-.friend-button { width: 100%; text-align: left; }
+.friend-button { width: 100%; min-width: 0; text-align: left; }
+.friend-main { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.friend-copy { display: grid; gap: 2px; min-width: 0; }
+.friend-copy small { overflow: hidden; color: var(--muted); font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
+.presence-dot { flex: 0 0 auto; width: 9px; height: 9px; border-radius: 50%; background: #79818d; }
+.presence-dot.online { background: #49d17d; box-shadow: 0 0 0 3px rgba(73,209,125,.13); }
+.friend-unread { min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; color: #fff; background: #e34747; font-size: .7rem; text-align: center; line-height: 20px; }
 .chat-area { min-width: 0; }
 #chat-actions { display: flex; gap: 7px; }
 .message-list { height: 380px; overflow-y: auto; margin: 12px 0; padding: 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--background); }
@@ -593,6 +607,13 @@ body.game-is-open {
 .message.mine { margin-left: auto; color: #fff; background: var(--accent); }
 .message small { display: block; margin-top: 4px; opacity: .72; font-size: .7rem; }
 .message-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.text-button { border: 0; padding: 2px; color: #8fc2ff; background: transparent; font: inherit; cursor: pointer; }
+.social-subview { max-width: 620px; margin: 24px auto 0; padding: 22px; border: 1px solid var(--border); border-radius: 8px; background: var(--background); }
+.social-subview h3:first-child { margin-top: 0; }
+.social-form textarea { width: 100%; min-height: 100px; resize: vertical; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); background: var(--surface); font: inherit; font-weight: 700; }
+.account-email { display: grid; gap: 4px; margin-bottom: 15px; }
+.account-email span { color: var(--muted); }
+.settings-password-form { margin: 18px 0 26px; }
 
 .form-card {
   max-width: 640px;
@@ -653,6 +674,8 @@ body.game-is-open {
   }
 
   .social-layout { grid-template-columns: 1fr; }
+  .profile-row { align-items: flex-start; flex-direction: column; }
+  .profile-actions { justify-content: flex-start; }
   .social-sidebar { padding-right: 0; padding-bottom: 16px; border-right: 0; border-bottom: 1px solid var(--border); }
   .message-list { height: 300px; }
 }

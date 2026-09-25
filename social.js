@@ -1,282 +1,42 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-import {
-  createUserWithEmailAndPassword, deleteUser, getAuth, onAuthStateChanged,
-  signInWithEmailAndPassword, signOut
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import {
-  addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, limit,
-  onSnapshot, orderBy, query, runTransaction, serverTimestamp, setDoc,
-  updateDoc, where, writeBatch
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDzJu7zyLTZWwffbS5wcxAGym5orePvNKg",
-  authDomain: "simplegames-23c2c.firebaseapp.com",
-  projectId: "simplegames-23c2c",
-  storageBucket: "simplegames-23c2c.firebasestorage.app",
-  messagingSenderId: "993873419513",
-  appId: "1:993873419513:web:14e22dfff6d7f0c7051628",
-  measurementId: "G-NC81W7MYG0"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const $ = (selector) => document.querySelector(selector);
-const panel = $("#social-panel");
-const authView = $("#auth-view");
-const socialView = $("#social-view");
-const status = $("#social-status");
-let profile = null;
-let activeFriend = null;
-let stopProfile = () => {};
-let stopRequests = () => {};
-let stopFriends = () => {};
-let stopMessages = () => {};
-
-function showStatus(message = "", error = false) {
-  status.textContent = message;
-  status.style.color = error ? "#ff8585" : "#ffcb65";
-}
-
-function friendlyError(error) {
-  const messages = {
-    "auth/email-already-in-use": "That email already has an account.",
-    "auth/invalid-credential": "The email or password is incorrect.",
-    "auth/invalid-email": "Enter a valid email address.",
-    "auth/too-many-requests": "Too many attempts. Wait a bit and try again.",
-    "auth/weak-password": "The password must contain at least 6 characters."
-  };
-  return messages[error.code] || error.message || "Something went wrong.";
-}
-
-$("#account-open").addEventListener("click", () => { panel.hidden = false; showStatus(); });
-$("#social-close").addEventListener("click", () => { panel.hidden = true; });
-panel.addEventListener("click", (event) => { if (event.target === panel) panel.hidden = true; });
-document.addEventListener("keydown", (event) => { if (event.key === "Escape") panel.hidden = true; });
-
-function showAuth(mode) {
-  $("#login-form").hidden = mode !== "login";
-  $("#signup-form").hidden = mode !== "signup";
-  $("#login-tab").setAttribute("aria-pressed", String(mode === "login"));
-  $("#signup-tab").setAttribute("aria-pressed", String(mode === "signup"));
-  showStatus();
-}
-$("#login-tab").addEventListener("click", () => showAuth("login"));
-$("#signup-tab").addEventListener("click", () => showAuth("signup"));
-showAuth("login");
-
-$("#signup-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const data = new FormData(form);
-  const username = String(data.get("username")).trim();
-  const usernameLower = username.toLowerCase();
-  const email = String(data.get("email")).trim();
-  const password = String(data.get("password"));
-  if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) return showStatus("Username must be 3–20 letters, numbers, or underscores.", true);
-  if (password.length < 6) return showStatus("Password must contain at least 6 characters.", true);
-  showStatus("Creating account…");
-  let credential;
-  let profileCreated = false;
-  try {
-    credential = await createUserWithEmailAndPassword(auth, email, password);
-    await runTransaction(db, async (transaction) => {
-      const usernameRef = doc(db, "usernames", usernameLower);
-      const usernameDoc = await transaction.get(usernameRef);
-      if (usernameDoc.exists()) {
-        const linkedUser = await transaction.get(doc(db, "users", usernameDoc.data().uid));
-        if (linkedUser.exists()) throw new Error("That username is already taken.");
-      }
-      transaction.set(usernameRef, { uid: credential.user.uid, username });
-      transaction.set(doc(db, "users", credential.user.uid), { username, usernameLower, createdAt: serverTimestamp() });
-    });
-    profileCreated = true;
-    profile = { username, usernameLower };
-    authView.hidden = true;
-    socialView.hidden = false;
-    $("#profile-username").textContent = `@${username}`;
-    $("#account-open").textContent = username;
-    listenForRequests(credential.user.uid);
-    listenForFriends(credential.user.uid);
-    form.reset();
-    showStatus("Account created.");
-  } catch (error) {
-    if (credential?.user && !profileCreated) await deleteUser(credential.user).catch(() => {});
-    showStatus(friendlyError(error), true);
-  }
-});
-
-$("#login-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const data = new FormData(form);
-  showStatus("Logging in…");
-  try {
-    await signInWithEmailAndPassword(auth, String(data.get("email")).trim(), String(data.get("password")));
-    form.reset();
-    showStatus();
-  } catch (error) { showStatus(friendlyError(error), true); }
-});
-$("#sign-out").addEventListener("click", () => signOut(auth));
-
-function pairId(a, b) { return [a, b].sort().join("_"); }
-function itemRow(name, actions = []) {
-  const row = document.createElement("div");
-  row.className = "social-list-item";
-  const label = document.createElement("span");
-  label.textContent = name;
-  row.append(label, ...actions);
-  return row;
-}
-function actionButton(text, handler) {
-  const button = document.createElement("button");
-  button.className = "secondary-button";
-  button.type = "button";
-  button.textContent = text;
-  button.addEventListener("click", handler);
-  return button;
-}
-
-function listenForRequests(uid) {
-  stopRequests();
-  stopRequests = onSnapshot(query(collection(db, "friendRequests"), where("toUid", "==", uid)), async (snapshot) => {
-    const list = $("#request-list");
-    list.replaceChildren();
-    const pending = snapshot.docs.filter((entry) => entry.data().status === "pending");
-    if (!pending.length) return list.append(Object.assign(document.createElement("p"), { textContent: "No requests" }));
-    for (const request of pending) {
-      const requestData = request.data();
-      const sender = await getDoc(doc(db, "users", requestData.fromUid));
-      const name = sender.data()?.username || "Unknown user";
-      const accept = actionButton("Accept", async () => {
-        const friendshipId = pairId(uid, requestData.fromUid);
-        const batch = writeBatch(db);
-        batch.update(request.ref, { status: "accepted", respondedAt: serverTimestamp() });
-        batch.set(doc(db, "friendships", friendshipId), { members: [uid, requestData.fromUid], createdAt: serverTimestamp() });
-        await batch.commit().catch((error) => showStatus(friendlyError(error), true));
-      });
-      const decline = actionButton("Decline", () => updateDoc(request.ref, { status: "declined", respondedAt: serverTimestamp() }));
-      list.append(itemRow(name, [accept, decline]));
-    }
-  }, (error) => showStatus(friendlyError(error), true));
-}
-
-function listenForFriends(uid) {
-  stopFriends();
-  stopFriends = onSnapshot(query(collection(db, "friendships"), where("members", "array-contains", uid)), async (snapshot) => {
-    const list = $("#friend-list");
-    list.replaceChildren();
-    if (snapshot.empty) return list.append(Object.assign(document.createElement("p"), { textContent: "No friends yet" }));
-    for (const friendship of snapshot.docs) {
-      const otherUid = friendship.data().members.find((member) => member !== uid);
-      const other = await getDoc(doc(db, "users", otherUid));
-      if (!other.exists()) continue;
-      const friend = { uid: otherUid, username: other.data().username, friendshipId: friendship.id };
-      const open = actionButton(friend.username, () => openChat(friend));
-      open.classList.add("friend-button");
-      list.append(itemRow("", [open]));
-    }
-  }, (error) => showStatus(friendlyError(error), true));
-}
-
-$("#friend-search").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const requestedName = String(new FormData(event.currentTarget).get("username")).trim().toLowerCase();
-  if (requestedName.length < 3) return showStatus("Enter the exact username.", true);
-  try {
-    const match = await getDoc(doc(db, "usernames", requestedName));
-    if (!match.exists()) return showStatus("No user has that exact username.", true);
-    const targetUid = match.data().uid;
-    if (targetUid === auth.currentUser.uid) return showStatus("You cannot add yourself.", true);
-    if ((await getDoc(doc(db, "blocks", `${auth.currentUser.uid}_${targetUid}`))).exists() || (await getDoc(doc(db, "blocks", `${targetUid}_${auth.currentUser.uid}`))).exists()) return showStatus("This friend request cannot be sent.", true);
-    if ((await getDoc(doc(db, "friendships", pairId(auth.currentUser.uid, targetUid)))).exists()) return showStatus("You are already friends.");
-    await setDoc(doc(db, "friendRequests", `${auth.currentUser.uid}_${targetUid}`), { fromUid: auth.currentUser.uid, toUid: targetUid, status: "pending", createdAt: serverTimestamp() });
-    event.currentTarget.reset();
-    showStatus(`Friend request sent to ${match.data().username}.`);
-  } catch (error) { showStatus(friendlyError(error), true); }
-});
-
-function openChat(friend) {
-  activeFriend = friend;
-  $("#chat-title").textContent = friend.username;
-  $("#chat-actions").hidden = false;
-  $("#message-form").hidden = false;
-  const chatId = pairId(auth.currentUser.uid, friend.uid);
-  stopMessages();
-  stopMessages = onSnapshot(query(collection(db, "chats", chatId, "messages"), orderBy("createdAt", "asc"), limit(100)), (snapshot) => {
-    const list = $("#message-list");
-    list.replaceChildren();
-    if (snapshot.empty) list.append(Object.assign(document.createElement("p"), { textContent: "No messages yet. Say hi!" }));
-    snapshot.forEach((messageDoc) => {
-      const data = messageDoc.data();
-      const bubble = document.createElement("div");
-      bubble.className = `message${data.senderId === auth.currentUser.uid ? " mine" : ""}`;
-      const text = document.createElement("span");
-      text.textContent = data.text;
-      const time = document.createElement("small");
-      time.textContent = data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : "Sending…";
-      bubble.append(text, time);
-      list.append(bubble);
-    });
-    list.scrollTop = list.scrollHeight;
-  }, (error) => showStatus(friendlyError(error), true));
-}
-
-$("#message-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!activeFriend) return;
-  const field = event.currentTarget.elements.message;
-  const text = field.value.trim();
-  if (!text || text.length > 500) return;
-  const chatId = pairId(auth.currentUser.uid, activeFriend.uid);
-  try {
-    await setDoc(doc(db, "chats", chatId), { members: [auth.currentUser.uid, activeFriend.uid], updatedAt: serverTimestamp(), lastMessage: text.slice(0, 80) }, { merge: true });
-    await addDoc(collection(db, "chats", chatId, "messages"), { senderId: auth.currentUser.uid, text, createdAt: serverTimestamp() });
-    field.value = "";
-  } catch (error) { showStatus(friendlyError(error), true); }
-});
-
-$("#block-user").addEventListener("click", async () => {
-  if (!activeFriend || !confirm(`Block ${activeFriend.username}? You will no longer be friends.`)) return;
-  await setDoc(doc(db, "blocks", `${auth.currentUser.uid}_${activeFriend.uid}`), { blockerUid: auth.currentUser.uid, blockedUid: activeFriend.uid, createdAt: serverTimestamp() });
-  await deleteDoc(doc(db, "friendships", pairId(auth.currentUser.uid, activeFriend.uid))).catch(() => {});
-  activeFriend = null;
-  stopMessages();
-  $("#chat-title").textContent = "Select a friend";
-  $("#chat-actions").hidden = true;
-  $("#message-form").hidden = true;
-  $("#message-list").textContent = "User blocked.";
-});
-
-$("#report-user").addEventListener("click", async () => {
-  if (!activeFriend) return;
-  const reason = prompt(`Why are you reporting ${activeFriend.username}?`);
-  if (!reason?.trim()) return;
-  await addDoc(collection(db, "reports"), { reporterUid: auth.currentUser.uid, reportedUid: activeFriend.uid, reason: reason.trim().slice(0, 500), createdAt: serverTimestamp() });
-  showStatus("Report sent. Thank you.");
-});
-
-onAuthStateChanged(auth, async (user) => {
-  stopProfile(); stopRequests(); stopFriends(); stopMessages();
-  activeFriend = null;
-  if (!user) {
-    profile = null;
-    authView.hidden = false;
-    socialView.hidden = true;
-    $("#account-open").textContent = "Log in";
-    return;
-  }
-  authView.hidden = true;
-  socialView.hidden = false;
-  $("#profile-username").textContent = "Loading username…";
-  $("#account-open").textContent = "Account";
-  stopProfile = onSnapshot(doc(db, "users", user.uid), (profileDoc) => {
-    if (!profileDoc.exists()) return;
-    profile = profileDoc.data();
-    $("#profile-username").textContent = `@${profile.username}`;
-    $("#account-open").textContent = profile.username;
-  });
-  listenForRequests(user.uid);
-  listenForFriends(user.uid);
-});
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import{createUserWithEmailAndPassword,deleteUser,getAuth,onAuthStateChanged,sendPasswordResetEmail,signInWithEmailAndPassword,signOut,updatePassword}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import{addDoc,collection,deleteDoc,doc,FieldPath,getDoc,getFirestore,increment,limit,onSnapshot,orderBy,query,runTransaction,serverTimestamp,setDoc,updateDoc,where,writeBatch}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyDzJu7zyLTZWwffbS5wcxAGym5orePvNKg",authDomain:"simplegames-23c2c.firebaseapp.com",projectId:"simplegames-23c2c",storageBucket:"simplegames-23c2c.firebasestorage.app",messagingSenderId:"993873419513",appId:"1:993873419513:web:14e22dfff6d7f0c7051628",measurementId:"G-NC81W7MYG0"});
+const auth=getAuth(app),db=getFirestore(app),$=s=>document.querySelector(s),panel=$("#social-panel"),authView=$("#auth-view"),socialView=$("#social-view"),status=$("#social-status");
+let profile,activeFriend,friends=[],chats=new Map(),friendProfiles=new Map(),presenceTimer=0;
+let stopProfile=()=>{},stopRequests=()=>{},stopFriends=()=>{},stopChats=()=>{},stopMessages=()=>{},stopBlocks=()=>{},stopFriendProfiles=[];
+function showStatus(m="",error=false){status.textContent=m;status.style.color=error?"#ff8585":"#ffcb65"}
+function friendlyError(e){return({"auth/email-already-in-use":"That email already has an account.","auth/invalid-credential":"The email or password is incorrect.","auth/invalid-email":"Enter a valid email address.","auth/requires-recent-login":"Log out and back in before changing your password.","auth/too-many-requests":"Too many attempts. Wait a bit and try again.","auth/weak-password":"The password must contain at least 6 characters."})[e.code]||e.message||"Something went wrong."}
+$("#account-open").onclick=()=>{panel.hidden=false;showStatus()};$("#social-close").onclick=()=>panel.hidden=true;panel.onclick=e=>{if(e.target===panel)panel.hidden=true};document.addEventListener("keydown",e=>{if(e.key==="Escape")panel.hidden=true});
+function showAuth(mode){$("#login-form").hidden=mode!=="login";$("#signup-form").hidden=mode!=="signup";$("#login-tab").setAttribute("aria-pressed",mode==="login");$("#signup-tab").setAttribute("aria-pressed",mode==="signup");showStatus()}
+$("#login-tab").onclick=()=>showAuth("login");$("#signup-tab").onclick=()=>showAuth("signup");showAuth("login");
+async function reset(email){if(!email)return showStatus("Enter your email address first.",true);try{await sendPasswordResetEmail(auth,email);showStatus("Password reset email sent. Check your inbox.")}catch(e){showStatus(friendlyError(e),true)}}
+$("#forgot-password").onclick=()=>reset($("#login-form").elements.email.value.trim());$("#send-reset").onclick=()=>reset(auth.currentUser?.email);
+$("#signup-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f),username=String(d.get("username")).trim(),usernameLower=username.toLowerCase(),email=String(d.get("email")).trim(),password=String(d.get("password"));if(!/^[A-Za-z0-9_]{3,20}$/.test(username))return showStatus("Username must be 3–20 letters, numbers, or underscores.",true);let cred,created=false;try{cred=await createUserWithEmailAndPassword(auth,email,password);await runTransaction(db,async t=>{const ur=doc(db,"usernames",usernameLower),ud=await t.get(ur);if(ud.exists()&&(await t.get(doc(db,"users",ud.data().uid))).exists())throw Error("That username is already taken.");t.set(ur,{uid:cred.user.uid,username});t.set(doc(db,"users",cred.user.uid),{username,usernameLower,displayName:username,avatar:"🙂",bio:"",status:"online",lastActive:serverTimestamp(),currentGame:null,createdAt:serverTimestamp()})});created=true;f.reset();showStatus("Account created.")}catch(err){if(cred?.user&&!created)await deleteUser(cred.user).catch(()=>{});showStatus(friendlyError(err),true)}};
+$("#login-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f);try{showStatus("Logging in…");await signInWithEmailAndPassword(auth,String(d.get("email")).trim(),String(d.get("password")));f.reset();showStatus()}catch(err){showStatus(friendlyError(err),true)}};
+$("#password-form").onsubmit=async e=>{e.preventDefault();try{await updatePassword(auth.currentUser,String(new FormData(e.currentTarget).get("password")));e.currentTarget.reset();showStatus("Password changed.")}catch(err){showStatus(friendlyError(err),true)}};
+const pairId=(a,b)=>[a,b].sort().join("_");
+function button(text,handler){const b=document.createElement("button");b.className="secondary-button";b.type="button";b.textContent=text;b.onclick=handler;return b}
+function row(name,actions=[]){const r=document.createElement("div");r.className="social-list-item";const s=document.createElement("span");s.textContent=name;r.append(s,...actions);return r}
+const ms=t=>t?.toMillis?t.toMillis():0,isOnline=d=>d?.status==="online"&&Date.now()-ms(d.lastActive)<180000;
+function activity(d){if(isOnline(d))return d.currentGame?.title?`Playing ${d.currentGame.title}`:"Online";const t=ms(d?.lastActive);if(!t)return"Offline";const m=Math.max(1,Math.round((Date.now()-t)/60000));return m<60?`Last active ${m}m ago`:m<1440?`Last active ${Math.round(m/60)}h ago`:`Last active ${new Date(t).toLocaleDateString()}`}
+function unread(uid){const c=chats.get(pairId(auth.currentUser.uid,uid));if(!c||c.lastSenderId===auth.currentUser.uid)return 0;return c.unreadCounts?.[auth.currentUser.uid]??(ms(c.updatedAt)>ms(c.readAt?.[auth.currentUser.uid])?1:0)}
+function renderFriends(){const list=$("#friend-list");list.replaceChildren();if(!friends.length)list.append(Object.assign(document.createElement("p"),{textContent:"No friends yet"}));friends.forEach(f=>{const d=friendProfiles.get(f.uid)||f,b=button("",()=>openChat({...f,username:d.username||f.username}));b.classList.add("friend-button");const main=document.createElement("span"),dot=document.createElement("span"),copy=document.createElement("span"),name=document.createElement("strong"),act=document.createElement("small");main.className="friend-main";dot.className=`presence-dot${isOnline(d)?" online":""}`;copy.className="friend-copy";name.textContent=`${d.avatar||"🙂"} ${d.displayName||d.username||"Friend"}`;act.textContent=activity(d);copy.append(name,act);main.append(dot,copy);b.append(main);const r=row("",[b]),n=unread(f.uid);if(n){const badge=document.createElement("span");badge.className="friend-unread";badge.textContent=n;r.append(badge)}list.append(r)});const count=friends.reduce((n,f)=>n+unread(f.uid),0),badge=$("#account-unread");badge.textContent=count;badge.hidden=!count}
+function listenRequests(uid){stopRequests();stopRequests=onSnapshot(query(collection(db,"friendRequests"),where("toUid","==",uid)),async snap=>{const list=$("#request-list");list.replaceChildren();const pending=snap.docs.filter(x=>x.data().status==="pending");if(!pending.length)return list.append(Object.assign(document.createElement("p"),{textContent:"No requests"}));for(const req of pending){const d=req.data(),u=await getDoc(doc(db,"users",d.fromUid)),name=u.data()?.username||"Unknown user";const accept=button("Accept",async()=>{const batch=writeBatch(db);batch.update(req.ref,{status:"accepted",respondedAt:serverTimestamp()});batch.set(doc(db,"friendships",pairId(uid,d.fromUid)),{members:[uid,d.fromUid],createdAt:serverTimestamp()});await batch.commit().catch(err=>showStatus(friendlyError(err),true))}),decline=button("Decline",()=>updateDoc(req.ref,{status:"declined",respondedAt:serverTimestamp()}));list.append(row(name,[accept,decline]))}},e=>showStatus(friendlyError(e),true))}
+function listenFriends(uid){stopFriends();stopFriends=onSnapshot(query(collection(db,"friendships"),where("members","array-contains",uid)),snap=>{stopFriendProfiles.forEach(s=>s());stopFriendProfiles=[];friends=snap.docs.map(x=>({uid:x.data().members.find(m=>m!==uid),friendshipId:x.id}));friendProfiles.clear();renderFriends();friends.forEach(f=>stopFriendProfiles.push(onSnapshot(doc(db,"users",f.uid),u=>{if(!u.exists())return;friendProfiles.set(f.uid,u.data());f.username=u.data().username;renderFriends();if(activeFriend?.uid===f.uid)$("#chat-title").textContent=`${u.data().avatar||"🙂"} ${u.data().displayName||u.data().username}`})))},e=>showStatus(friendlyError(e),true))}
+function listenChats(uid){stopChats();stopChats=onSnapshot(query(collection(db,"chats"),where("members","array-contains",uid)),snap=>{chats=new Map(snap.docs.map(x=>[x.id,x.data()]));renderFriends()},e=>showStatus(friendlyError(e),true))}
+$("#friend-search").onsubmit=async e=>{e.preventDefault();const name=String(new FormData(e.currentTarget).get("username")).trim().toLowerCase();try{const match=await getDoc(doc(db,"usernames",name));if(!match.exists())return showStatus("No user has that exact username.",true);const target=match.data().uid,me=auth.currentUser.uid;if(target===me)return showStatus("You cannot add yourself.",true);if((await getDoc(doc(db,"blocks",`${me}_${target}`))).exists()||(await getDoc(doc(db,"blocks",`${target}_${me}`))).exists())return showStatus("This friend request cannot be sent.",true);if((await getDoc(doc(db,"friendships",pairId(me,target)))).exists())return showStatus("You are already friends.");await setDoc(doc(db,"friendRequests",`${me}_${target}`),{fromUid:me,toUid:target,status:"pending",createdAt:serverTimestamp()});e.currentTarget.reset();showStatus(`Friend request sent to ${match.data().username}.`)}catch(err){showStatus(friendlyError(err),true)}};
+async function markRead(id){try{await updateDoc(doc(db,"chats",id),new FieldPath("readAt",auth.currentUser.uid),serverTimestamp(),new FieldPath("unreadCounts",auth.currentUser.uid),0)}catch{}}
+function openChat(f){activeFriend=f;showView("friends");const d=friendProfiles.get(f.uid)||f;$("#chat-title").textContent=`${d.avatar||"🙂"} ${d.displayName||d.username}`;$("#chat-actions").hidden=false;$("#message-form").hidden=false;const id=pairId(auth.currentUser.uid,f.uid);stopMessages();markRead(id);stopMessages=onSnapshot(query(collection(db,"chats",id,"messages"),orderBy("createdAt","asc"),limit(100)),snap=>{const list=$("#message-list");list.replaceChildren();if(snap.empty)list.append(Object.assign(document.createElement("p"),{textContent:"No messages yet. Say hi!"}));snap.forEach(x=>{const d=x.data(),bubble=document.createElement("div"),text=document.createElement("span"),time=document.createElement("small");bubble.className=`message${d.senderId===auth.currentUser.uid?" mine":""}`;text.textContent=d.text;time.textContent=d.createdAt?.toDate?d.createdAt.toDate().toLocaleString():"Sending…";bubble.append(text,time);list.append(bubble)});list.scrollTop=list.scrollHeight;markRead(id)},e=>showStatus(friendlyError(e),true))}
+$("#message-form").onsubmit=async e=>{e.preventDefault();if(!activeFriend)return;const field=e.currentTarget.elements.message,text=field.value.trim();if(!text||text.length>500)return;const id=pairId(auth.currentUser.uid,activeFriend.uid),ref=doc(db,"chats",id);try{await setDoc(ref,{members:[auth.currentUser.uid,activeFriend.uid],updatedAt:serverTimestamp(),lastMessage:text.slice(0,80),lastSenderId:auth.currentUser.uid},{merge:true});await updateDoc(ref,new FieldPath("unreadCounts",activeFriend.uid),increment(1));await addDoc(collection(db,"chats",id,"messages"),{senderId:auth.currentUser.uid,text,createdAt:serverTimestamp()});field.value=""}catch(err){showStatus(friendlyError(err),true)}};
+$("#block-user").onclick=async()=>{if(!activeFriend||!confirm(`Block ${activeFriend.username}? You will no longer be friends.`))return;await setDoc(doc(db,"blocks",`${auth.currentUser.uid}_${activeFriend.uid}`),{blockerUid:auth.currentUser.uid,blockedUid:activeFriend.uid,createdAt:serverTimestamp()});await deleteDoc(doc(db,"friendships",pairId(auth.currentUser.uid,activeFriend.uid))).catch(()=>{});activeFriend=null;stopMessages();$("#chat-title").textContent="Select a friend";$("#chat-actions").hidden=true;$("#message-form").hidden=true;$("#message-list").textContent="User blocked."};
+$("#report-user").onclick=async()=>{if(!activeFriend)return;const reason=prompt(`Why are you reporting ${activeFriend.username}?`);if(!reason?.trim())return;await addDoc(collection(db,"reports"),{reporterUid:auth.currentUser.uid,reportedUid:activeFriend.uid,reason:reason.trim().slice(0,500),createdAt:serverTimestamp()});showStatus("Report sent. Thank you.")};
+function showView(v){$(".social-layout").hidden=v!=="friends";$("#profile-editor").hidden=v!=="profile";$("#account-settings-view").hidden=v!=="settings"}
+document.querySelectorAll(".social-view-button").forEach(b=>b.onclick=()=>showView(b.dataset.socialView));
+$("#profile-form").elements.bio.oninput=e=>$("#bio-count").textContent=e.target.value.length;
+$("#profile-form").onsubmit=async e=>{e.preventDefault();const d=new FormData(e.currentTarget),displayName=String(d.get("displayName")).trim(),avatar=String(d.get("avatar")).trim()||"🙂",bio=String(d.get("bio")).trim();if(!displayName||displayName.length>30)return showStatus("Display name must be 1–30 characters.",true);try{await updateDoc(doc(db,"users",auth.currentUser.uid),{displayName,avatar,bio});showStatus("Profile saved.")}catch(err){showStatus(friendlyError(err),true)}};
+function listenBlocks(uid){stopBlocks();stopBlocks=onSnapshot(query(collection(db,"blocks"),where("blockerUid","==",uid)),async snap=>{const list=$("#blocked-list");list.replaceChildren();if(snap.empty)return list.append(Object.assign(document.createElement("p"),{textContent:"No blocked users"}));for(const block of snap.docs){const u=await getDoc(doc(db,"users",block.data().blockedUid)),name=u.data()?.username||"Unknown user";list.append(row(name,[button("Unblock",async()=>{await deleteDoc(block.ref);showStatus(`${name} was unblocked.`)})]))}})}
+async function presence(extra={}){if(auth.currentUser)await updateDoc(doc(db,"users",auth.currentUser.uid),{status:document.visibilityState==="visible"?"online":"away",lastActive:serverTimestamp(),...extra}).catch(()=>{})}
+document.addEventListener("visibilitychange",()=>presence());window.addEventListener("simplegames:play",e=>presence({currentGame:e.detail}));window.addEventListener("simplegames:stop-playing",()=>presence({currentGame:null}));
+$("#sign-out").onclick=async()=>{await updateDoc(doc(db,"users",auth.currentUser.uid),{status:"offline",lastActive:serverTimestamp(),currentGame:null}).catch(()=>{});await signOut(auth)};
+onAuthStateChanged(auth,user=>{stopProfile();stopRequests();stopFriends();stopChats();stopMessages();stopBlocks();stopFriendProfiles.forEach(s=>s());stopFriendProfiles=[];clearInterval(presenceTimer);activeFriend=null;friends=[];chats.clear();friendProfiles.clear();if(!user){profile=null;authView.hidden=false;socialView.hidden=true;$("#account-open").childNodes[0].textContent="Log in";$("#account-unread").hidden=true;return}authView.hidden=true;socialView.hidden=false;showView("friends");$("#account-email").textContent=user.email||"";stopProfile=onSnapshot(doc(db,"users",user.uid),p=>{if(!p.exists())return;profile=p.data();const display=profile.displayName||profile.username;$("#profile-display-name").textContent=display;$("#profile-username").textContent=`@${profile.username}`;$("#profile-avatar").textContent=profile.avatar||"🙂";$("#account-open").childNodes[0].textContent=display;const f=$("#profile-form");if(document.activeElement?.form!==f){f.elements.displayName.value=display;f.elements.avatar.value=profile.avatar||"🙂";f.elements.bio.value=profile.bio||"";$("#bio-count").textContent=(profile.bio||"").length}});listenRequests(user.uid);listenFriends(user.uid);listenChats(user.uid);listenBlocks(user.uid);presence();presenceTimer=setInterval(()=>presence(),120000)});
