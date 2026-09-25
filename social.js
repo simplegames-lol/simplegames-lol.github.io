@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDzJu7zyLTZWwffbS5wxcAGym5orePvNKg",
+  apiKey: "AIzaSyDzJu7zyLTZWwffbS5wcxAGym5orePvNKg",
   authDomain: "simplegames-23c2c.firebaseapp.com",
   projectId: "simplegames-23c2c",
   storageBucket: "simplegames-23c2c.firebasestorage.app",
