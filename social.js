@@ -29,6 +29,7 @@ const socialView = $("#social-view");
 const status = $("#social-status");
 let profile = null;
 let activeFriend = null;
+let stopProfile = () => {};
 let stopRequests = () => {};
 let stopFriends = () => {};
 let stopMessages = () => {};
@@ -257,7 +258,7 @@ $("#report-user").addEventListener("click", async () => {
 });
 
 onAuthStateChanged(auth, async (user) => {
-  stopRequests(); stopFriends(); stopMessages();
+  stopProfile(); stopRequests(); stopFriends(); stopMessages();
   activeFriend = null;
   if (!user) {
     profile = null;
@@ -266,12 +267,16 @@ onAuthStateChanged(auth, async (user) => {
     $("#account-open").textContent = "Log in";
     return;
   }
-  const profileDoc = await getDoc(doc(db, "users", user.uid));
-  profile = profileDoc.data();
   authView.hidden = true;
   socialView.hidden = false;
-  $("#profile-username").textContent = `@${profile?.username || "user"}`;
-  $("#account-open").textContent = profile?.username || "Account";
+  $("#profile-username").textContent = "Loading username…";
+  $("#account-open").textContent = "Account";
+  stopProfile = onSnapshot(doc(db, "users", user.uid), (profileDoc) => {
+    if (!profileDoc.exists()) return;
+    profile = profileDoc.data();
+    $("#profile-username").textContent = `@${profile.username}`;
+    $("#account-open").textContent = profile.username;
+  });
   listenForRequests(user.uid);
   listenForFriends(user.uid);
 });
