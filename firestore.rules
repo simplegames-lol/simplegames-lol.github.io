@@ -97,11 +97,17 @@ service cloud.firestore {
         && request.resource.data.members.size() == 2
         && exists(/databases/$(database)/documents/friendships/$(chatId));
       allow update: if isMember(resource.data.members)
-        && request.resource.data.members == resource.data.members
+        && request.resource.data.members.size() == resource.data.members.size()
+        && request.resource.data.members.hasAll(resource.data.members)
+        && resource.data.members.hasAll(request.resource.data.members)
         && exists(/databases/$(database)/documents/friendships/$(chatId));
 
       match /messages/{messageId} {
-        allow read: if isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members);
+        // A new conversation has no chat document yet. Friendship is the
+        // source of truth, so friends can attach the live listener immediately.
+        allow read: if signedIn()
+          && exists(/databases/$(database)/documents/friendships/$(chatId))
+          && request.auth.uid in get(/databases/$(database)/documents/friendships/$(chatId)).data.members;
         allow create: if signedIn()
           && request.resource.data.senderId == request.auth.uid
           && request.resource.data.text is string
@@ -110,8 +116,8 @@ service cloud.firestore {
             || (request.resource.data.get("attachment", {}).get("dataUrl", "") is string
               && request.resource.data.get("attachment", {}).get("dataUrl", "").size() <= 260000
               && request.resource.data.get("attachment", {}).get("type", "") in ["image/png", "image/jpeg", "image/webp", "image/gif"]))
-          && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members)
-          && exists(/databases/$(database)/documents/friendships/$(chatId));
+          && exists(/databases/$(database)/documents/friendships/$(chatId))
+          && request.auth.uid in get(/databases/$(database)/documents/friendships/$(chatId)).data.members;
         allow delete: if signedIn() && resource.data.senderId == request.auth.uid
           && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members);
         allow update: if signedIn() && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members) && (

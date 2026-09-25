@@ -56,4 +56,7 @@ block record returns "not found" instead of "insufficient permissions."
 The friendship check also permits signed-in single-document reads so a missing
 friendship returns "not found" instead of the same permissions error.
 
+Live-chat fix: direct-message listeners now use the friendship record as their
+permission source, including before the first message creates a chat summary.
+
 Firebase Authentication stores passwords securely. The website never stores raw passwords.
