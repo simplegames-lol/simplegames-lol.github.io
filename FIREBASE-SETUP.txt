@@ -51,4 +51,7 @@ IMPORTANT: Publish the included firestore.rules again for ratings, message delet
 username changes, reactions, group management, replies, edits, and attachments to work.
 The newest rules also enforce the profile-picture size limit.
 
+Friend-request fix: the block check now permits signed-in reads so a missing
+block record returns "not found" instead of "insufficient permissions."
+
 Firebase Authentication stores passwords securely. The website never stores raw passwords.

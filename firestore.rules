@@ -162,7 +162,9 @@ service cloud.firestore {
     }
 
     match /blocks/{blockId} {
-      allow read: if signedIn() && (resource.data.blockerUid == request.auth.uid || resource.data.blockedUid == request.auth.uid);
+      // Friend requests check both possible block IDs. Signed-in users must be
+      // able to receive a normal "not found" result when neither record exists.
+      allow read: if signedIn();
       allow create: if signedIn() && request.resource.data.blockerUid == request.auth.uid
         && request.resource.data.blockedUid != request.auth.uid
         && blockId == request.auth.uid + "_" + request.resource.data.blockedUid;
