@@ -13,8 +13,17 @@ service cloud.firestore {
         && request.resource.data.username.size() <= 20
         && request.resource.data.usernameLower == request.resource.data.username.lower()
         && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid;
+      // Profile-only saves are independent from username/display-name cooldowns.
       allow update: if signedIn() && request.auth.uid == uid
-        && request.resource.data.get("avatarImage", "").size() <= 150000 && (
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["avatarImage", "bio", "statusText"])
+        && request.resource.data.get("avatarImage", "") is string
+        && request.resource.data.get("avatarImage", "").size() <= 180000
+        && request.resource.data.get("bio", "") is string
+        && request.resource.data.get("bio", "").size() <= 160
+        && request.resource.data.get("statusText", "") is string
+        && request.resource.data.get("statusText", "").size() <= 60;
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.get("avatarImage", "").size() <= 180000 && (
         (request.resource.data.username == resource.data.username
           && request.resource.data.usernameLower == resource.data.usernameLower
           && request.resource.data.get('usernameChangedAt', null) == resource.data.get('usernameChangedAt', null))
