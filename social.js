@@ -67,7 +67,8 @@ showAuth("login");
 
 $("#signup-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const data = new FormData(event.currentTarget);
+  const form = event.currentTarget;
+  const data = new FormData(form);
   const username = String(data.get("username")).trim();
   const usernameLower = username.toLowerCase();
   const email = String(data.get("email")).trim();
@@ -76,14 +77,20 @@ $("#signup-form").addEventListener("submit", async (event) => {
   if (password.length < 6) return showStatus("Password must contain at least 6 characters.", true);
   showStatus("Creating account…");
   let credential;
+  let profileCreated = false;
   try {
     credential = await createUserWithEmailAndPassword(auth, email, password);
     await runTransaction(db, async (transaction) => {
       const usernameRef = doc(db, "usernames", usernameLower);
-      if ((await transaction.get(usernameRef)).exists()) throw new Error("That username is already taken.");
+      const usernameDoc = await transaction.get(usernameRef);
+      if (usernameDoc.exists()) {
+        const linkedUser = await transaction.get(doc(db, "users", usernameDoc.data().uid));
+        if (linkedUser.exists()) throw new Error("That username is already taken.");
+      }
       transaction.set(usernameRef, { uid: credential.user.uid, username });
       transaction.set(doc(db, "users", credential.user.uid), { username, usernameLower, createdAt: serverTimestamp() });
     });
+    profileCreated = true;
     profile = { username, usernameLower };
     authView.hidden = true;
     socialView.hidden = false;
@@ -91,21 +98,22 @@ $("#signup-form").addEventListener("submit", async (event) => {
     $("#account-open").textContent = username;
     listenForRequests(credential.user.uid);
     listenForFriends(credential.user.uid);
-    event.currentTarget.reset();
+    form.reset();
     showStatus("Account created.");
   } catch (error) {
-    if (credential?.user) await deleteUser(credential.user).catch(() => {});
+    if (credential?.user && !profileCreated) await deleteUser(credential.user).catch(() => {});
     showStatus(friendlyError(error), true);
   }
 });
 
 $("#login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const data = new FormData(event.currentTarget);
+  const form = event.currentTarget;
+  const data = new FormData(form);
   showStatus("Logging in…");
   try {
     await signInWithEmailAndPassword(auth, String(data.get("email")).trim(), String(data.get("password")));
-    event.currentTarget.reset();
+    form.reset();
     showStatus();
   } catch (error) { showStatus(friendlyError(error), true); }
 });

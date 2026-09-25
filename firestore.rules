@@ -25,6 +25,12 @@ service cloud.firestore {
         && request.resource.data.username is string
         && request.resource.data.username.size() >= 3
         && request.resource.data.username.size() <= 20;
+      allow update: if signedIn()
+        && !exists(/databases/$(database)/documents/users/$(resource.data.uid))
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.username is string
+        && request.resource.data.username.size() >= 3
+        && request.resource.data.username.size() <= 20;
       allow delete: if signedIn() && resource.data.uid == request.auth.uid;
     }
 
