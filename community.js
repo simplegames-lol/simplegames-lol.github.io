@@ -25,7 +25,7 @@ const achievements=[
   {icon:"🏆",name:"Game Fan",test:s=>(s.gamesOpened||0)>=20},
   {icon:"⏱️",name:"One Hour Club",test:s=>(s.playSeconds||0)>=3600}
 ];
-function renderAchievements(profile={}){const stats=profile.stats||{},grid=$("#achievement-grid");if(!grid)return;$("#playtime-total").textContent=`${Math.floor((stats.playSeconds||0)/60)} minutes played · ${stats.gamesOpened||0} games opened`;grid.replaceChildren();achievements.forEach(a=>{const item=document.createElement("div");item.className=`achievement${a.test(stats)?" unlocked":""}`;item.textContent=`${a.icon} ${a.name}${a.test(stats)?" ✓":" — Locked"}`;grid.append(item)})}
+function renderAchievements(profile={}){const stats=profile.stats||{},total=$("#playtime-total");if(total)total.textContent=`${Math.floor((stats.playSeconds||0)/60)} minutes played`}
 async function flushPlaytime(){if(!currentUser||!playSession)return;const seconds=Math.max(1,Math.round((Date.now()-playSession.started)/1000));playSession.started=Date.now();await updateDoc(doc(db,"users",currentUser.uid),{"stats.playSeconds":increment(seconds)}).catch(()=>{})}
 window.addEventListener("simplegames:play",async e=>{playSession={...e.detail,started:Date.now()};if(currentUser)await updateDoc(doc(db,"users",currentUser.uid),{"stats.gamesOpened":increment(1),[`stats.games.${pathKey(e.detail.path)}`]:increment(1)}).catch(()=>{});clearInterval(playTimer);playTimer=setInterval(flushPlaytime,60000)});
 window.addEventListener("simplegames:stop-playing",async()=>{clearInterval(playTimer);await flushPlaytime();playSession=null});

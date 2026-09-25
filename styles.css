@@ -584,7 +584,10 @@ body.game-is-open {
 .profile-row, .chat-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .profile-summary, .profile-actions { display: flex; align-items: center; gap: 9px; }
 .profile-summary small { display: block; margin-top: 2px; color: var(--muted); }
-.profile-avatar { display: grid; width: 46px; height: 46px; place-items: center; border: 1px solid var(--border); border-radius: 50%; background: var(--background); font-size: 1.55rem; }
+.profile-avatar { display: grid; width: 46px; height: 46px; flex: 0 0 auto; place-items: center; overflow: hidden; border: 1px solid var(--border); border-radius: 50%; background: linear-gradient(145deg,#536276,#252b34); background-image: var(--avatar-image,linear-gradient(145deg,#536276,#252b34)); background-position: center; background-size: cover; }
+.profile-avatar::after { color: #fff; content: var(--avatar-fallback,"?"); font-size: 1rem; }
+.profile-avatar.has-image::after { content: ""; }
+.friend-avatar { width: 28px; height: 28px; }
 .profile-actions { flex-wrap: wrap; justify-content: flex-end; }
 .social-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 20px; margin-top: 18px; }
 .social-sidebar { padding-right: 18px; border-right: 1px solid var(--border); }
@@ -641,6 +644,7 @@ body.game-is-open {
 .profile-link-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .profile-status-text { color: #8fc2ff; }
 .achievement-panel { margin-top: 28px; border-top: 1px solid var(--border); padding-top: 14px; }
+.achievement-coming-soon { width: fit-content; border: 1px solid #ffcb65; border-radius: 999px; padding: 6px 10px; color: #ffcb65; }
 .achievement-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
 .achievement { padding: 11px; border: 1px solid var(--border); border-radius: 7px; color: var(--muted); background: var(--surface); }
 .achievement.unlocked { color: var(--text); border-color: #ffcb65; }
@@ -649,6 +653,10 @@ body.game-is-open {
 .rating-count { color: var(--muted); font-size: .7rem; }
 .rating-picker { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
 .rating-picker button { border: 0; color: #ffd84a; background: transparent; font-size: 2rem; cursor: pointer; }
+.leaderboard-list { margin: 18px 0 0; padding: 0; list-style: none; counter-reset: ranks; }
+.leaderboard-list li { display: grid; grid-template-columns: 34px 36px 1fr auto; align-items: center; gap: 9px; margin-bottom: 8px; padding: 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); counter-increment: ranks; }
+.leaderboard-list li::before { content: counter(ranks); color: var(--muted); text-align: center; }
+.leaderboard-list .profile-avatar { width: 34px; height: 34px; }
 
 .form-card {
   max-width: 640px;

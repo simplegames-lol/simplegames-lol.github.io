@@ -6,7 +6,7 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
   </head>
   <body>
     <header class="site-header">
@@ -249,8 +249,8 @@
         </div>
         <div id="social-view" hidden>
           <div class="profile-row">
-            <div class="profile-summary"><span class="profile-avatar" id="profile-avatar">🙂</span><div><strong id="profile-display-name"></strong><small id="profile-username"></small></div></div>
-            <div class="profile-actions"><button class="secondary-button social-view-button" data-social-view="friends" type="button">Friends</button><button class="secondary-button social-view-button" data-social-view="profile" type="button">Edit profile</button><button class="secondary-button social-view-button" data-social-view="settings" type="button">Account settings</button><button class="secondary-button" id="sign-out" type="button">Sign out</button></div>
+            <div class="profile-summary"><span class="profile-avatar" id="profile-avatar" aria-label="Profile picture"></span><div><strong id="profile-display-name"></strong><small id="profile-username"></small></div></div>
+            <div class="profile-actions"><button class="secondary-button social-view-button" data-social-view="friends" type="button">Friends</button><button class="secondary-button social-view-button" data-social-view="profile" type="button">Edit profile</button><button class="secondary-button social-view-button" data-social-view="leaderboard" type="button">Leaderboard</button><button class="secondary-button social-view-button" data-social-view="settings" type="button">Account settings</button><button class="secondary-button" id="sign-out" type="button">Sign out</button></div>
           </div>
           <div class="social-layout">
             <aside class="social-sidebar" id="friends-sidebar">
@@ -271,15 +271,17 @@
             <h3>Customize your profile</h3>
             <form class="social-form" id="profile-form">
               <label>Display name<input name="displayName" maxlength="30" placeholder="What friends see" /></label>
-              <label>Avatar emoji<input name="avatar" maxlength="8" placeholder="🙂" /></label>
-              <label>Status<input name="statusText" maxlength="60" placeholder="Grinding PolyTrack" /><small>Up to 60 characters</small></label>
+              <label>Profile picture<input id="avatar-file" name="avatarFile" type="file" accept="image/png,image/jpeg,image/webp" /><small>PNG, JPEG, or WebP. Your picture is resized automatically.</small></label>
+              <input name="avatar" type="hidden" value="" />
+              <label>Status<input name="statusText" maxlength="60" placeholder="What's on your mind?" /><small>Up to 60 characters</small></label>
               <label>Bio<textarea name="bio" maxlength="160" placeholder="Tell your friends a little about yourself"></textarea><small><span id="bio-count">0</span>/160</small></label>
               <button class="submit-button" type="submit">Save profile</button>
             </form>
-            <div class="achievement-panel"><h3>Achievements</h3><p id="playtime-total">0 minutes played</p><div class="achievement-grid" id="achievement-grid"></div></div>
+            <div class="achievement-panel"><h3>Achievements</h3><p class="achievement-coming-soon">Coming soon</p><p id="playtime-total">0 minutes played</p></div>
           </section>
           <section class="social-subview" id="friend-profile-view" hidden><div class="profile-link-actions"><button class="text-button" id="friend-profile-back" type="button">← Back to friends</button><button class="secondary-button" id="copy-profile-link" type="button">Copy profile link</button></div><div class="public-profile" id="friend-profile-content"></div></section>
           <section class="social-subview" id="group-manager-view" hidden><button class="text-button" id="group-manager-back" type="button">← Back to group</button><h3>Group management</h3><form class="social-form" id="group-rename-form"><label>Group name<input name="name" maxlength="30" required /></label><button class="submit-button" type="submit">Rename group</button></form><form class="social-form group-add-form" id="group-add-form"><label>Add a friend<input name="username" placeholder="Exact username" required /></label><button class="submit-button" type="submit">Add member</button></form><div class="social-list" id="group-member-list"></div></section>
+          <section class="social-subview" id="leaderboard-view" hidden><h3>Playtime leaderboard</h3><p class="result-count">Only signed-in members can view the leaderboard.</p><ol class="leaderboard-list" id="leaderboard-list"><li>Loading leaderboard…</li></ol></section>
           <section class="social-subview" id="account-settings-view" hidden>
             <h3>Account settings</h3>
             <div class="account-email"><span>Email</span><strong id="account-email"></strong></div>
@@ -305,7 +307,7 @@
     <script src="clock.js?v=2"></script>
     <script src="features.js?v=14"></script>
     <script src="play.js?v=24"></script>
-    <script type="module" src="social.js?v=10"></script>
-    <script type="module" src="community.js?v=2"></script>
+    <script type="module" src="social.js?v=11"></script>
+    <script type="module" src="community.js?v=3"></script>
   </body>
 </html>

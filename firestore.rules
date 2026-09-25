@@ -13,7 +13,8 @@ service cloud.firestore {
         && request.resource.data.username.size() <= 20
         && request.resource.data.usernameLower == request.resource.data.username.lower()
         && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid;
-      allow update: if signedIn() && request.auth.uid == uid && (
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.get("avatarImage", "").size() <= 150000 && (
         (request.resource.data.username == resource.data.username
           && request.resource.data.usernameLower == resource.data.usernameLower
           && request.resource.data.get('usernameChangedAt', null) == resource.data.get('usernameChangedAt', null))

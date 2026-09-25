@@ -41,8 +41,12 @@ The system includes:
 - Group unread badges and notification sounds
 - Message editing and quoted replies
 - PNG, JPEG, WebP, and GIF sharing capped at 180 KB
+- Uploaded profile pictures resized to 256x256 (no emoji avatar field)
+- Account-only playtime leaderboard
+- Achievements marked as coming soon while minutes played remain visible
 
 IMPORTANT: Publish the included firestore.rules again for ratings, message deletion,
 username changes, reactions, group management, replies, edits, and attachments to work.
+The newest rules also enforce the profile-picture size limit.
 
 Firebase Authentication stores passwords securely. The website never stores raw passwords.
