@@ -26,6 +26,15 @@ service cloud.firestore {
           && (!('usernameChangedAt' in resource.data)
             || request.time > resource.data.usernameChangedAt + duration.value(30, 'd'))
           && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid)
+      ) && (
+        (request.resource.data.displayName == resource.data.displayName
+          && request.resource.data.get('displayNameChangedAt', null) == resource.data.get('displayNameChangedAt', null))
+        || (request.resource.data.displayName is string
+          && request.resource.data.displayName.size() > 0
+          && request.resource.data.displayName.size() <= 30
+          && request.resource.data.displayNameChangedAt == request.time
+          && (!('displayNameChangedAt' in resource.data)
+            || request.time > resource.data.displayNameChangedAt + duration.value(24, 'h')))
       );
     }
 

@@ -44,6 +44,8 @@ The system includes:
 - Uploaded profile pictures resized to 256x256 (no emoji avatar field)
 - Account-only playtime leaderboard
 - Achievements marked as coming soon while minutes played remain visible
+- Display names can be changed once every 24 hours
+- Removed the old achievement emoji badges from usernames
 
 IMPORTANT: Publish the included firestore.rules again for ratings, message deletion,
 username changes, reactions, group management, replies, edits, and attachments to work.
