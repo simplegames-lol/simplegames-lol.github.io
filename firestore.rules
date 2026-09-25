@@ -13,9 +13,19 @@ service cloud.firestore {
         && request.resource.data.username.size() <= 20
         && request.resource.data.usernameLower == request.resource.data.username.lower()
         && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid;
-      allow update: if signedIn() && request.auth.uid == uid
-        && request.resource.data.username == resource.data.username
-        && request.resource.data.usernameLower == resource.data.usernameLower;
+      allow update: if signedIn() && request.auth.uid == uid && (
+        (request.resource.data.username == resource.data.username
+          && request.resource.data.usernameLower == resource.data.usernameLower
+          && request.resource.data.get('usernameChangedAt', null) == resource.data.get('usernameChangedAt', null))
+        || (request.resource.data.username is string
+          && request.resource.data.username.size() >= 3
+          && request.resource.data.username.size() <= 20
+          && request.resource.data.usernameLower == request.resource.data.username.lower()
+          && request.resource.data.usernameChangedAt == request.time
+          && (!('usernameChangedAt' in resource.data)
+            || request.time > resource.data.usernameChangedAt + duration.value(30, 'd'))
+          && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid)
+      );
     }
 
     match /usernames/{name} {
@@ -76,6 +86,8 @@ service cloud.firestore {
           && request.resource.data.text.size() <= 500
           && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members)
           && exists(/databases/$(database)/documents/friendships/$(chatId));
+        allow delete: if signedIn() && resource.data.senderId == request.auth.uid
+          && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members);
       }
     }
 
@@ -94,6 +106,23 @@ service cloud.firestore {
         && request.resource.data.reason.size() > 0
         && request.resource.data.reason.size() <= 500;
       allow read, update, delete: if false;
+    }
+
+    match /ratings/{ratingId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow update: if signedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.gamePath == resource.data.gamePath
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow delete: if signedIn() && resource.data.userId == request.auth.uid;
     }
   }
 }

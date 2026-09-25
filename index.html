@@ -44,6 +44,8 @@
           <option value="az">Name: A–Z</option>
           <option value="za">Name: Z–A</option>
           <option value="newest">Newest first</option>
+          <option value="most-played">Most played</option>
+          <option value="top-rated">Top rated</option>
           <option value="category:action">Category: Action</option>
           <option value="category:driving">Category: Driving</option>
           <option value="category:sports">Category: Sports</option>
@@ -257,7 +259,8 @@
               <h3>Friends</h3><div class="social-list" id="friend-list"><p>No friends yet</p></div>
             </aside>
             <section class="chat-area">
-              <div class="chat-heading"><h3 id="chat-title">Select a friend</h3><div id="chat-actions" hidden><button class="secondary-button" id="block-user" type="button">Block</button><button class="secondary-button" id="report-user" type="button">Report</button></div></div>
+              <div class="chat-heading"><h3 id="chat-title">Select a friend</h3><div id="chat-actions" hidden><button class="secondary-button" id="remove-friend" type="button">Remove friend</button><button class="secondary-button" id="block-user" type="button">Block</button><button class="secondary-button" id="report-user" type="button">Report</button></div></div>
+              <p class="typing-status" id="typing-status" aria-live="polite"></p>
               <div class="message-list" id="message-list"><p>Select a friend to start chatting.</p></div>
               <form class="message-form" id="message-form" hidden><input name="message" maxlength="500" autocomplete="off" placeholder="Write a message…" required /><button class="submit-button" type="submit">Send</button></form>
             </section>
@@ -270,7 +273,9 @@
               <label>Bio<textarea name="bio" maxlength="160" placeholder="Tell your friends a little about yourself"></textarea><small><span id="bio-count">0</span>/160</small></label>
               <button class="submit-button" type="submit">Save profile</button>
             </form>
+            <div class="achievement-panel"><h3>Achievements</h3><p id="playtime-total">0 minutes played</p><div class="achievement-grid" id="achievement-grid"></div></div>
           </section>
+          <section class="social-subview" id="friend-profile-view" hidden><button class="text-button" id="friend-profile-back" type="button">← Back to friends</button><div class="public-profile" id="friend-profile-content"></div></section>
           <section class="social-subview" id="account-settings-view" hidden>
             <h3>Account settings</h3>
             <div class="account-email"><span>Email</span><strong id="account-email"></strong></div>
@@ -279,15 +284,24 @@
               <label>New password<input name="password" type="password" minlength="6" autocomplete="new-password" required /><small>At least 6 characters</small></label>
               <button class="submit-button" type="submit">Change password</button>
             </form>
+            <h3>Privacy and notifications</h3>
+            <label class="check-setting"><input id="message-sound-setting" type="checkbox" checked /> Message notification sounds</label>
+            <label class="check-setting"><input id="dnd-setting" type="checkbox" /> Do Not Disturb</label>
+            <label class="check-setting"><input id="hide-online-setting" type="checkbox" /> Hide online and last-active status</label>
+            <label class="check-setting"><input id="private-activity-setting" type="checkbox" /> Hide the game I’m playing</label>
+            <p class="result-count">Your theme, colors, layout, timezone, and supported background images sync automatically while logged in.</p>
+            <h3>Change username</h3>
+            <form class="social-form" id="username-form"><label>New username<input name="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" required /><small>Usernames can be changed once every 30 days.</small></label><button class="submit-button" type="submit">Change username</button></form>
             <h3>Blocked users</h3><div class="social-list" id="blocked-list"><p>No blocked users</p></div>
           </section>
         </div>
       </div>
     </section>
-    <div class="game-loader" id="game-loader" hidden><span></span><p>Loading game…</p></div>
+    <div class="game-loader" id="game-loader" hidden><span id="game-loader-spinner"></span><p id="game-loader-status">Loading game…</p><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">Back to games</button></div></div>
     <script src="clock.js?v=2"></script>
-    <script src="features.js?v=12"></script>
-    <script src="play.js?v=23"></script>
-    <script type="module" src="social.js?v=5"></script>
+    <script src="features.js?v=14"></script>
+    <script src="play.js?v=24"></script>
+    <script type="module" src="social.js?v=7"></script>
+    <script type="module" src="community.js?v=2"></script>
   </body>
 </html>

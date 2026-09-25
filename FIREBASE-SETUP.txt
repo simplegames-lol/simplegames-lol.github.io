@@ -20,5 +20,20 @@ The system includes:
 - Online and last-active status
 - Custom display names, emoji avatars, and bios
 - Friend game activity
+- Friend profile cards
+- Typing indicators and read receipts
+- Do Not Disturb and activity privacy
+- Public game ratings
+- Playtime and achievements
+- Cloud-synced appearance settings (very large background images stay on each device)
+- Optional message notification sounds
+- Removing friends and deleting your own messages
+- Username changes with a 30-day cooldown
+- Earned profile badges
+- Most-played and top-rated sorting
+- Game loading timeouts with retry controls
+
+IMPORTANT: Publish the included firestore.rules again for ratings, message deletion,
+and username changes to work.
 
 Firebase Authentication stores passwords securely. The website never stores raw passwords.

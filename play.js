@@ -30,6 +30,12 @@ const infoOverlay = document.querySelector("#info-overlay");
 const infoTitle = document.querySelector("#info-title");
 const infoContent = document.querySelector("#info-content");
 const infoClose = document.querySelector("#info-close");
+const loader = document.querySelector("#game-loader");
+const loaderStatus = document.querySelector("#game-loader-status");
+const loaderSpinner = document.querySelector("#game-loader-spinner");
+const loaderActions = document.querySelector("#loader-actions");
+let loadTimer = 0;
+let currentGameUrl = "";
 
 if (window.location.pathname.endsWith("/index.html")) {
   history.replaceState(null, "", "/");
@@ -47,7 +53,19 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   const cardTitle = link.closest(".game-card")?.querySelector("h2")?.textContent?.trim() || "Game";
   title.textContent = cardTitle;
   player.title = cardTitle;
+  currentGameUrl = gameUrl;
   player.src = gameUrl;
+  loaderStatus.textContent = "Loading game…";
+  loaderSpinner.hidden = false;
+  loaderActions.hidden = true;
+  loader.hidden = false;
+  clearTimeout(loadTimer);
+  loadTimer = setTimeout(() => {
+    loader.hidden = false;
+    loaderSpinner.hidden = true;
+    loaderStatus.textContent = "This game is taking too long to load. It may be blocked or temporarily unavailable.";
+    loaderActions.hidden = false;
+  }, 15000);
   overlay.hidden = false;
   document.body.classList.add("game-is-open");
   window.dispatchEvent(new CustomEvent("simplegames:play", { detail: { path, title: cardTitle } }));
@@ -55,6 +73,7 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
 });
 
 function closeGame() {
+  clearTimeout(loadTimer);
   overlay.hidden = true;
   player.src = "about:blank";
   document.querySelector("#game-loader").hidden = true;
@@ -62,10 +81,20 @@ function closeGame() {
   window.dispatchEvent(new CustomEvent("simplegames:stop-playing"));
 }
 
+player.addEventListener("load", () => { clearTimeout(loadTimer); loader.hidden = true; });
+document.querySelector("#game-retry")?.addEventListener("click", () => {
+  loaderStatus.textContent = "Trying again…";
+  loaderSpinner.hidden = false;
+  loaderActions.hidden = true;
+  player.src = "about:blank";
+  setTimeout(() => { loader.hidden = false; player.src = currentGameUrl; loadTimer = setTimeout(() => { loader.hidden = false; loaderSpinner.hidden = true; loaderStatus.textContent = "The game still could not load. Try again later."; loaderActions.hidden = false; }, 15000); }, 100);
+});
+document.querySelector("#game-error-close")?.addEventListener("click", closeGame);
+
 const pages = {
   updates: {
     title: "Update Log",
-    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026 — Big Site Update</h2><p>Added Bouncy Basketball, Speed Stars, Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, Crossy Road, Monkey Mart, and Basketball Stars. Also added secure accounts, unique usernames, friend requests, private messaging, unread badges, online and last-active status, friend game activity, customizable profiles, account settings, password resets, blocking and reporting, search, favorites, A–Z and Z–A sorting, category filters, themes, customizable colors and backgrounds, timezone controls, settings, game requests, bug reports, shortcuts, loading indicators, new-game badges, mobile navigation, and a custom 404 page.</p></li></ol>'
+    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026 — Big Site Update</h2><p>Added Bouncy Basketball, Speed Stars, Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, Crossy Road, Monkey Mart, and Basketball Stars. Also added accounts, usernames and username changes, friend requests and removal, private messaging, message deletion, notification sounds, unread badges, typing indicators, read receipts, friend profiles, profile badges, online and last-active status, friend activity, privacy controls, Do Not Disturb, game ratings, most-played and top-rated sorting, achievements, playtime tracking, cloud-synced customization, account settings, password resets, blocking and reporting, search, favorites, category filters, themes, timezone controls, request and bug forms, shortcuts, improved game loading errors and retries, new-game badges, mobile navigation, and a custom 404 page.</p></li></ol>'
   },
   announcements: {
     title: "Announcements",

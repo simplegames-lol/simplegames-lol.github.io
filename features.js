@@ -38,6 +38,8 @@ const player = document.querySelector("#game-player");
 
 let favorites = new Set(storage.read("sg-favorites", []));
 let favoritesOnly = false;
+let communityRatings = {};
+let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
@@ -103,6 +105,8 @@ function sortGames() {
     if (mode === "az") return a.dataset.name.localeCompare(b.dataset.name);
     if (mode === "za") return b.dataset.name.localeCompare(a.dataset.name);
     if (mode === "newest") return Number(newGames.has(b.dataset.path)) - Number(newGames.has(a.dataset.path)) || originalOrder.get(a) - originalOrder.get(b);
+    if (mode === "most-played") return (communityPlays[b.dataset.path] || 0) - (communityPlays[a.dataset.path] || 0) || a.dataset.name.localeCompare(b.dataset.name);
+    if (mode === "top-rated") return (communityRatings[b.dataset.path] || 0) - (communityRatings[a.dataset.path] || 0) || a.dataset.name.localeCompare(b.dataset.name);
     return originalOrder.get(a) - originalOrder.get(b);
   });
   sorted.forEach((card) => gameGrid.append(card));
@@ -111,6 +115,11 @@ function sortGames() {
 
 search?.addEventListener("input", filterGames);
 gameSort?.addEventListener("change", sortGames);
+window.addEventListener("simplegames:community-data", (event) => {
+  communityRatings = event.detail.ratings || {};
+  communityPlays = event.detail.plays || {};
+  if (["most-played", "top-rated"].includes(gameSort.value)) sortGames();
+});
 favoritesFilter?.addEventListener("click", () => {
   favoritesOnly = !favoritesOnly;
   favoritesFilter.setAttribute("aria-pressed", String(favoritesOnly));

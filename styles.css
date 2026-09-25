@@ -600,12 +600,15 @@ body.game-is-open {
 .presence-dot { flex: 0 0 auto; width: 9px; height: 9px; border-radius: 50%; background: #79818d; }
 .presence-dot.online { background: #49d17d; box-shadow: 0 0 0 3px rgba(73,209,125,.13); }
 .friend-unread { min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; color: #fff; background: #e34747; font-size: .7rem; text-align: center; line-height: 20px; }
+.friend-profile-button { flex: 0 0 auto; padding: 6px !important; }
 .chat-area { min-width: 0; }
 #chat-actions { display: flex; gap: 7px; }
 .message-list { height: 380px; overflow-y: auto; margin: 12px 0; padding: 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--background); }
 .message { width: fit-content; max-width: 78%; margin: 7px 0; padding: 9px 11px; border-radius: 10px; background: var(--surface); overflow-wrap: anywhere; }
+.message-delete { display: block; border: 0; padding: 4px 0 0; color: inherit; background: transparent; font: inherit; font-size: .68rem; opacity: .68; cursor: pointer; }
 .message.mine { margin-left: auto; color: #fff; background: var(--accent); }
 .message small { display: block; margin-top: 4px; opacity: .72; font-size: .7rem; }
+.typing-status { min-height: 18px; margin: 2px 0 -8px; color: var(--muted); font-size: .78rem; }
 .message-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
 .text-button { border: 0; padding: 2px; color: #8fc2ff; background: transparent; font: inherit; cursor: pointer; }
 .social-subview { max-width: 620px; margin: 24px auto 0; padding: 22px; border: 1px solid var(--border); border-radius: 8px; background: var(--background); }
@@ -614,6 +617,19 @@ body.game-is-open {
 .account-email { display: grid; gap: 4px; margin-bottom: 15px; }
 .account-email span { color: var(--muted); }
 .settings-password-form { margin: 18px 0 26px; }
+.social-subview .check-setting { display: flex; align-items: center; gap: 9px; margin: 12px 0; color: var(--muted); }
+.public-profile { display: grid; justify-items: center; gap: 8px; padding: 24px 0; text-align: center; }
+.public-profile .profile-avatar { width: 74px; height: 74px; font-size: 2.35rem; }
+.public-profile h3, .public-profile p { margin: 0; }
+.achievement-panel { margin-top: 28px; border-top: 1px solid var(--border); padding-top: 14px; }
+.achievement-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+.achievement { padding: 11px; border: 1px solid var(--border); border-radius: 7px; color: var(--muted); background: var(--surface); }
+.achievement.unlocked { color: var(--text); border-color: #ffcb65; }
+.rating-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 8px; }
+.rating-button { border: 0; padding: 0; color: #ffd84a; background: transparent; font: inherit; font-size: .78rem; cursor: pointer; }
+.rating-count { color: var(--muted); font-size: .7rem; }
+.rating-picker { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
+.rating-picker button { border: 0; color: #ffd84a; background: transparent; font-size: 2rem; cursor: pointer; }
 
 .form-card {
   max-width: 640px;
@@ -642,6 +658,8 @@ body.game-is-open {
 
 .game-loader[hidden] { display: none; }
 .game-loader span { width: 38px; height: 38px; border: 4px solid #405064; border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+.game-loader span[hidden], .loader-actions[hidden] { display: none; }
+.loader-actions { display: flex; gap: 9px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 620px) {
