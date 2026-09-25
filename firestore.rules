@@ -13,37 +13,36 @@ service cloud.firestore {
         && request.resource.data.username.size() <= 20
         && request.resource.data.usernameLower == request.resource.data.username.lower()
         && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid;
-      // Profile-only saves are independent from username/display-name cooldowns.
-      allow update: if signedIn() && request.auth.uid == uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["avatarImage", "bio", "statusText"])
-        && request.resource.data.get("avatarImage", "") is string
-        && request.resource.data.get("avatarImage", "").size() <= 180000
-        && request.resource.data.get("bio", "") is string
-        && request.resource.data.get("bio", "").size() <= 160
-        && request.resource.data.get("statusText", "") is string
-        && request.resource.data.get("statusText", "").size() <= 60;
-      allow update: if signedIn() && request.auth.uid == uid
-        && request.resource.data.get("avatarImage", "").size() <= 180000 && (
-        (request.resource.data.username == resource.data.username
-          && request.resource.data.usernameLower == resource.data.usernameLower
-          && request.resource.data.get('usernameChangedAt', null) == resource.data.get('usernameChangedAt', null))
-        || (request.resource.data.username is string
+      // Each feature has its own update path so accounts created by older
+      // versions do not need fields that did not exist yet.
+      allow update: if signedIn() && request.auth.uid == uid && (
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(["avatarImage", "bio", "statusText", "displayName", "displayNameChangedAt"])
+          && request.resource.data.get("avatarImage", "") is string
+          && request.resource.data.get("avatarImage", "").size() <= 180000
+          && request.resource.data.get("bio", "") is string
+          && request.resource.data.get("bio", "").size() <= 160
+          && request.resource.data.get("statusText", "") is string
+          && request.resource.data.get("statusText", "").size() <= 60
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(["displayName", "displayNameChangedAt"])
+            || (request.resource.data.displayName is string
+              && request.resource.data.displayName.size() > 0
+              && request.resource.data.displayName.size() <= 30
+              && request.resource.data.displayNameChangedAt == request.time
+              && (!("displayNameChangedAt" in resource.data)
+                || request.time > resource.data.displayNameChangedAt + duration.value(24, "h")))))
+        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status", "lastActive", "currentGame"])
+        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(["messageSound", "doNotDisturb", "hideOnline", "privateActivity", "pinnedFriends"])
+        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(["preferences"])
+        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(["stats"])
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(["username", "usernameLower", "usernameChangedAt"])
+          && request.resource.data.username is string
           && request.resource.data.username.size() >= 3
           && request.resource.data.username.size() <= 20
           && request.resource.data.usernameLower == request.resource.data.username.lower()
           && request.resource.data.usernameChangedAt == request.time
-          && (!('usernameChangedAt' in resource.data)
-            || request.time > resource.data.usernameChangedAt + duration.value(30, 'd'))
+          && (!("usernameChangedAt" in resource.data)
+            || request.time > resource.data.usernameChangedAt + duration.value(30, "d"))
           && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid)
-      ) && (
-        (request.resource.data.displayName == resource.data.displayName
-          && request.resource.data.get('displayNameChangedAt', null) == resource.data.get('displayNameChangedAt', null))
-        || (request.resource.data.displayName is string
-          && request.resource.data.displayName.size() > 0
-          && request.resource.data.displayName.size() <= 30
-          && request.resource.data.displayNameChangedAt == request.time
-          && (!('displayNameChangedAt' in resource.data)
-            || request.time > resource.data.displayNameChangedAt + duration.value(24, 'h')))
       );
     }
 

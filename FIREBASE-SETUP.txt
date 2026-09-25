@@ -59,4 +59,8 @@ friendship returns "not found" instead of the same permissions error.
 Live-chat fix: direct-message listeners now use the friendship record as their
 permission source, including before the first message creates a chat summary.
 
+Legacy-account compatibility: user updates are split by feature so old accounts
+can use profile pictures, profiles, presence, privacy settings, pinned chats,
+cloud preferences, playtime, and username changes without missing-field errors.
+
 Firebase Authentication stores passwords securely. The website never stores raw passwords.
