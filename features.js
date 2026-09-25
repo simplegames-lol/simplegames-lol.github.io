@@ -12,6 +12,7 @@ const root = document.documentElement;
 const cards = [...document.querySelectorAll(".game-card")];
 const search = document.querySelector("#game-search");
 const favoritesFilter = document.querySelector("#favorites-filter");
+const gameSort = document.querySelector("#game-sort");
 const resultCount = document.querySelector("#result-count");
 const libraryIntro = document.querySelector(".intro[aria-labelledby='featured-title']");
 const libraryTitle = document.querySelector("#featured-title");
@@ -30,15 +31,21 @@ const backgroundImageStatus = document.querySelector("#background-image-status")
 const backgroundStyle = document.querySelector("#background-style");
 const displaySettings = {
   "show-menu-time": ".menu-time",
-  "show-menu-battery": ".menu-battery-status",
-  "show-game-time": ".game-time",
-  "show-game-battery": ".game-battery-status"
+  "show-game-time": ".game-time"
 };
 const loader = document.querySelector("#game-loader");
 const player = document.querySelector("#game-player");
 
 let favorites = new Set(storage.read("sg-favorites", []));
 let favoritesOnly = false;
+const gameGrid = document.querySelector(".game-grid");
+const originalOrder = new Map(cards.map((card, index) => [card, index]));
+const categories = {
+  "/bouncy-basketball/": "sports", "/speed-stars/": "sports", "/basketball-stars/": "sports", "/basket-random/": "sports",
+  "/polytrack/": "driving", "/drift-boss/": "driving", "/escape-road/": "driving", "/drift-hunters/": "driving",
+  "/crossy-road/": "action", "/stickman-hook/": "action", "/gunspin/": "action", "/subway-surfers/": "action", "/slope/": "action",
+  "/block-blast/": "puzzle", "/tomb-of-the-mask/": "puzzle", "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports", "/golf-orbit/": "sports"
+};
 
 const newGames = new Set([
   "/bouncy-basketball/",
@@ -53,6 +60,7 @@ cards.forEach((card) => {
   const name = card.querySelector("h2")?.textContent.trim() || "Game";
   card.dataset.path = path;
   card.dataset.name = name.toLowerCase();
+  card.dataset.category = categories[path] || "action";
 
   const favorite = document.createElement("button");
   favorite.className = "favorite-button";
@@ -79,16 +87,30 @@ cards.forEach((card) => {
 
 function filterGames() {
   const query = search.value.trim().toLowerCase();
+  const category = gameSort.value.startsWith("category:") ? gameSort.value.split(":")[1] : "";
   let visible = 0;
   cards.forEach((card) => {
-    const show = card.dataset.name.includes(query) && (!favoritesOnly || favorites.has(card.dataset.path));
+    const show = card.dataset.name.includes(query) && (!favoritesOnly || favorites.has(card.dataset.path)) && (!category || card.dataset.category === category);
     card.hidden = !show;
     if (show) visible += 1;
   });
   resultCount.textContent = `${visible} game${visible === 1 ? "" : "s"}`;
 }
 
+function sortGames() {
+  const mode = gameSort.value;
+  const sorted = [...cards].sort((a, b) => {
+    if (mode === "az") return a.dataset.name.localeCompare(b.dataset.name);
+    if (mode === "za") return b.dataset.name.localeCompare(a.dataset.name);
+    if (mode === "newest") return Number(newGames.has(b.dataset.path)) - Number(newGames.has(a.dataset.path)) || originalOrder.get(a) - originalOrder.get(b);
+    return originalOrder.get(a) - originalOrder.get(b);
+  });
+  sorted.forEach((card) => gameGrid.append(card));
+  filterGames();
+}
+
 search?.addEventListener("input", filterGames);
+gameSort?.addEventListener("change", sortGames);
 favoritesFilter?.addEventListener("click", () => {
   favoritesOnly = !favoritesOnly;
   favoritesFilter.setAttribute("aria-pressed", String(favoritesOnly));
@@ -218,7 +240,7 @@ document.querySelector("#settings-open")?.addEventListener("click", openSettings
 document.querySelector("#settings-close")?.addEventListener("click", closeSettings);
 settingsPanel?.addEventListener("click", (event) => { if (event.target === settingsPanel) closeSettings(); });
 document.querySelector("#reset-settings")?.addEventListener("click", () => {
-  ["sg-theme", "sg-card-size", "sg-favorites", "sg-timezone", "sg-accent", "sg-background", "sg-background-image", "sg-background-style", "sg-show-menu-time", "sg-show-menu-battery", "sg-show-game-time", "sg-show-game-battery"].forEach((key) => localStorage.removeItem(key));
+  ["sg-theme", "sg-card-size", "sg-favorites", "sg-timezone", "sg-accent", "sg-background", "sg-background-image", "sg-background-style", "sg-show-menu-time", "sg-show-game-time"].forEach((key) => localStorage.removeItem(key));
   location.reload();
 });
 
@@ -227,21 +249,7 @@ window.addEventListener("simplegames:play", () => {
 });
 player?.addEventListener("load", () => { loader.hidden = true; });
 
-const batteryStatuses = document.querySelectorAll(".battery-status");
-const setBatteryText = (text) => batteryStatuses.forEach((status) => { status.textContent = text; });
-const isMac = /Macintosh|Mac OS X/.test(navigator.userAgent);
-if (isMac && navigator.getBattery) {
-  navigator.getBattery().then((battery) => {
-    const updateBattery = () => {
-      setBatteryText(`Battery ${Math.round(battery.level * 100)}%${battery.charging ? " ⚡" : ""}`);
-    };
-    updateBattery();
-    battery.addEventListener("levelchange", updateBattery);
-    battery.addEventListener("chargingchange", updateBattery);
-  }).catch(() => { setBatteryText("The battery feature only works on Mac"); });
-}
-
-const updateVersion = "2026-09-24-customization";
+const updateVersion = "2026-09-24-accounts";
 const updateDot = document.querySelector("#update-dot");
 updateDot.hidden = storage.read("sg-seen-update", "") === updateVersion;
 document.querySelector("[data-page='updates']")?.addEventListener("click", () => {

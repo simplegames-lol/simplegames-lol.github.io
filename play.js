@@ -64,7 +64,7 @@ function closeGame() {
 const pages = {
   updates: {
     title: "Update Log",
-    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026 — Big Site Update</h2><p>Added Bouncy Basketball, Speed Stars, Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, Crossy Road, Monkey Mart, and Basketball Stars. Also added search, favorites, themes, customizable accent and background colors, custom background images, timezone selection with automatic detection, Mac battery percentage, header visibility controls, settings, game requests, bug reports, keyboard shortcuts, loading indicators, new-game badges, mobile navigation, and a custom 404 page.</p></li></ol>'
+    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026 — Big Site Update</h2><p>Added Bouncy Basketball, Speed Stars, Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, Crossy Road, Monkey Mart, and Basketball Stars. Also added secure accounts, unique usernames, friend requests, private messaging, blocking and reporting, search, favorites, A–Z and Z–A sorting, category filters, themes, customizable colors and backgrounds, timezone controls, settings, game requests, bug reports, shortcuts, loading indicators, new-game badges, mobile navigation, and a custom 404 page.</p></li></ol>'
   },
   announcements: {
     title: "Announcements",

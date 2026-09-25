@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isMember(members) { return signedIn() && request.auth.uid in members; }
+    function otherMember(members) { return members[0] == request.auth.uid ? members[1] : members[0]; }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.username is string
+        && request.resource.data.username.size() >= 3
+        && request.resource.data.username.size() <= 20
+        && request.resource.data.usernameLower == request.resource.data.username.lower()
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == uid;
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.username == resource.data.username
+        && request.resource.data.usernameLower == resource.data.usernameLower;
+    }
+
+    match /usernames/{name} {
+      allow read: if signedIn();
+      allow create: if signedIn() && !exists(/databases/$(database)/documents/usernames/$(name))
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.username is string
+        && request.resource.data.username.size() >= 3
+        && request.resource.data.username.size() <= 20;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    match /friendRequests/{requestId} {
+      allow read: if signedIn() && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.status == "pending"
+        && requestId == request.auth.uid + "_" + request.resource.data.toUid
+        && exists(/databases/$(database)/documents/users/$(request.resource.data.toUid))
+        && !exists(/databases/$(database)/documents/blocks/$(request.auth.uid + "_" + request.resource.data.toUid))
+        && !exists(/databases/$(database)/documents/blocks/$(request.resource.data.toUid + "_" + request.auth.uid));
+      allow update: if signedIn() && resource.data.toUid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status", "respondedAt"])
+        && request.resource.data.status in ["accepted", "declined"];
+    }
+
+    match /friendships/{friendshipId} {
+      allow read, delete: if isMember(resource.data.members);
+      allow create: if isMember(request.resource.data.members)
+        && request.resource.data.members.size() == 2
+        && (friendshipId == request.resource.data.members[0] + "_" + request.resource.data.members[1]
+          || friendshipId == request.resource.data.members[1] + "_" + request.resource.data.members[0])
+        && getAfter(/databases/$(database)/documents/friendRequests/$(otherMember(request.resource.data.members) + "_" + request.auth.uid)).data.status == "accepted";
+    }
+
+    match /chats/{chatId} {
+      allow read: if isMember(resource.data.members);
+      allow create: if isMember(request.resource.data.members)
+        && request.resource.data.members.size() == 2
+        && exists(/databases/$(database)/documents/friendships/$(chatId));
+      allow update: if isMember(resource.data.members)
+        && request.resource.data.members == resource.data.members
+        && exists(/databases/$(database)/documents/friendships/$(chatId));
+
+      match /messages/{messageId} {
+        allow read: if isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members);
+        allow create: if signedIn()
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 500
+          && isMember(get(/databases/$(database)/documents/chats/$(chatId)).data.members)
+          && exists(/databases/$(database)/documents/friendships/$(chatId));
+      }
+    }
+
+    match /blocks/{blockId} {
+      allow read: if signedIn() && (resource.data.blockerUid == request.auth.uid || resource.data.blockedUid == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.blockerUid == request.auth.uid
+        && request.resource.data.blockedUid != request.auth.uid
+        && blockId == request.auth.uid + "_" + request.resource.data.blockedUid;
+      allow delete: if signedIn() && resource.data.blockerUid == request.auth.uid;
+    }
+
+    match /reports/{reportId} {
+      allow create: if signedIn() && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.reportedUid != request.auth.uid
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() > 0
+        && request.resource.data.reason.size() <= 500;
+      allow read, update, delete: if false;
+    }
+  }
+}
