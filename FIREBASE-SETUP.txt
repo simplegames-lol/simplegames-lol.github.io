@@ -53,5 +53,7 @@ The newest rules also enforce the profile-picture size limit.
 
 Friend-request fix: the block check now permits signed-in reads so a missing
 block record returns "not found" instead of "insufficient permissions."
+The friendship check also permits signed-in single-document reads so a missing
+friendship returns "not found" instead of the same permissions error.
 
 Firebase Authentication stores passwords securely. The website never stores raw passwords.
