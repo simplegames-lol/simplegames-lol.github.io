@@ -78,4 +78,5 @@ onAuthStateChanged(auth,user=>{stopGroups();activeGroup=null;groups.clear();grou
 onAuthStateChanged(auth,user=>{stopLeaderboard();if(user)listenLeaderboard()});
 const renderFriendsBase=renderFriends;renderFriends=()=>{renderFriendsBase();updateAccountUnread()};
 const openChatBase=openChat;openChat=f=>{const d=friendProfiles.get(f.uid);if(d)friendProfiles.set(f.uid,{...d,avatar:""});openChatBase(f);const shown=friendProfiles.get(f.uid)||f;$("#chat-title").textContent=shown.displayName||shown.username};
+const fixedAccountLabel=$("#account-open .account-label");if(fixedAccountLabel){const keepAccountLabel=()=>{if(fixedAccountLabel.textContent!=="Account")fixedAccountLabel.textContent="Account"};keepAccountLabel();new MutationObserver(keepAccountLabel).observe(fixedAccountLabel,{childList:true,characterData:true,subtree:true})}
 if(new URLSearchParams(location.search).has("user")){panel.hidden=false;showStatus("Log in to view this profile.")}

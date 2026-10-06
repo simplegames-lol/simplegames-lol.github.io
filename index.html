@@ -5,25 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
-    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=14" />
+    <link rel="icon" type="image/svg+xml" href="assets/cat-favicon.svg?v=1" />
+    <link rel="apple-touch-icon" href="assets/cat-logo-original.jpg" />
+    <link rel="stylesheet" href="styles.css?v=25" />
   </head>
   <body>
+    <div class="startup-loader" id="startup-loader" role="dialog" aria-modal="true" aria-labelledby="startup-title">
+      <div class="startup-card">
+        <div class="startup-logo" aria-hidden="true"><img src="assets/cat-logo-original.jpg" alt="" /></div>
+        <div><strong id="startup-title">Simple Games</strong><small id="startup-status">Loading everything…</small></div>
+        <div class="startup-progress" aria-hidden="true"><span id="startup-progress-bar"></span></div>
+        <button id="startup-enter" type="button" disabled>Loading…</button>
+      </div>
+    </div>
     <header class="site-header">
       <div class="header-inner">
       <a class="brand" href="/" aria-label="Simple Games home">
-        <span class="brand-mark">SG</span><span class="brand-name">Simple Games</span>
+        <span class="brand-mark"><img src="assets/cat-logo-original.jpg" alt="" /></span><span class="brand-name">Simple Games</span>
       </a>
       <div class="header-right">
-        <a class="rail-link active" href="/"><span class="rail-icon">⌂</span><span>Home</span></a>
-        <a class="rail-link" id="games-open" href="#game-library"><span class="rail-icon">▦</span><span>Games</span></a>
-        <button class="header-button" id="servers-open" type="button"><span class="rail-icon">◫</span><span>Servers</span></button>
-        <button class="header-button account-button" id="account-open" type="button"><span class="rail-icon">◎</span><span class="account-label">Account</span><span class="notification-badge" id="account-unread" hidden>0</span></button>
-        <a class="rail-link" href="/" data-form="request"><span class="rail-icon">＋</span><span>Request</span></a>
-        <a class="rail-link" href="/" data-form="bug"><span class="rail-icon">!</span><span>Report bug</span></a>
-        <a class="rail-link updates-link" href="/" data-page="updates"><span class="rail-icon">↻</span><span>Updates</span><span class="update-dot" id="update-dot" aria-label="New updates"></span></a>
-        <a class="rail-link" href="/" data-page="announcements"><span class="rail-icon">◉</span><span>News</span></a>
-        <button class="header-button" id="settings-open" type="button"><span class="rail-icon">⚙</span><span>Settings</span></button>
+        <a class="rail-link active" href="/"><span class="rail-icon">🏠</span><span>Home</span></a>
+        <a class="rail-link" id="games-open" href="#game-library"><span class="rail-icon">🎮</span><span>Games</span></a>
+        <button class="header-button" id="servers-open" type="button"><span class="rail-icon">🌐</span><span>Servers</span></button>
+        <button class="header-button account-button" id="account-open" type="button"><span class="rail-icon">👤</span><span class="account-label">Account</span><span class="notification-badge" id="account-unread" hidden>0</span></button>
+        <a class="rail-link" href="/" data-form="request"><span class="rail-icon">💡</span><span>Request</span></a>
+        <a class="rail-link" href="/" data-form="bug"><span class="rail-icon">🐛</span><span>Report bug</span></a>
+        <a class="rail-link updates-link" href="/" data-page="updates"><span class="rail-icon">🚀</span><span>Updates</span><span class="update-dot" id="update-dot" aria-label="New updates"></span></a>
+        <a class="rail-link" href="/" data-page="announcements"><span class="rail-icon">📣</span><span>News</span></a>
+        <button class="header-button" id="settings-open" type="button"><span class="rail-icon">⚙️</span><span>Settings</span></button>
         <time class="local-time menu-time" aria-label="Your local time"></time>
       </div>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
@@ -38,12 +47,12 @@
           <label class="hero-search"><span class="sr-only">Search games</span><span aria-hidden="true">⌕</span><input id="hero-game-search" type="search" placeholder="Search games..." autocomplete="off" /></label>
         </div>
         <div class="dashboard-shortcuts" aria-label="Quick actions">
-          <button type="button" data-dashboard-action="games"><span>▦</span><strong>Games</strong><small>Browse the library</small></button>
-          <button type="button" data-dashboard-action="account"><span>◯</span><strong>Friends</strong><small>Chat and profiles</small></button>
-          <button type="button" data-dashboard-action="ai"><span>✦</span><strong>AI</strong><small>Ask Simple AI</small></button>
-          <button type="button" data-dashboard-action="servers"><span>◫</span><strong>Servers</strong><small>Your communities</small></button>
-          <button type="button" data-dashboard-action="leaderboard"><span>♕</span><strong>Leaderboard</strong><small>Top playtime</small></button>
-          <button type="button" data-dashboard-action="settings"><span>⚙</span><strong>Settings</strong><small>Make it yours</small></button>
+          <button type="button" data-dashboard-action="games"><span>🎮</span><strong>Games</strong><small>Browse the library</small></button>
+          <button type="button" data-dashboard-action="account"><span>💬</span><strong>Friends</strong><small>Chat and profiles</small></button>
+          <button type="button" data-dashboard-action="ai"><span>🪄</span><strong>AI</strong><small>Ask Simple AI</small></button>
+          <button type="button" data-dashboard-action="servers"><span>🌐</span><strong>Servers</strong><small>Your communities</small></button>
+          <button type="button" data-dashboard-action="leaderboard"><span>🏆</span><strong>Leaderboard</strong><small>Top playtime</small></button>
+          <button type="button" data-dashboard-action="settings"><span>⚙️</span><strong>Settings</strong><small>Make it yours</small></button>
         </div>
       </section>
       <section class="intro" id="game-library" aria-labelledby="featured-title" hidden>
@@ -75,6 +84,32 @@
       </section>
 
       <section class="game-grid" aria-label="Games" hidden>
+        <article class="game-card"><a class="game-card__image-link" href="/snek-io/" aria-label="Play Snek.io"><img src="https://nicmath.com/lessons/img2/snek-io.webp" alt="Snek.io game cover" /></a><div class="game-card__body"><h2><a href="/snek-io/">Snek.io</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/super-liquid-soccer/" aria-label="Play Super Liquid Soccer"><img src="https://nicmath.com/lessons/img/super-liquid-soccer.jpg" alt="Super Liquid Soccer game cover" /></a><div class="game-card__body"><h2><a href="/super-liquid-soccer/">Super Liquid Soccer</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/moto-x3m/" aria-label="Play Moto X3M"><img src="https://nicmath.com/lessons/motox3m.webp" alt="Moto X3M game cover" /></a><div class="game-card__body"><h2><a href="/moto-x3m/">Moto X3M</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/drift-hunters-pro/" aria-label="Play Drift Hunters Pro"><img src="https://nicmath.com/lessons/img/Drift-Hunters-Pro.jpg" alt="Drift Hunters Pro game cover" /></a><div class="game-card__body"><h2><a href="/drift-hunters-pro/">Drift Hunters Pro</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/uno/" aria-label="Play UNO"><img src="https://nicmath.com/lessons/uno.webp" alt="UNO game cover" /></a><div class="game-card__body"><h2><a href="/uno/">UNO</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/wheelie-bike/" aria-label="Play Wheelie Bike"><img src="https://nicmath.com/lessons/img/wheelie-bike.jpg" alt="Wheelie Bike game cover" /></a><div class="game-card__body"><h2><a href="/wheelie-bike/">Wheelie Bike</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/ragdoll-archers/" aria-label="Play Ragdoll Archers"><img src="https://nicmath.com/lessons/img/ragdoll-archers.jpg" alt="Ragdoll Archers game cover" /></a><div class="game-card__body"><h2><a href="/ragdoll-archers/">Ragdoll Archers</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/basket-bros/" aria-label="Play Basket Bros"><img src="https://nicmath.com/lessons/img/basket-bros.jpeg" alt="Basket Bros game cover" /></a><div class="game-card__body"><h2><a href="/basket-bros/">Basket Bros</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/thorns-and-ballons/" aria-label="Play Thorns and Balloons"><img src="https://nicmath.com/lessons/img/thorns-and-ballons.jpg" alt="Thorns and Balloons game cover" /></a><div class="game-card__body"><h2><a href="/thorns-and-ballons/">Thorns and Balloons</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/2d-fortnite/" aria-label="Play 2D Fortnite"><img src="https://nicmath.com/lessons/img/fort-battle-royale.webp" alt="2D Fortnite game cover" /></a><div class="game-card__body"><h2><a href="/2d-fortnite/">2D Fortnite</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/worldguessr/" aria-label="Play Worldguessr"><img src="https://nicmath.com/lessons/img3/world-guesser.jpg" alt="Worldguessr game cover" /></a><div class="game-card__body"><h2><a href="/worldguessr/">Worldguessr</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/among-us/" aria-label="Play Among Us"><img src="https://nicmath.com/lessons/amongus.webp" alt="Among Us game cover" /></a><div class="game-card__body"><h2><a href="/among-us/">Among Us</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/funny-shooter-2/" aria-label="Play Funny Shooter 2"><img src="https://nicmath.com/lessons/funntshooes.webp" alt="Funny Shooter 2 game cover" /></a><div class="game-card__body"><h2><a href="/funny-shooter-2/">Funny Shooter 2</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/baseball-bros/" aria-label="Play Baseball Bros"><img src="https://nicmath.com/lessons/img/baseball-bros.jpg" alt="Baseball Bros game cover" /></a><div class="game-card__body"><h2><a href="/baseball-bros/">Baseball Bros</a></h2></div></article>
+        <article class="game-card">
+          <a class="game-card__image-link" href="/golf-orbit/" aria-label="Play Golf Orbit"><img src="https://nicmath.com/lessons/img/Golf-Orbit-Play-Online.jpg" alt="Golf Orbit game cover" /></a>
+          <div class="game-card__body"><h2><a href="/golf-orbit/">Golf Orbit</a></h2></div>
+        </article>
+        <article class="game-card">
+          <a class="game-card__image-link" href="/gun-spin/" aria-label="Play Gun Spin"><img src="https://nicmath.com/lessons/img/gun-spin.jpg" alt="Gun Spin game cover" /></a>
+          <div class="game-card__body"><h2><a href="/gun-spin/">Gun Spin</a></h2></div>
+        </article>
+        <article class="game-card">
+          <a class="game-card__image-link" href="/duckcraft/" aria-label="Play Duckcraft"><img src="https://nicmath.com/lessons/img2/eagle-duckcraft-new.webp" alt="Duckcraft game cover" /></a>
+          <div class="game-card__body"><h2><a href="/duckcraft/">Duckcraft</a></h2></div>
+        </article>
         <article class="game-card">
           <a class="game-card__image-link" href="/bouncy-basketball/" aria-label="Play Bouncy Basketball">
             <img src="assets/bouncy-basketball.png" alt="Bouncy Basketball game cover" />
@@ -220,9 +255,6 @@
         <div class="settings-divider"><strong>Customize appearance</strong></div>
         <label>Accent color<input id="accent-color" type="color" value="#173f6d" /></label>
         <label>Background color<input id="background-color" type="color" value="#202225" /></label>
-        <label>Background image<input id="background-image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /><small id="background-image-status">No custom image selected</small></label>
-        <label>Background style<select id="background-style"><option value="cover">Fill screen</option><option value="contain">Fit image</option><option value="repeat">Tile image</option></select></label>
-        <button class="secondary-button" id="remove-background" type="button">Remove background image</button>
         <button class="secondary-button" id="reset-settings" type="button">Reset saved settings</button>
       </div>
     </section>
@@ -300,11 +332,13 @@
         </div>
       </div>
     </section>
-    <div class="game-loader" id="game-loader" hidden><div class="loader-card"><div class="loader-logo">SG</div><span id="game-loader-spinner"></span><p id="game-loader-status">Loading game…</p><button class="loader-sound" id="loader-sound" type="button" aria-pressed="true">🔊 Loading sounds on</button><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">Back to games</button></div></div></div>
+    <div class="game-loader" id="game-loader" hidden><div class="startup-card"><div class="startup-logo"><img src="assets/cat-logo-original.jpg" alt="" /></div><strong>Simple Games</strong><p id="game-loader-status" role="status">Loading game…</p><div class="game-load-progress" id="game-loader-spinner" aria-hidden="true"></div><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">← Home</button></div></div></div>
     <script src="clock.js?v=2"></script>
-    <script src="features.js?v=17"></script>
-    <script type="module" src="ai.js?v=2"></script>
-    <script src="play.js?v=25"></script>
+    <script src="startup.js?v=3"></script>
+    <script src="ui-sounds.js?v=1"></script>
+    <script src="features.js?v=27"></script>
+    <script type="module" src="ai.js?v=3"></script>
+    <script src="play.js?v=33"></script>
     <script type="module" src="social.js?v=23"></script>
     <script type="module" src="community.js?v=3"></script>
     <script type="module" src="servers.js?v=2"></script>

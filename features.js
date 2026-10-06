@@ -43,6 +43,23 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
+  "/duckcraft/": "simulation",
+  "/gun-spin/": "arcade",
+  "/golf-orbit/": "sports",
+  "/snek-io/": "arcade",
+  "/super-liquid-soccer/": "sports",
+  "/moto-x3m/": "racing",
+  "/drift-hunters-pro/": "racing",
+  "/uno/": "puzzle",
+  "/wheelie-bike/": "arcade",
+  "/ragdoll-archers/": "action",
+  "/basket-bros/": "sports",
+  "/thorns-and-ballons/": "puzzle",
+  "/2d-fortnite/": "action",
+  "/worldguessr/": "puzzle",
+  "/among-us/": "multiplayer",
+  "/funny-shooter-2/": "action",
+  "/baseball-bros/": "sports",
   "/bouncy-basketball/": "sports", "/basketball-stars/": "sports", "/basket-random/": "sports",
   "/polytrack/": "driving", "/drift-boss/": "driving", "/escape-road/": "driving", "/drift-hunters/": "driving",
   "/subway-surfers/": "action", "/slope/": "action",
@@ -77,12 +94,6 @@ cards.forEach((card) => {
   });
   card.prepend(favorite);
 
-  if (newGames.has(path)) {
-    const badge = document.createElement("span");
-    badge.className = "new-badge";
-    badge.textContent = "NEW";
-    card.querySelector(".game-card__image-link")?.append(badge);
-  }
 });
 
 function filterGames() {
@@ -142,9 +153,36 @@ const heroSearch=document.querySelector("#hero-game-search");
 const librarySections=[document.querySelector("#game-library"),document.querySelector(".library-tools"),document.querySelector(".game-grid")];
 function openLibrary(){librarySections.forEach(section=>{if(section)section.hidden=false});document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})}
 document.querySelector("#games-open")?.addEventListener("click",event=>{event.preventDefault();openLibrary()});
-heroSearch?.addEventListener("input",()=>{gameSearch.value=heroSearch.value;gameSearch.dispatchEvent(new Event("input"));if(heroSearch.value.trim())openLibrary()});
+heroSearch?.addEventListener("input",()=>{search.value=heroSearch.value;search.dispatchEvent(new Event("input"));if(heroSearch.value.trim())openLibrary()});
+search?.addEventListener("input",()=>{if(heroSearch)heroSearch.value=search.value});
 heroSearch?.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();openLibrary()}});
 
+function goHome(event) {
+  event.preventDefault();
+  librarySections.forEach(section=>{if(section)section.hidden=true});
+  search.value="";
+  if(heroSearch)heroSearch.value="";
+  filterGames();
+  document.querySelectorAll("#info-overlay,#ai-panel,#server-panel,#settings-panel,#social-panel").forEach(panel=>panel.hidden=true);
+  document.querySelectorAll(".server-dialog").forEach(panel=>panel.hidden=true);
+  if(!document.querySelector("#game-overlay").hidden)document.querySelector("#game-close")?.click();
+  document.body.classList.remove("game-is-open");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelector(".header-right .rail-link[href='/']")?.addEventListener("click",goHome);
+document.querySelector(".brand")?.addEventListener("click",goHome);
+const infoHome=document.querySelector("#info-close");
+if(infoHome){infoHome.textContent="← Home";infoHome.addEventListener("click",goHome)}
+for(const selector of ["#ai-panel .settings-heading","#server-panel .server-topbar","#settings-panel .settings-heading","#social-panel .settings-heading"]){
+  const heading=document.querySelector(selector);
+  if(!heading)continue;
+  const home=document.createElement("button");
+  home.type="button";
+  home.className="panel-home-button";
+  home.textContent="← Home";
+  home.addEventListener("click",goHome);
+  heading.prepend(home);
+}
 filterGames();
 
 function applyTheme(choice) {
@@ -208,14 +246,14 @@ Object.keys(displaySettings).forEach((id) => {
 applyDisplaySettings();
 
 function applyAppearance() {
-  const accent = storage.read("sg-accent", "#173f6d");
-  const background = storage.read("sg-background", "#202225");
+  let accent = storage.read("sg-accent", "#153a63");
+  let background = storage.read("sg-background", "#050608");
+  if (accent === "#173f6d") { accent = "#153a63"; storage.write("sg-accent", accent); }
+  if (background === "#202225") { background = "#050608"; storage.write("sg-background", background); }
   const image = storage.read("sg-background-image", "");
   const style = storage.read("sg-background-style", "cover");
   accentColor.value = accent;
   backgroundColor.value = background;
-  backgroundImageStatus.textContent = image ? "Custom image selected" : "No custom image selected";
-  backgroundStyle.value = style;
   root.style.setProperty("--accent", accent);
   root.style.setProperty("--background", background);
   root.style.setProperty("--custom-background-image", image ? `url("${image.replaceAll('"', '%22')}")` : "none");
@@ -225,7 +263,7 @@ function applyAppearance() {
 
 accentColor.addEventListener("input", () => { storage.write("sg-accent", accentColor.value); applyAppearance(); });
 backgroundColor.addEventListener("input", () => { storage.write("sg-background", backgroundColor.value); applyAppearance(); });
-backgroundImageFile.addEventListener("change", () => {
+backgroundImageFile?.addEventListener("change", () => {
   const file = backgroundImageFile.files?.[0];
   if (!file) return;
   const reader = new FileReader();
@@ -255,7 +293,7 @@ document.querySelector("#remove-background")?.addEventListener("click", () => {
   backgroundImageFile.value = "";
   applyAppearance();
 });
-backgroundStyle.addEventListener("change", () => { storage.write("sg-background-style", backgroundStyle.value); applyAppearance(); });
+backgroundStyle?.addEventListener("change", () => { storage.write("sg-background-style", backgroundStyle.value); applyAppearance(); });
 applyAppearance();
 
 function openSettings() {
