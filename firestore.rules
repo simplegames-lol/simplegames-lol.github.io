@@ -1,3 +1,4 @@
+// Simple Games rules — friend request missing-document fix v2
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -63,7 +64,11 @@ service cloud.firestore {
     }
 
     match /friendRequests/{requestId} {
-      allow read: if signedIn() && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+      // Friend-request creation checks both possible request IDs first. A
+      // signed-in user must be allowed to get a missing document; otherwise
+      // Firestore returns "insufficient permissions" instead of "not found".
+      allow get: if signedIn();
+      allow list: if signedIn() && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
       allow create: if signedIn()
         && request.resource.data.fromUid == request.auth.uid
         && request.resource.data.toUid != request.auth.uid

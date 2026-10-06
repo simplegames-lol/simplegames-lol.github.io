@@ -746,7 +746,8 @@ body {
     radial-gradient(circle at 78% 8%, color-mix(in srgb,var(--accent) 34%,transparent) 0, transparent 28%),
     radial-gradient(circle at 18% 78%, rgba(79,112,255,.12) 0, transparent 30%),
     var(--custom-background-image,none);
-  background-blend-mode: screen,normal,normal;
+  background-color: #10151d;
+  background-blend-mode: screen,normal,multiply;
 }
 body::before {
   position: fixed;
@@ -763,7 +764,7 @@ body::before {
   position: fixed;
   z-index: 200;
   inset: 0 auto 0 0;
-  width: 218px;
+  width: 196px;
   border: 0;
   border-right: 1px solid rgba(255,255,255,.09);
   background: rgba(10,12,17,.86);
@@ -773,7 +774,7 @@ body::before {
 .header-inner {
   width: 100%;
   min-height: 100%;
-  padding: 22px 15px;
+  padding: 20px 13px;
   align-items: stretch;
   flex-direction: column;
   justify-content: flex-start;
@@ -821,12 +822,12 @@ body::before {
 .rail-icon { display: grid; width: 24px; flex: 0 0 24px; place-items: center; color: #fff; font-size: 1.15rem; }
 .header-right .menu-time { margin-top: auto; padding: 13px 11px 0; color: #b6bdc8; text-align: left; font-size: .76rem; }
 .update-dot { top: 8px; right: 9px; }
-.page-shell { width: min(calc(100% - 290px),1280px); max-width: none; margin: 0 36px 0 auto; padding: 42px 0 70px; }
+.page-shell { width: min(calc(100% - 246px),1240px); max-width: none; margin: 0 25px 0 auto; padding: 28px 0 70px; }
 .dashboard-hero {
   position: relative;
   overflow: hidden;
-  min-height: 390px;
-  padding: 64px clamp(28px,6vw,76px) 42px;
+  min-height: 315px;
+  padding: 44px clamp(28px,5vw,62px) 30px;
   border: 1px solid rgba(255,255,255,.1);
   border-radius: 28px;
   background: linear-gradient(135deg,rgba(10,13,20,.9),color-mix(in srgb,var(--accent) 28%,rgba(18,21,29,.8)));
@@ -845,19 +846,19 @@ body::before {
 }
 .hero-copy { position: relative; z-index: 1; max-width: 760px; }
 .hero-kicker { color: #94bfff; font-size: .72rem; letter-spacing: .2em; }
-.dashboard-hero h1 { max-width: 720px; margin: 14px 0 12px; color: #f5f6f8; font-size: clamp(2.65rem,6vw,5.6rem); line-height: .96; letter-spacing: -.065em; }
+.dashboard-hero h1 { max-width: 720px; margin: 12px 0 10px; color: #f5f6f8; font-size: clamp(2.65rem,5vw,4.45rem); line-height: .96; letter-spacing: -.055em; }
 .dashboard-hero h1 span { color: #8bb8ff; text-shadow: 0 0 42px rgba(95,155,255,.28); }
 .dashboard-hero p { max-width: 590px; margin: 0; color: #b6bdc8; font-size: clamp(.95rem,1.7vw,1.15rem); line-height: 1.6; }
-.dashboard-shortcuts { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-top: 46px; }
+.dashboard-shortcuts { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-top: 30px; }
 .dashboard-shortcuts button {
   display: grid;
   min-width: 0;
-  min-height: 118px;
+  min-height: 92px;
   align-content: center;
   justify-items: start;
   border: 1px solid rgba(255,255,255,.11);
   border-radius: 17px;
-  padding: 18px;
+  padding: 14px 16px;
   color: #f5f6f8;
   background: rgba(255,255,255,.055);
   box-shadow: inset 0 1px rgba(255,255,255,.04);
@@ -868,10 +869,10 @@ body::before {
   transition: transform .2s ease,border-color .2s ease,background .2s ease;
 }
 .dashboard-shortcuts button:hover { border-color: #79aaff; background: rgba(100,154,255,.12); transform: translateY(-4px); }
-.dashboard-shortcuts button>span { display: grid; width: 34px; height: 34px; margin-bottom: 10px; place-items: center; border-radius: 10px; background: color-mix(in srgb,var(--accent) 55%,rgba(255,255,255,.08)); }
+.dashboard-shortcuts button>span { display: grid; width: 30px; height: 30px; margin-bottom: 7px; place-items: center; border-radius: 9px; background: color-mix(in srgb,var(--accent) 55%,rgba(255,255,255,.08)); }
 .dashboard-shortcuts strong { font-size: .9rem; }
 .dashboard-shortcuts small { margin-top: 3px; overflow: hidden; color: #b6bdc8; font-size: .7rem; text-overflow: ellipsis; white-space: nowrap; }
-.intro { margin-top: 46px; }
+.intro { margin-top: 30px; padding: 0 4px; text-shadow: 0 2px 14px rgba(0,0,0,.75); }
 .intro h1 { margin-bottom: 4px; font-size: clamp(1.6rem,3vw,2.25rem); letter-spacing: -.035em; }
 .intro p { margin: 0; color: var(--muted); }
 .library-tools {
