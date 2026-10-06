@@ -43,17 +43,15 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
-  "/bouncy-basketball/": "sports", "/speed-stars/": "sports", "/basketball-stars/": "sports", "/basket-random/": "sports",
+  "/bouncy-basketball/": "sports", "/basketball-stars/": "sports", "/basket-random/": "sports",
   "/polytrack/": "driving", "/drift-boss/": "driving", "/escape-road/": "driving", "/drift-hunters/": "driving",
-  "/crossy-road/": "action", "/stickman-hook/": "action", "/gunspin/": "action", "/subway-surfers/": "action", "/slope/": "action",
-  "/block-blast/": "puzzle", "/tomb-of-the-mask/": "puzzle", "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports", "/golf-orbit/": "sports"
+  "/subway-surfers/": "action", "/slope/": "action",
+  "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports"
 };
 
 const newGames = new Set([
   "/bouncy-basketball/",
-  "/speed-stars/",
-  "/tomb-of-the-mask/", "/crossy-road/", "/stickman-hook/", "/gunspin/",
-  "/golf-orbit/", "/polytrack/", "/drift-boss/", "/block-blast/", "/escape-road/"
+  "/polytrack/", "/drift-boss/", "/escape-road/"
 ]);
 
 cards.forEach((card) => {
@@ -128,6 +126,14 @@ favoritesFilter?.addEventListener("click", () => {
   libraryIntro.classList.toggle("favorites-view", favoritesOnly);
   filterGames();
 });
+document.querySelector(".dashboard-shortcuts")?.addEventListener("click",(event)=>{
+  const action=event.target.closest("[data-dashboard-action]")?.dataset.dashboardAction;
+  if(!action)return;
+  if(action==="games")document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"});
+  if(action==="favorites"){if(!favoritesOnly)favoritesFilter.click();document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})}
+  if(action==="account")document.querySelector("#account-open")?.click();
+  if(action==="settings")document.querySelector("#settings-open")?.click();
+});
 filterGames();
 
 function applyTheme(choice) {
@@ -135,7 +141,8 @@ function applyTheme(choice) {
     ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
     : choice;
   root.dataset.theme = effective;
-  document.querySelector("#theme-toggle").textContent = effective === "dark" ? "☀" : "☾";
+  const themeIcon = document.querySelector("#theme-toggle .rail-icon");
+  if (themeIcon) themeIcon.textContent = effective === "dark" ? "☀" : "☾";
 }
 
 const savedTheme = storage.read("sg-theme", "dark");

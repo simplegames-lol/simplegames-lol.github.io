@@ -1,15 +1,8 @@
 (() => {
 const games = {
   "/bouncy-basketball/": "https://trueedu20.github.io/g177/class-282",
-  "/speed-stars/": "https://pizzaedition.com/embed/speedstars",
-  "/tomb-of-the-mask/": "https://games.pizzaedition.com/tomb-of-the-mask/h/index.html",
-  "/crossy-road/": "https://games.pizzaedition.com/crossyroadnormal/g/index.html",
-  "/stickman-hook/": "https://games.pizzaedition.com/stickman-hook/i/index.html",
-  "/gunspin/": "https://games.pizzaedition.com/gunspin-main/h/index.html",
-  "/golf-orbit/": "https://games.pizzaedition.com/golforbit/i/index.html",
   "/polytrack/": "https://poly-track-online.github.io/polytrack/",
   "/drift-boss/": "https://driftbossonline.github.io/file/",
-  "/block-blast/": "https://blockblast-2.io/embed/block-blast-unblocked?preroll=0&pub_id=",
   "/escape-road/": "https://escape-road.global.ssl.fastly.net/",
   "/monkey-mart/": "https://gaming-escape.github.io/public/assets/games/monkey-mart/",
   "/basketball-stars/": "https://gaming-escape.github.io/public/assets/games/basketball-stars/",
@@ -94,7 +87,7 @@ document.querySelector("#game-error-close")?.addEventListener("click", closeGame
 const pages = {
   updates: {
     title: "Update Log",
-    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>September 24, 2026 — Big Site Update</h2><p>Added Bouncy Basketball, Speed Stars, Escape Road, Block Blast, Drift Boss, PolyTrack, Golf Orbit, Gunspin, Stickman Hook, Tomb of the Mask, Crossy Road, Monkey Mart, and Basketball Stars. Also added accounts, uploaded profile pictures, usernames and username changes, searchable friends, pinned conversations, direct profile links, profile statuses, managed group chats, group unread alerts, friend requests and removal, private messaging, emoji reactions, message editing, quoted replies, small image and GIF sharing, message deletion, notification sounds, unread badges, typing indicators, read receipts, friend profiles, profile badges, online and last-active status, friend activity, privacy controls, Do Not Disturb, game ratings, most-played and top-rated sorting, playtime tracking and an account-only leaderboard, an achievements-coming-soon section, cloud-synced customization, account settings, password resets, blocking and reporting, search, favorites, category filters, themes, timezone controls, request and bug forms, shortcuts, improved game loading errors and retries, new-game badges, mobile navigation, and a custom 404 page.</p></li></ol>'
+    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>Big Site Update</h2><p>Redesigned Simple Games with a cleaner dashboard, glass sidebar, faster shortcuts, improved game browsing, and a more focused library. Also added accounts, uploaded profile pictures, usernames and username changes, searchable friends, pinned conversations, direct profile links, profile statuses, managed group chats, group unread alerts, friend requests and removal, private messaging, emoji reactions, message editing, quoted replies, small image and GIF sharing, message deletion, notification sounds, unread badges, typing indicators, read receipts, friend profiles, profile badges, online and last-active status, friend activity, privacy controls, Do Not Disturb, game ratings, most-played and top-rated sorting, playtime tracking and an account-only leaderboard, cloud-synced customization, account settings, password resets, blocking and reporting, search, favorites, category filters, themes, timezone controls, request and bug forms, improved game loading errors, mobile navigation, and a custom 404 page.</p></li></ol>'
   },
   announcements: {
     title: "Announcements",

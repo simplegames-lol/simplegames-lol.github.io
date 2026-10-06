@@ -6,22 +6,24 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=9" />
+    <link rel="stylesheet" href="styles.css?v=10" />
   </head>
   <body>
     <header class="site-header">
       <div class="header-inner">
       <a class="brand" href="/" aria-label="Simple Games home">
-        <span>Simple Games</span>
+        <span class="brand-mark">SG</span><span class="brand-name">Simple Games</span>
       </a>
       <div class="header-right">
-        <a href="/" data-form="request">Request</a>
-        <a href="/" data-form="bug">Report bug</a>
-        <a class="updates-link" href="/" data-page="updates">Updates<span class="update-dot" id="update-dot" aria-label="New updates"></span></a>
-        <a href="/" data-page="announcements">Announcements</a>
-        <button class="header-button account-button" id="account-open" type="button">Log in<span class="notification-badge" id="account-unread" hidden>0</span></button>
-        <button class="header-button" id="theme-toggle" type="button" aria-label="Toggle light or dark theme">☀</button>
-        <button class="header-button" id="settings-open" type="button">Settings</button>
+        <a class="rail-link active" href="/"><span class="rail-icon">⌂</span><span>Home</span></a>
+        <a class="rail-link" href="#game-library"><span class="rail-icon">▦</span><span>Games</span></a>
+        <button class="header-button account-button" id="account-open" type="button"><span class="rail-icon">◎</span><span class="account-label">Account</span><span class="notification-badge" id="account-unread" hidden>0</span></button>
+        <a class="rail-link" href="/" data-form="request"><span class="rail-icon">＋</span><span>Request</span></a>
+        <a class="rail-link" href="/" data-form="bug"><span class="rail-icon">!</span><span>Report bug</span></a>
+        <a class="rail-link updates-link" href="/" data-page="updates"><span class="rail-icon">↻</span><span>Updates</span><span class="update-dot" id="update-dot" aria-label="New updates"></span></a>
+        <a class="rail-link" href="/" data-page="announcements"><span class="rail-icon">◉</span><span>News</span></a>
+        <button class="header-button" id="theme-toggle" type="button" aria-label="Toggle light or dark theme"><span class="rail-icon">◐</span><span>Theme</span></button>
+        <button class="header-button" id="settings-open" type="button"><span class="rail-icon">⚙</span><span>Settings</span></button>
         <time class="local-time menu-time" aria-label="Your local time"></time>
       </div>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
@@ -29,8 +31,22 @@
     </header>
 
     <main class="page-shell">
-      <section class="intro" aria-labelledby="featured-title">
+      <section class="dashboard-hero" aria-labelledby="dashboard-title">
+        <div class="hero-copy">
+          <span class="hero-kicker">YOUR GAME HUB</span>
+          <h1 id="dashboard-title">Play something <span>simple.</span></h1>
+          <p>Jump back in, find a new favorite, or see what your friends are playing.</p>
+        </div>
+        <div class="dashboard-shortcuts" aria-label="Quick actions">
+          <button type="button" data-dashboard-action="games"><span>▦</span><strong>Games</strong><small>Browse the library</small></button>
+          <button type="button" data-dashboard-action="favorites"><span>★</span><strong>Favorites</strong><small>Your saved games</small></button>
+          <button type="button" data-dashboard-action="account"><span>◎</span><strong>Social</strong><small>Friends and messages</small></button>
+          <button type="button" data-dashboard-action="settings"><span>⚙</span><strong>Customize</strong><small>Make it yours</small></button>
+        </div>
+      </section>
+      <section class="intro" id="game-library" aria-labelledby="featured-title">
         <h1 id="featured-title">Games</h1>
+        <p>Choose a game and start playing.</p>
       </section>
 
       <section class="library-tools" aria-label="Game library tools">
@@ -64,42 +80,6 @@
           <div class="game-card__body"><h2><a href="/bouncy-basketball/">Bouncy Basketball</a></h2></div>
         </article>
         <article class="game-card">
-          <a class="game-card__image-link" href="/speed-stars/" aria-label="Play Speed Stars">
-            <img src="assets/speed-stars.webp" alt="Speed Stars game cover" />
-          </a>
-          <div class="game-card__body"><h2><a href="/speed-stars/">Speed Stars</a></h2></div>
-        </article>
-        <article class="game-card">
-          <a class="game-card__image-link" href="/tomb-of-the-mask/" aria-label="Play Tomb of the Mask">
-            <img src="assets/tomb-of-the-mask.webp" alt="Tomb of the Mask game cover" />
-          </a>
-          <div class="game-card__body"><h2><a href="/tomb-of-the-mask/">Tomb of the Mask</a></h2></div>
-        </article>
-        <article class="game-card">
-          <a class="game-card__image-link" href="/crossy-road/" aria-label="Play Crossy Road">
-            <img src="assets/crossy-road.webp" alt="Crossy Road game cover" />
-          </a>
-          <div class="game-card__body"><h2><a href="/crossy-road/">Crossy Road</a></h2></div>
-        </article>
-        <article class="game-card">
-          <a class="game-card__image-link" href="/stickman-hook/" aria-label="Play Stickman Hook">
-            <img src="assets/stickman-hook.png" alt="Stickman Hook game cover" />
-          </a>
-          <div class="game-card__body"><h2><a href="/stickman-hook/">Stickman Hook</a></h2></div>
-        </article>
-        <article class="game-card">
-          <a class="game-card__image-link" href="/gunspin/" aria-label="Play Gunspin">
-            <img src="assets/gunspin.png" alt="Gunspin game cover" />
-          </a>
-          <div class="game-card__body"><h2><a href="/gunspin/">Gunspin</a></h2></div>
-        </article>
-        <article class="game-card">
-          <a class="game-card__image-link" href="/golf-orbit/" aria-label="Play Golf Orbit">
-            <img src="assets/golf-orbit.webp" alt="Golf Orbit game cover" />
-          </a>
-          <div class="game-card__body"><h2><a href="/golf-orbit/">Golf Orbit</a></h2></div>
-        </article>
-        <article class="game-card">
           <a class="game-card__image-link" href="/polytrack/" aria-label="Play PolyTrack">
             <img src="assets/polytrack-new.png" alt="PolyTrack game cover" />
           </a>
@@ -110,12 +90,6 @@
             <img class="game-card__image--borderless" src="assets/drift-boss.png" alt="Drift Boss game cover" />
           </a>
           <div class="game-card__body"><h2><a href="/drift-boss/">Drift Boss</a></h2></div>
-        </article>
-        <article class="game-card">
-          <a class="game-card__image-link" href="/block-blast/" aria-label="Play Block Blast">
-            <img src="assets/block-blast.png" alt="Block Blast game cover" />
-          </a>
-          <div class="game-card__body"><h2><a href="/block-blast/">Block Blast</a></h2></div>
         </article>
         <article class="game-card">
           <a class="game-card__image-link" href="/escape-road/" aria-label="Play Escape Road">
@@ -304,9 +278,9 @@
     </section>
     <div class="game-loader" id="game-loader" hidden><span id="game-loader-spinner"></span><p id="game-loader-status">Loading game…</p><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">Back to games</button></div></div>
     <script src="clock.js?v=2"></script>
-    <script src="features.js?v=14"></script>
+    <script src="features.js?v=15"></script>
     <script src="play.js?v=24"></script>
-    <script type="module" src="social.js?v=20"></script>
+    <script type="module" src="social.js?v=21"></script>
     <script type="module" src="community.js?v=3"></script>
   </body>
 </html>
