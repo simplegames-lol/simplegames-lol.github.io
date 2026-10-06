@@ -6,8 +6,9 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/cat-favicon.svg?v=1" />
+    <link rel="icon" type="image/jpeg" href="assets/cat-logo-original.jpg?v=2" />
     <link rel="apple-touch-icon" href="assets/cat-logo-original.jpg" />
-    <link rel="stylesheet" href="styles.css?v=25" />
+    <link rel="stylesheet" href="styles.css?v=32" />
   </head>
   <body>
     <div class="startup-loader" id="startup-loader" role="dialog" aria-modal="true" aria-labelledby="startup-title">
@@ -314,6 +315,9 @@
           <section class="social-subview" id="account-settings-view" hidden>
             <h3>Account settings</h3>
             <div class="account-email"><span>Email</span><strong id="account-email"></strong></div>
+            <form class="social-form" id="email-change-form"><label>New email<input type="email" name="email" autocomplete="email" placeholder="An email you can access" required /></label><button class="secondary-button" type="submit">Verify new email</button></form>
+            <p id="email-change-status" class="result-count" aria-live="polite"></p>
+            <button class="secondary-button" id="email-refresh" type="button">Check email change</button>
             <button class="secondary-button" id="send-reset" type="button">Send password reset email</button>
             <form class="social-form settings-password-form" id="password-form">
               <label>New password<input name="password" type="password" minlength="6" autocomplete="new-password" required /><small>At least 6 characters</small></label>
@@ -336,11 +340,12 @@
     <script src="clock.js?v=2"></script>
     <script src="startup.js?v=3"></script>
     <script src="ui-sounds.js?v=1"></script>
-    <script src="features.js?v=27"></script>
-    <script type="module" src="ai.js?v=3"></script>
+    <script src="game-availability.js?v=1"></script>
+    <script src="features.js?v=31"></script>
+    <script type="module" src="ai.js?v=4"></script>
     <script src="play.js?v=33"></script>
-    <script type="module" src="social.js?v=23"></script>
-    <script type="module" src="community.js?v=3"></script>
-    <script type="module" src="servers.js?v=2"></script>
+    <script type="module" src="social.js?v=27"></script>
+    <script type="module" src="community.js?v=6"></script>
+    <script type="module" src="servers.js?v=6"></script>
   </body>
 </html>

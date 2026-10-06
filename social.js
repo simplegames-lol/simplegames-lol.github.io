@@ -1,5 +1,5 @@
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-import{createUserWithEmailAndPassword,deleteUser,getAuth,onAuthStateChanged,sendPasswordResetEmail,signInWithEmailAndPassword,signOut,updatePassword}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import{createUserWithEmailAndPassword,deleteUser,getAuth,onAuthStateChanged,reload,sendPasswordResetEmail,signInWithEmailAndPassword,signOut,updatePassword,verifyBeforeUpdateEmail}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import{addDoc,collection,deleteDoc,doc,FieldPath,getDoc,getFirestore,increment,limit,onSnapshot,orderBy,query,runTransaction,serverTimestamp,setDoc,updateDoc,where,writeBatch}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyDzJu7zyLTZWwffbS5wcxAGym5orePvNKg",authDomain:"simplegames-23c2c.firebaseapp.com",projectId:"simplegames-23c2c",storageBucket:"simplegames-23c2c.firebasestorage.app",messagingSenderId:"993873419513",appId:"1:993873419513:web:14e22dfff6d7f0c7051628",measurementId:"G-NC81W7MYG0"});
 const auth=getAuth(app),db=getFirestore(app),$=s=>document.querySelector(s),panel=$("#social-panel"),authView=$("#auth-view"),socialView=$("#social-view"),status=$("#social-status");
@@ -16,6 +16,16 @@ function showAuth(mode){$("#login-form").hidden=mode!=="login";$("#signup-form")
 $("#login-tab").onclick=()=>showAuth("login");$("#signup-tab").onclick=()=>showAuth("signup");showAuth("login");
 async function reset(email){if(!email)return showStatus("Enter your email address first.",true);try{await sendPasswordResetEmail(auth,email);showStatus("Password reset email sent. Check your inbox.")}catch(e){showStatus(friendlyError(e),true)}}
 $("#forgot-password").onclick=()=>reset($("#login-form").elements.email.value.trim());$("#send-reset").onclick=()=>reset(auth.currentUser?.email);
+$("#email-change-form").onsubmit=async event=>{
+  event.preventDefault();const form=event.currentTarget,submit=form.querySelector('button'),feedback=$("#email-change-status"),email=form.elements.email.value.trim();
+  if(!auth.currentUser){feedback.textContent='Sign in before changing your email.';return}
+  if(email.toLowerCase()===auth.currentUser.email?.toLowerCase()){feedback.textContent='Enter a different email that you can access.';return}
+  submit.disabled=true;feedback.textContent='Sending verification…';
+  try{await verifyBeforeUpdateEmail(auth.currentUser,email);feedback.textContent='Check your NEW email and follow the verification link. Your email is not changed until you verify it.';form.reset()}
+  catch(error){feedback.textContent=error.code==='auth/requires-recent-login'?'Firebase needs a recent sign-in. Do not sign out if you forgot your password—use project-admin recovery instead.':friendlyError(error)}
+  finally{submit.disabled=false}
+};
+$("#email-refresh").onclick=async()=>{const feedback=$("#email-change-status");if(!auth.currentUser)return;try{await reload(auth.currentUser);$("#account-email").textContent=auth.currentUser.email||'';feedback.textContent='Current email refreshed. If the new email is shown, you can send a password reset to it.'}catch(error){feedback.textContent='Could not refresh this session. Check Authentication → Users for the verified email before signing out.'}};
 $("#signup-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f),username=String(d.get("username")).trim(),usernameLower=username.toLowerCase(),email=String(d.get("email")).trim(),password=String(d.get("password"));if(!/^[A-Za-z0-9_]{3,20}$/.test(username))return showStatus("Username must be 3–20 letters, numbers, or underscores.",true);let cred,created=false;try{cred=await createUserWithEmailAndPassword(auth,email,password);await runTransaction(db,async t=>{const ur=doc(db,"usernames",usernameLower),ud=await t.get(ur);if(ud.exists()&&(await t.get(doc(db,"users",ud.data().uid))).exists())throw Error("That username is already taken.");t.set(ur,{uid:cred.user.uid,username});t.set(doc(db,"users",cred.user.uid),{username,usernameLower,displayName:username,bio:"",statusText:"",status:"online",lastActive:serverTimestamp(),currentGame:null,createdAt:serverTimestamp()})});created=true;f.reset();showStatus("Account created.")}catch(err){if(cred?.user&&!created)await deleteUser(cred.user).catch(()=>{});showStatus(friendlyError(err),true)}};
 $("#login-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f);try{showStatus("Logging in…");await signInWithEmailAndPassword(auth,String(d.get("email")).trim(),String(d.get("password")));f.reset();showStatus()}catch(err){showStatus(friendlyError(err),true)}};
 $("#password-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget;try{await updatePassword(auth.currentUser,String(new FormData(f).get("password")));f.reset();showStatus("Password changed.")}catch(err){showStatus(friendlyError(err),true)}};
@@ -58,6 +68,44 @@ $("#group-rename-form").onsubmit=async e=>{e.preventDefault();const name=String(
 $("#group-add-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,username=String(new FormData(f).get("username")).trim().toLowerCase();try{if(activeGroup.members.length>=8)throw Error("Groups can have up to 8 members.");const match=await getDoc(doc(db,"usernames",username));if(!match.exists())throw Error("That username does not exist.");const uid=match.data().uid;if(activeGroup.members.includes(uid))throw Error("That person is already in the group.");if(!(await getDoc(doc(db,"friendships",pairId(auth.currentUser.uid,uid)))).exists())throw Error("You can only add your friends.");await updateDoc(doc(db,"groupChats",activeGroup.id),{members:[...activeGroup.members,uid],updatedAt:serverTimestamp()});f.reset();showStatus("Member added.")}catch(err){showStatus(friendlyError(err),true)}};
 $("#group-leave").onclick=async()=>{if(!activeGroup)return;const owner=activeGroup.ownerUid===auth.currentUser.uid;if(!confirm(owner?"Delete this group for everyone?":"Leave this group?"))return;try{owner?await deleteDoc(doc(db,"groupChats",activeGroup.id)):await updateDoc(doc(db,"groupChats",activeGroup.id),{members:activeGroup.members.filter(uid=>uid!==auth.currentUser.uid)});activeGroup=null;stopMessages();$("#chat-title").textContent="Select a conversation";$("#chat-actions").hidden=true;$("#message-form").hidden=true;showStatus(owner?"Group deleted.":"You left the group.")}catch(err){showStatus(friendlyError(err),true)}};
 $("#friend-profile-back").onclick=()=>showView("friends");
+const profilePopover=document.createElement('div');profilePopover.className='profile-popover-overlay';profilePopover.hidden=true;document.body.append(profilePopover);
+profilePopover.addEventListener('click',event=>{if(event.target===profilePopover)profilePopover.hidden=true});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')profilePopover.hidden=true});
+document.addEventListener('simplegames:open-profile',event=>openProfileCard(event.detail.uid,event.detail.profile));
+function openProfileCard(uid,data){
+  profilePopover.replaceChildren();const card=document.createElement('section');card.className='profile-popover';card.setAttribute('role','dialog');card.setAttribute('aria-modal','true');card.setAttribute('aria-label','Member profile');
+  const banner=document.createElement('div');banner.className='profile-popover-banner';if(data.bannerImage){const image=document.createElement('img');image.src=data.bannerImage;image.alt='';banner.append(image)}
+  const close=button('×',()=>profilePopover.hidden=true);close.className='profile-popover-close';close.setAttribute('aria-label','Close profile');banner.append(close);
+  const avatar=document.createElement('span');avatar.className='profile-avatar';applyAvatar(avatar,data);
+  const name=document.createElement('h3');name.textContent=data.displayName||data.username||'Member';const username=document.createElement('p');username.className='profile-popover-username';username.textContent='@'+(data.username||'member');
+  const bio=document.createElement('p');bio.textContent=data.bio||data.statusText||'';
+  const feedback=document.createElement('p');feedback.className='profile-popover-feedback';feedback.setAttribute('aria-live','polite');
+  const add=button('Add Friend',async()=>{add.disabled=true;feedback.textContent='Sending…';try{
+    const me=auth.currentUser?.uid;if(!me)throw Error('Log in to add friends.');if(me===uid)throw Error('This is your profile.');
+    if((await getDoc(doc(db,'friendships',pairId(me,uid)))).exists()){add.textContent='Already friends';feedback.textContent='';return}
+    const incoming=await getDoc(doc(db,'friendRequests',`${uid}_${me}`));if(incoming.exists()&&incoming.data().status==='pending'){feedback.textContent='They already sent you a request. Open Friends → Requests to accept it.';add.disabled=false;return}
+    const ref=doc(db,'friendRequests',`${me}_${uid}`),existing=await getDoc(ref);
+    if(existing.exists()&&existing.data().status==='pending'){add.textContent='Request sent';feedback.textContent='';return}
+    if(existing.exists())await updateDoc(ref,{status:'pending',createdAt:serverTimestamp()});else await setDoc(ref,{fromUid:me,toUid:uid,status:'pending',createdAt:serverTimestamp()});
+    add.textContent='Request sent';feedback.textContent='';
+  }catch(error){feedback.textContent=friendlyError(error);add.disabled=false}});
+  if(uid===auth.currentUser?.uid){add.textContent='Your profile';add.disabled=true}else if(friends.some(friend=>friend.uid===uid)){add.textContent='Already friends';add.disabled=true}
+  const full=button('View full profile',()=>{profilePopover.hidden=true;panel.hidden=false;showFriendProfile(uid,data)});
+  const mutual=document.createElement('section');mutual.className='profile-mutual-friends';const mutualTitle=document.createElement('h4');mutualTitle.textContent='Mutual friends';const mutualList=document.createElement('div');mutualList.textContent='Checking…';mutual.append(mutualTitle,mutualList);
+  card.append(banner,avatar,name,username,bio,mutual,add,full,feedback);profilePopover.append(card);profilePopover.hidden=false;close.focus();
+  loadMutualFriends(uid,mutualTitle,mutualList);
+}
+async function loadMutualFriends(uid,title,list){
+  if(uid===auth.currentUser?.uid){title.textContent='Friends';list.textContent='This is your profile.';return}
+  try{
+    const candidates=friends.filter(friend=>friend.uid!==uid),shared=[];
+    // Read exact friendship records; never list another person's private friend list.
+    for(let offset=0;offset<candidates.length;offset+=8){const batch=await Promise.all(candidates.slice(offset,offset+8).map(async friend=>({friend,shared:(await getDoc(doc(db,'friendships',pairId(uid,friend.uid)))).exists()})));shared.push(...batch.filter(item=>item.shared).map(item=>item.friend))}
+    if(!list.isConnected)return;title.textContent=`Mutual friends · ${shared.length}`;list.replaceChildren();
+    if(!shared.length){list.textContent='No mutual friends yet.';return}
+    for(const friend of shared){const data=friendProfiles.get(friend.uid)||friend,item=button('',()=>openProfileCard(friend.uid,data));item.className='mutual-friend';const avatar=document.createElement('span');avatar.className='profile-avatar';applyAvatar(avatar,data);const name=document.createElement('span');name.textContent=data.displayName||data.username||'Friend';item.append(avatar,name);list.append(item)}
+  }catch(error){if(list.isConnected)list.textContent='Could not load mutual friends. Please try again.';console.error('Mutual friends:',error)}
+}
 function showFriendProfile(uid,supplied){const d=supplied||friendProfiles.get(uid);if(!d)return;profileLinkUsername=d.username;const box=$("#friend-profile-content");box.replaceChildren();const avatar=document.createElement("span"),name=document.createElement("h3"),user=document.createElement("p"),statusText=document.createElement("p"),bio=document.createElement("p"),activityLine=document.createElement("p"),stats=document.createElement("p"),earned=badgeFor(d);avatar.className="profile-avatar";applyAvatar(avatar,d);name.textContent=`${d.displayName||d.username}${earned?` ${earned}`:""}`;user.textContent=`@${d.username}`;statusText.className="profile-status-text";statusText.textContent=d.statusText||"";bio.textContent=d.bio||"No bio yet.";activityLine.textContent=activity(d);stats.textContent=`${Math.floor((d.stats?.playSeconds||0)/60)} minutes played`;box.append(avatar,name,user,statusText,bio,activityLine,stats);showView("friend-profile")}
 $("#copy-profile-link").onclick=async()=>{const url=new URL(location.href);url.search="";url.searchParams.set("user",profileLinkUsername);try{await navigator.clipboard.writeText(url.href);showStatus("Profile link copied.")}catch{showStatus(url.href)}};
 async function openLinkedProfile(){const username=new URLSearchParams(location.search).get("user")?.trim().toLowerCase();if(!username||profileLinkOpened||!auth.currentUser)return;profileLinkOpened=true;try{const nameDoc=await getDoc(doc(db,"usernames",username));if(!nameDoc.exists())throw Error("That profile does not exist.");const userDoc=await getDoc(doc(db,"users",nameDoc.data().uid));if(!userDoc.exists())throw Error("That profile does not exist.");panel.hidden=false;showFriendProfile(nameDoc.data().uid,userDoc.data())}catch(err){showStatus(friendlyError(err),true)}}
