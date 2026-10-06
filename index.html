@@ -6,7 +6,7 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=11" />
+    <link rel="stylesheet" href="styles.css?v=12" />
   </head>
   <body>
     <header class="site-header">
@@ -33,15 +33,17 @@
     <main class="page-shell">
       <section class="dashboard-hero" aria-labelledby="dashboard-title">
         <div class="hero-copy">
-          <span class="hero-kicker">YOUR GAME HUB</span>
-          <h1 id="dashboard-title">Play something <span>simple.</span></h1>
-          <p>Jump back in, find a new favorite, or see what your friends are playing.</p>
+          <h1 id="dashboard-title">Simple <span>Games</span></h1>
+          <p>What are we playing today?</p>
+          <label class="hero-search"><span class="sr-only">Search games</span><span aria-hidden="true">⌕</span><input id="hero-game-search" type="search" placeholder="Search games..." autocomplete="off" /></label>
         </div>
         <div class="dashboard-shortcuts" aria-label="Quick actions">
           <button type="button" data-dashboard-action="games"><span>▦</span><strong>Games</strong><small>Browse the library</small></button>
-          <button type="button" data-dashboard-action="favorites"><span>★</span><strong>Favorites</strong><small>Your saved games</small></button>
-          <button type="button" data-dashboard-action="account"><span>◎</span><strong>Social</strong><small>Friends and messages</small></button>
-          <button type="button" data-dashboard-action="settings"><span>⚙</span><strong>Customize</strong><small>Make it yours</small></button>
+          <button type="button" data-dashboard-action="account"><span>◯</span><strong>Friends</strong><small>Chat and profiles</small></button>
+          <button type="button" data-dashboard-action="ai"><span>✦</span><strong>AI</strong><small>Ask Simple AI</small></button>
+          <button type="button" data-dashboard-action="random"><span>◈</span><strong>Random</strong><small>Surprise me</small></button>
+          <button type="button" data-dashboard-action="leaderboard"><span>♕</span><strong>Leaderboard</strong><small>Top playtime</small></button>
+          <button type="button" data-dashboard-action="settings"><span>⚙</span><strong>Settings</strong><small>Make it yours</small></button>
         </div>
       </section>
       <section class="intro" id="game-library" aria-labelledby="featured-title">
@@ -166,6 +168,15 @@
 
       </section>
     </main>
+
+    <div class="info-overlay ai-panel" id="ai-panel" hidden>
+      <section class="ai-card" role="dialog" aria-modal="true" aria-labelledby="ai-title">
+        <div class="settings-heading"><div><span class="hero-kicker">SIMPLE AI</span><h2 id="ai-title">What do you want to play?</h2></div><button id="ai-close" type="button" aria-label="Close Simple AI">×</button></div>
+        <div class="ai-messages" id="ai-messages" aria-live="polite"><p class="ai-message assistant">Hey! I can recommend games, find something by category, or help you use Simple Games.</p></div>
+        <div class="ai-suggestions"><button type="button">Recommend a game</button><button type="button">Best racing game?</button><button type="button">Show my favorites</button></div>
+        <form class="ai-form" id="ai-form"><input name="message" maxlength="180" placeholder="Ask Simple AI..." autocomplete="off" required /><button type="submit">Send</button></form>
+      </section>
+    </div>
     <section class="game-overlay" id="game-overlay" hidden aria-label="Game player">
       <header class="game-toolbar">
         <button class="back-link game-close" id="game-close" type="button">← All games</button>
@@ -278,7 +289,8 @@
     </section>
     <div class="game-loader" id="game-loader" hidden><span id="game-loader-spinner"></span><p id="game-loader-status">Loading game…</p><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">Back to games</button></div></div>
     <script src="clock.js?v=2"></script>
-    <script src="features.js?v=15"></script>
+    <script src="features.js?v=16"></script>
+    <script type="module" src="ai.js?v=2"></script>
     <script src="play.js?v=24"></script>
     <script type="module" src="social.js?v=22"></script>
     <script type="module" src="community.js?v=3"></script>

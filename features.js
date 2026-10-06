@@ -132,8 +132,16 @@ document.querySelector(".dashboard-shortcuts")?.addEventListener("click",(event)
   if(action==="games")document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"});
   if(action==="favorites"){if(!favoritesOnly)favoritesFilter.click();document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})}
   if(action==="account")document.querySelector("#account-open")?.click();
+  if(action==="ai")document.querySelector("#ai-panel").hidden=false;
+  if(action==="random"){const cards=[...document.querySelectorAll(".game-card:not([hidden])")];cards[Math.floor(Math.random()*cards.length)]?.querySelector("a")?.click()}
+  if(action==="leaderboard"){document.querySelector("#account-open")?.click();setTimeout(()=>document.querySelector('[data-social-view="leaderboard"]')?.click(),0)}
   if(action==="settings")document.querySelector("#settings-open")?.click();
 });
+
+const heroSearch=document.querySelector("#hero-game-search");
+heroSearch?.addEventListener("input",()=>{gameSearch.value=heroSearch.value;gameSearch.dispatchEvent(new Event("input"));document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})});
+heroSearch?.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})}});
+
 filterGames();
 
 function applyTheme(choice) {
