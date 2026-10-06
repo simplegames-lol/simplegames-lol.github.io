@@ -6,7 +6,7 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=12" />
+    <link rel="stylesheet" href="styles.css?v=13" />
   </head>
   <body>
     <header class="site-header">
@@ -16,7 +16,8 @@
       </a>
       <div class="header-right">
         <a class="rail-link active" href="/"><span class="rail-icon">⌂</span><span>Home</span></a>
-        <a class="rail-link" href="#game-library"><span class="rail-icon">▦</span><span>Games</span></a>
+        <a class="rail-link" id="games-open" href="#game-library"><span class="rail-icon">▦</span><span>Games</span></a>
+        <button class="header-button" id="servers-open" type="button"><span class="rail-icon">◫</span><span>Servers</span></button>
         <button class="header-button account-button" id="account-open" type="button"><span class="rail-icon">◎</span><span class="account-label">Account</span><span class="notification-badge" id="account-unread" hidden>0</span></button>
         <a class="rail-link" href="/" data-form="request"><span class="rail-icon">＋</span><span>Request</span></a>
         <a class="rail-link" href="/" data-form="bug"><span class="rail-icon">!</span><span>Report bug</span></a>
@@ -41,17 +42,17 @@
           <button type="button" data-dashboard-action="games"><span>▦</span><strong>Games</strong><small>Browse the library</small></button>
           <button type="button" data-dashboard-action="account"><span>◯</span><strong>Friends</strong><small>Chat and profiles</small></button>
           <button type="button" data-dashboard-action="ai"><span>✦</span><strong>AI</strong><small>Ask Simple AI</small></button>
-          <button type="button" data-dashboard-action="random"><span>◈</span><strong>Random</strong><small>Surprise me</small></button>
+          <button type="button" data-dashboard-action="servers"><span>◫</span><strong>Servers</strong><small>Your communities</small></button>
           <button type="button" data-dashboard-action="leaderboard"><span>♕</span><strong>Leaderboard</strong><small>Top playtime</small></button>
           <button type="button" data-dashboard-action="settings"><span>⚙</span><strong>Settings</strong><small>Make it yours</small></button>
         </div>
       </section>
-      <section class="intro" id="game-library" aria-labelledby="featured-title">
+      <section class="intro" id="game-library" aria-labelledby="featured-title" hidden>
         <h1 id="featured-title">Games</h1>
         <p>Choose a game and start playing.</p>
       </section>
 
-      <section class="library-tools" aria-label="Game library tools">
+      <section class="library-tools" aria-label="Game library tools" hidden>
         <label class="search-box">
           <span class="sr-only">Search games</span>
           <input id="game-search" type="search" placeholder="Search games..." autocomplete="off" />
@@ -74,7 +75,7 @@
         <span class="result-count" id="result-count"></span>
       </section>
 
-      <section class="game-grid" aria-label="Games">
+      <section class="game-grid" aria-label="Games" hidden>
         <article class="game-card">
           <a class="game-card__image-link" href="/bouncy-basketball/" aria-label="Play Bouncy Basketball">
             <img src="assets/bouncy-basketball.png" alt="Bouncy Basketball game cover" />
@@ -171,12 +172,24 @@
 
     <div class="info-overlay ai-panel" id="ai-panel" hidden>
       <section class="ai-card" role="dialog" aria-modal="true" aria-labelledby="ai-title">
-        <div class="settings-heading"><div><span class="hero-kicker">SIMPLE AI</span><h2 id="ai-title">What do you want to play?</h2></div><button id="ai-close" type="button" aria-label="Close Simple AI">×</button></div>
-        <div class="ai-messages" id="ai-messages" aria-live="polite"><p class="ai-message assistant">Hey! I can recommend games, find something by category, or help you use Simple Games.</p></div>
-        <div class="ai-suggestions"><button type="button">Recommend a game</button><button type="button">Best racing game?</button><button type="button">Show my favorites</button></div>
+        <div class="settings-heading"><div><span class="hero-kicker">SIMPLE AI</span><h2 id="ai-title">Ask anything</h2></div><button id="ai-close" type="button" aria-label="Close Simple AI">×</button></div>
+        <div class="ai-messages" id="ai-messages" aria-live="polite"><p class="ai-message assistant">Hey! Ask me anything—homework, ideas, explanations, games, or whatever is on your mind.</p></div>
+        <div class="ai-suggestions"><button type="button">Explain black holes simply</button><button type="button">Help me study</button><button type="button">Recommend a game</button></div>
         <form class="ai-form" id="ai-form"><input name="message" maxlength="180" placeholder="Ask Simple AI..." autocomplete="off" required /><button type="submit">Send</button></form>
       </section>
     </div>
+    <section class="server-panel" id="server-panel" hidden aria-label="Community servers">
+      <header class="server-topbar"><div><span class="hero-kicker">COMMUNITIES</span><h2>Servers</h2></div><button id="servers-close" type="button" aria-label="Close servers">×</button></header>
+      <div class="server-layout">
+        <aside class="server-list-pane"><button class="submit-button" id="server-create-open" type="button">＋ Create server</button><div id="server-list" class="server-list"><p>No servers yet.</p></div></aside>
+        <aside class="channel-pane"><h3 id="server-name">Choose a server</h3><div id="channel-list" class="channel-list"></div><form id="channel-form" class="channel-form" hidden><input name="channel" maxlength="24" placeholder="new-channel" required /><button type="submit" aria-label="Add channel">＋</button></form><button class="text-button" id="server-leave" type="button" hidden>Leave server</button></aside>
+        <main class="server-chat"><div class="server-chat-heading"><div><span>#</span><h3 id="channel-title">general</h3></div><button class="secondary-button" id="server-invite-open" type="button" hidden>Invite member</button></div><div id="server-messages" class="server-messages"><div class="server-empty"><h3>Your communities, your conversations.</h3><p>Create a server or choose one from the left.</p></div></div><form id="server-message-form" class="server-message-form" hidden><input name="message" maxlength="500" placeholder="Message #general" autocomplete="off" required /><button class="submit-button" type="submit">Send</button></form></main>
+        <aside class="member-pane"><h3>Members</h3><div id="server-members" class="server-members"><p>Select a server</p></div></aside>
+      </div>
+      <div class="server-dialog" id="server-create-dialog" hidden><form class="server-dialog-card" id="server-create-form"><div class="settings-heading"><h2>Create a server</h2><button type="button" data-server-dialog-close>×</button></div><label>Server name<input name="name" maxlength="32" required /></label><label>Invite by username <small>(optional, comma-separated)</small><input name="members" placeholder="friend1, friend2" /></label><button class="submit-button" type="submit">Create server</button></form></div>
+      <div class="server-dialog" id="server-invite-dialog" hidden><form class="server-dialog-card" id="server-invite-form"><div class="settings-heading"><h2>Invite a member</h2><button type="button" data-server-dialog-close>×</button></div><label>Exact username<input name="username" required /></label><button class="submit-button" type="submit">Add member</button></form></div>
+      <p class="server-status" id="server-status" aria-live="polite"></p>
+    </section>
     <section class="game-overlay" id="game-overlay" hidden aria-label="Game player">
       <header class="game-toolbar">
         <button class="back-link game-close" id="game-close" type="button">← All games</button>
@@ -289,10 +302,11 @@
     </section>
     <div class="game-loader" id="game-loader" hidden><span id="game-loader-spinner"></span><p id="game-loader-status">Loading game…</p><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">Back to games</button></div></div>
     <script src="clock.js?v=2"></script>
-    <script src="features.js?v=16"></script>
+    <script src="features.js?v=17"></script>
     <script type="module" src="ai.js?v=2"></script>
     <script src="play.js?v=24"></script>
     <script type="module" src="social.js?v=22"></script>
     <script type="module" src="community.js?v=3"></script>
+    <script type="module" src="servers.js?v=1"></script>
   </body>
 </html>

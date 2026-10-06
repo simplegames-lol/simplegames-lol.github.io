@@ -129,18 +129,21 @@ favoritesFilter?.addEventListener("click", () => {
 document.querySelector(".dashboard-shortcuts")?.addEventListener("click",(event)=>{
   const action=event.target.closest("[data-dashboard-action]")?.dataset.dashboardAction;
   if(!action)return;
-  if(action==="games")document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"});
-  if(action==="favorites"){if(!favoritesOnly)favoritesFilter.click();document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})}
+  if(action==="games")openLibrary();
+  if(action==="favorites"){if(!favoritesOnly)favoritesFilter.click();openLibrary()}
   if(action==="account")document.querySelector("#account-open")?.click();
   if(action==="ai")document.querySelector("#ai-panel").hidden=false;
-  if(action==="random"){const cards=[...document.querySelectorAll(".game-card:not([hidden])")];cards[Math.floor(Math.random()*cards.length)]?.querySelector("a")?.click()}
+  if(action==="servers")document.querySelector("#servers-open")?.click();
   if(action==="leaderboard"){document.querySelector("#account-open")?.click();setTimeout(()=>document.querySelector('[data-social-view="leaderboard"]')?.click(),0)}
   if(action==="settings")document.querySelector("#settings-open")?.click();
 });
 
 const heroSearch=document.querySelector("#hero-game-search");
-heroSearch?.addEventListener("input",()=>{gameSearch.value=heroSearch.value;gameSearch.dispatchEvent(new Event("input"));document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})});
-heroSearch?.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})}});
+const librarySections=[document.querySelector("#game-library"),document.querySelector(".library-tools"),document.querySelector(".game-grid")];
+function openLibrary(){librarySections.forEach(section=>{if(section)section.hidden=false});document.querySelector("#game-library")?.scrollIntoView({behavior:"smooth"})}
+document.querySelector("#games-open")?.addEventListener("click",event=>{event.preventDefault();openLibrary()});
+heroSearch?.addEventListener("input",()=>{gameSearch.value=heroSearch.value;gameSearch.dispatchEvent(new Event("input"));if(heroSearch.value.trim())openLibrary()});
+heroSearch?.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();openLibrary()}});
 
 filterGames();
 

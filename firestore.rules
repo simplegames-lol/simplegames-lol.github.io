@@ -193,6 +193,56 @@ service cloud.firestore {
       }
     }
 
+    match /servers/{serverId} {
+      allow read: if isMember(resource.data.members);
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.auth.uid in request.resource.data.members
+        && request.resource.data.members.size() >= 1
+        && request.resource.data.members.size() <= 50
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 32
+        && request.resource.data.channels is list
+        && request.resource.data.channels.size() >= 1
+        && request.resource.data.channels.size() <= 30;
+      allow update: if isMember(resource.data.members)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 32
+        && request.resource.data.channels is list
+        && request.resource.data.channels.size() >= 1
+        && request.resource.data.channels.size() <= 30
+        && request.resource.data.members.size() >= 1
+        && request.resource.data.members.size() <= 50
+        && (
+          (request.auth.uid == resource.data.ownerUid
+            && resource.data.ownerUid in request.resource.data.members)
+          || (request.auth.uid != resource.data.ownerUid
+            && !(request.auth.uid in request.resource.data.members)
+            && request.resource.data.members.hasOnly(resource.data.members)
+            && request.resource.data.members.size() == resource.data.members.size() - 1)
+        );
+      allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
+
+      match /messages/{messageId} {
+        allow read: if isMember(get(/databases/$(database)/documents/servers/$(serverId)).data.members);
+        allow create: if signedIn()
+          && isMember(get(/databases/$(database)/documents/servers/$(serverId)).data.members)
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.senderName is string
+          && request.resource.data.senderName.size() > 0
+          && request.resource.data.senderName.size() <= 30
+          && request.resource.data.channel in get(/databases/$(database)/documents/servers/$(serverId)).data.channels
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 500;
+        allow update: if false;
+        allow delete: if signedIn() && resource.data.senderId == request.auth.uid;
+      }
+    }
+
     match /blocks/{blockId} {
       // Friend requests check both possible block IDs. Signed-in users must be
       // able to receive a normal "not found" result when neither record exists.
