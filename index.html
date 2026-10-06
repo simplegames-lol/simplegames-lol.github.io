@@ -6,7 +6,7 @@
     <meta name="description" content="Simple Games — pick a game and play." />
     <title>Simple Games</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="stylesheet" href="styles.css?v=14" />
   </head>
   <body>
     <header class="site-header">
@@ -23,7 +23,6 @@
         <a class="rail-link" href="/" data-form="bug"><span class="rail-icon">!</span><span>Report bug</span></a>
         <a class="rail-link updates-link" href="/" data-page="updates"><span class="rail-icon">↻</span><span>Updates</span><span class="update-dot" id="update-dot" aria-label="New updates"></span></a>
         <a class="rail-link" href="/" data-page="announcements"><span class="rail-icon">◉</span><span>News</span></a>
-        <button class="header-button" id="theme-toggle" type="button" aria-label="Toggle light or dark theme"><span class="rail-icon">◐</span><span>Theme</span></button>
         <button class="header-button" id="settings-open" type="button"><span class="rail-icon">⚙</span><span>Settings</span></button>
         <time class="local-time menu-time" aria-label="Your local time"></time>
       </div>
@@ -181,13 +180,14 @@
     <section class="server-panel" id="server-panel" hidden aria-label="Community servers">
       <header class="server-topbar"><div><span class="hero-kicker">COMMUNITIES</span><h2>Servers</h2></div><button id="servers-close" type="button" aria-label="Close servers">×</button></header>
       <div class="server-layout">
-        <aside class="server-list-pane"><button class="submit-button" id="server-create-open" type="button">＋ Create server</button><div id="server-list" class="server-list"><p>No servers yet.</p></div></aside>
-        <aside class="channel-pane"><h3 id="server-name">Choose a server</h3><div id="channel-list" class="channel-list"></div><form id="channel-form" class="channel-form" hidden><input name="channel" maxlength="24" placeholder="new-channel" required /><button type="submit" aria-label="Add channel">＋</button></form><button class="text-button" id="server-leave" type="button" hidden>Leave server</button></aside>
-        <main class="server-chat"><div class="server-chat-heading"><div><span>#</span><h3 id="channel-title">general</h3></div><button class="secondary-button" id="server-invite-open" type="button" hidden>Invite member</button></div><div id="server-messages" class="server-messages"><div class="server-empty"><h3>Your communities, your conversations.</h3><p>Create a server or choose one from the left.</p></div></div><form id="server-message-form" class="server-message-form" hidden><input name="message" maxlength="500" placeholder="Message #general" autocomplete="off" required /><button class="submit-button" type="submit">Send</button></form></main>
+        <aside class="server-list-pane"><button class="server-nav-button active" id="server-discover-open" type="button">⌕ Discover</button><button class="server-nav-button" id="server-my-open" type="button">◫ My servers</button><button class="submit-button" id="server-create-open" type="button">＋ Create server</button><div id="server-list" class="server-list"><p>No servers yet.</p></div></aside>
+        <aside class="channel-pane" id="channel-pane" hidden><h3 id="server-name">Choose a server</h3><div id="channel-list" class="channel-list"></div><form id="channel-form" class="channel-form" hidden><input name="channel" maxlength="24" placeholder="new-channel" required /><button type="submit" aria-label="Add channel">＋</button></form><button class="text-button" id="server-roles-open" type="button" hidden>Manage roles</button><button class="text-button" id="server-leave" type="button" hidden>Leave server</button></aside>
+        <main class="server-chat"><section class="server-discover" id="server-discover"><div class="discover-heading"><div><span class="hero-kicker">FIND YOUR PEOPLE</span><h2>Discover servers</h2><p>Browse public communities or create your own.</p></div><select id="server-sort" aria-label="Sort servers"><option value="members">Most members</option><option value="newest">Newest</option><option value="az">Name A–Z</option></select></div><div class="discover-grid" id="server-discover-list"><p>Loading public servers…</p></div></section><div class="server-chat-heading" id="server-chat-heading" hidden><div><span>#</span><h3 id="channel-title">general</h3></div><button class="secondary-button" id="server-invite-open" type="button" hidden>Invite member</button></div><div id="server-messages" class="server-messages" hidden></div><form id="server-message-form" class="server-message-form" hidden><input name="message" maxlength="500" placeholder="Message #general" autocomplete="off" required /><button class="submit-button" type="submit">Send</button></form></main>
         <aside class="member-pane"><h3>Members</h3><div id="server-members" class="server-members"><p>Select a server</p></div></aside>
       </div>
-      <div class="server-dialog" id="server-create-dialog" hidden><form class="server-dialog-card" id="server-create-form"><div class="settings-heading"><h2>Create a server</h2><button type="button" data-server-dialog-close>×</button></div><label>Server name<input name="name" maxlength="32" required /></label><label>Invite by username <small>(optional, comma-separated)</small><input name="members" placeholder="friend1, friend2" /></label><button class="submit-button" type="submit">Create server</button></form></div>
+      <div class="server-dialog" id="server-create-dialog" hidden><form class="server-dialog-card" id="server-create-form"><div class="settings-heading"><h2>Create a server</h2><button type="button" data-server-dialog-close>×</button></div><label>Server name<input name="name" maxlength="32" required /></label><label>Description<input name="description" maxlength="120" placeholder="What is your server about?" required /></label><label>Category<select name="category"><option>Gaming</option><option>Community</option><option>School</option><option>Art</option><option>Music</option><option>Other</option></select></label><label class="check-setting"><input name="isPublic" type="checkbox" checked /> Show in Discover</label><label>Invite by username <small>(optional, comma-separated)</small><input name="members" placeholder="friend1, friend2" /></label><button class="submit-button" type="submit">Create server</button></form></div>
       <div class="server-dialog" id="server-invite-dialog" hidden><form class="server-dialog-card" id="server-invite-form"><div class="settings-heading"><h2>Invite a member</h2><button type="button" data-server-dialog-close>×</button></div><label>Exact username<input name="username" required /></label><button class="submit-button" type="submit">Add member</button></form></div>
+      <div class="server-dialog" id="server-roles-dialog" hidden><div class="server-dialog-card"><div class="settings-heading"><h2>Server roles</h2><button type="button" data-server-dialog-close>×</button></div><form id="server-role-form" class="role-form"><input name="name" maxlength="20" placeholder="Role name" required /><input name="color" type="color" value="#55b3ff" /><button class="submit-button" type="submit">Create role</button></form><form id="server-role-assign-form" class="role-form"><select name="member" required></select><select name="role" required></select><button class="submit-button" type="submit">Assign role</button></form><div id="server-role-list" class="server-role-list"></div></div></div>
       <p class="server-status" id="server-status" aria-live="polite"></p>
     </section>
     <section class="game-overlay" id="game-overlay" hidden aria-label="Game player">
@@ -300,13 +300,13 @@
         </div>
       </div>
     </section>
-    <div class="game-loader" id="game-loader" hidden><span id="game-loader-spinner"></span><p id="game-loader-status">Loading game…</p><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">Back to games</button></div></div>
+    <div class="game-loader" id="game-loader" hidden><div class="loader-card"><div class="loader-logo">SG</div><span id="game-loader-spinner"></span><p id="game-loader-status">Loading game…</p><button class="loader-sound" id="loader-sound" type="button" aria-pressed="true">🔊 Loading sounds on</button><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">Back to games</button></div></div></div>
     <script src="clock.js?v=2"></script>
     <script src="features.js?v=17"></script>
     <script type="module" src="ai.js?v=2"></script>
-    <script src="play.js?v=24"></script>
-    <script type="module" src="social.js?v=22"></script>
+    <script src="play.js?v=25"></script>
+    <script type="module" src="social.js?v=23"></script>
     <script type="module" src="community.js?v=3"></script>
-    <script type="module" src="servers.js?v=1"></script>
+    <script type="module" src="servers.js?v=2"></script>
   </body>
 </html>

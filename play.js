@@ -27,8 +27,14 @@ const loader = document.querySelector("#game-loader");
 const loaderStatus = document.querySelector("#game-loader-status");
 const loaderSpinner = document.querySelector("#game-loader-spinner");
 const loaderActions = document.querySelector("#loader-actions");
+const loaderSound = document.querySelector("#loader-sound");
 let loadTimer = 0;
 let currentGameUrl = "";
+let soundOn = true, soundTimer = 0, audioContext;
+function loadingTone(frequency=360){if(!soundOn)return;try{audioContext??=new AudioContext();const oscillator=audioContext.createOscillator(),gain=audioContext.createGain();oscillator.frequency.value=frequency;gain.gain.setValueAtTime(.035,audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+.12);oscillator.connect(gain).connect(audioContext.destination);oscillator.start();oscillator.stop(audioContext.currentTime+.13)}catch{}}
+function startLoadingSound(){clearInterval(soundTimer);loadingTone(330);soundTimer=setInterval(()=>loadingTone(430),1100)}
+function stopLoadingSound(done=false){clearInterval(soundTimer);soundTimer=0;if(done)loadingTone(620)}
+loaderSound?.addEventListener("click",()=>{soundOn=!soundOn;loaderSound.setAttribute("aria-pressed",String(soundOn));loaderSound.textContent=soundOn?"🔊 Loading sounds on":"🔇 Loading sounds off";if(soundOn)startLoadingSound();else stopLoadingSound()});
 
 if (window.location.pathname.endsWith("/index.html")) {
   history.replaceState(null, "", "/");
@@ -52,6 +58,7 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   loaderSpinner.hidden = false;
   loaderActions.hidden = true;
   loader.hidden = false;
+  startLoadingSound();
   clearTimeout(loadTimer);
   loadTimer = setTimeout(() => {
     loader.hidden = false;
@@ -67,6 +74,7 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
 
 function closeGame() {
   clearTimeout(loadTimer);
+  stopLoadingSound();
   overlay.hidden = true;
   player.src = "about:blank";
   document.querySelector("#game-loader").hidden = true;
@@ -74,9 +82,10 @@ function closeGame() {
   window.dispatchEvent(new CustomEvent("simplegames:stop-playing"));
 }
 
-player.addEventListener("load", () => { clearTimeout(loadTimer); loader.hidden = true; });
+player.addEventListener("load", () => { clearTimeout(loadTimer); loader.hidden = true; stopLoadingSound(true); });
 document.querySelector("#game-retry")?.addEventListener("click", () => {
   loaderStatus.textContent = "Trying again…";
+  startLoadingSound();
   loaderSpinner.hidden = false;
   loaderActions.hidden = true;
   player.src = "about:blank";
@@ -87,11 +96,11 @@ document.querySelector("#game-error-close")?.addEventListener("click", closeGame
 const pages = {
   updates: {
     title: "Update Log",
-    content: '<section class="intro"><h1>Update Log</h1></section><ol class="updates-list"><li class="update-entry"><h2>Big Site Update</h2><p>Redesigned Simple Games with a cleaner dashboard, glass sidebar, faster shortcuts, improved game browsing, and a more focused library. Also added accounts, uploaded profile pictures, usernames and username changes, searchable friends, pinned conversations, direct profile links, profile statuses, managed group chats, group unread alerts, friend requests and removal, private messaging, emoji reactions, message editing, quoted replies, small image and GIF sharing, message deletion, notification sounds, unread badges, typing indicators, read receipts, friend profiles, profile badges, online and last-active status, friend activity, privacy controls, Do Not Disturb, game ratings, most-played and top-rated sorting, playtime tracking and an account-only leaderboard, cloud-synced customization, account settings, password resets, blocking and reporting, search, favorites, category filters, themes, timezone controls, request and bug forms, improved game loading errors, mobile navigation, and a custom 404 page.</p></li></ol>'
+    content: '<ol class="updates-list"><li class="update-entry"><h2>Big Site Update</h2><p>Redesigned Simple Games with a cleaner dashboard, faster shortcuts, improved browsing, accounts, friends, chat, profiles, live status, ratings, playtime, AI, and community servers.</p></li></ol>'
   },
   announcements: {
     title: "Announcements",
-    content: '<section class="intro"><h1>Announcements</h1></section><div class="update-entry"><p>More games coming soon!</p></div>'
+    content: '<div class="update-entry"><h2>More games coming soon</h2><p>New games and server improvements are on the way.</p></div>'
   }
 };
 
