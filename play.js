@@ -1,5 +1,26 @@
 (() => {
 const games = {
+  "/snow-rider-3d/": "https://classroomlesson.github.io/basic-ruffle-player/html/snow_rider_3d/index.html",
+  "/cookie-clicker/": "https://classroomlesson.github.io/basic-ruffle-player/html/cookie_clicker/index.html",
+  "/1v1-lol/": "https://classroomlesson.github.io/basic-ruffle-player/html/1v1lol/index.html",
+  "/dune/": "https://classroomlesson.github.io/basic-ruffle-player/html/dune/index.html",
+  "/doge-miner/": "https://classroomlesson.github.io/basic-ruffle-player/html/doge_miner/index.html",
+  "/rooftop-snipers/": "https://classroomlesson.github.io/basic-ruffle-player/html/rooftop_snipers/index.html",
+  "/house-painter/": "https://db2.duckmath.org/2023/construct/238/house-painter/index.html",
+  "/tap-tap-shots/": "https://db2.duckmath.org/2023/q/1/tap-tap-shots/index.html",
+  "/blocky-puzzle/": "https://classroomlesson.github.io/basic-ruffle-player/html/blocky_puzzle/index.html",
+  "/backrooms/": "https://classroomlesson.github.io/basic-ruffle-player/html/backroomsv1.5/index.html",
+  "/drift-king/": "https://db2.duckmath.org/2024/unity/drift-king/index.html",
+  "/granny/": "https://classroomlesson.github.io/basic-ruffle-player/html/granny/index.html",
+  "/president-simulator/": "https://classroomlesson.github.io/basic-ruffle-player/html/president_simulator/index.html",
+  "/pac-man/": "https://classroomlesson.github.io/basic-ruffle-player/html/pac_man/index.html",
+  "/8-ball-pool-billiard/": "https://db2.duckmath.org/2022/unity3/8-ball-pool-billiard/index.html",
+  "/flappy-bird/": "https://classroomlesson.github.io/basic-ruffle-player/html/flappy_bird/index.html",
+  "/stickman-parkour/": "https://classroomlesson.github.io/basic-ruffle-player/html/stickman_parkour/index.html",
+  "/mini-golf/": "https://classroomlesson.github.io/basic-ruffle-player/html/mini_golf/index.html",
+  "/plants-vs-zombies/": "https://classroomlesson.github.io/basic-ruffle-player/html/pvz/index.html",
+  "/fast-food-rush/": "https://db2.duckmath.org/2025/unity/fast-food-rush/index.html",
+  "/football-legends/": "https://ubg005.gitlab.io/football-legends/",
   "/snek-io/": "https://db2.duckmath.org/2026/more/snek-io/pre.html",
   "/super-liquid-soccer/": "https://classroomlesson.github.io/basic-ruffle-player/html/super_liquid_soccer/index.html",
   "/moto-x3m/": "https://db2.duckmath.org/2024/gm/moto-x3m/index.html",
@@ -34,6 +55,10 @@ const games = {
 
 const overlay = document.querySelector("#game-overlay");
 const player = document.querySelector("#game-player");
+document.querySelector('#game-fullscreen')?.addEventListener('click', async () => {
+  try { if(document.fullscreenElement)await document.exitFullscreen();else await overlay.requestFullscreen(); }
+  catch { loaderStatus.textContent='Fullscreen is unavailable in this browser.'; }
+});
 const title = document.querySelector("#game-title");
 const closeButton = document.querySelector("#game-close");
 const infoOverlay = document.querySelector("#info-overlay");
@@ -91,6 +116,7 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
 });
 
 function closeGame() {
+  if(document.fullscreenElement===overlay)document.exitFullscreen().catch(()=>{});
   clearTimeout(loadTimer);
   stopLoadingSound();
   overlay.hidden = true;

@@ -43,6 +43,27 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
+  "/snow-rider-3d/": "racing",
+  "/cookie-clicker/": "simulation",
+  "/1v1-lol/": "multiplayer",
+  "/dune/": "arcade",
+  "/doge-miner/": "simulation",
+  "/rooftop-snipers/": "action",
+  "/house-painter/": "puzzle",
+  "/tap-tap-shots/": "sports",
+  "/blocky-puzzle/": "puzzle",
+  "/backrooms/": "action",
+  "/drift-king/": "racing",
+  "/granny/": "action",
+  "/president-simulator/": "simulation",
+  "/pac-man/": "arcade",
+  "/8-ball-pool-billiard/": "sports",
+  "/flappy-bird/": "arcade",
+  "/stickman-parkour/": "action",
+  "/mini-golf/": "sports",
+  "/plants-vs-zombies/": "action",
+  "/fast-food-rush/": "simulation",
+  "/football-legends/": "sports",
   "/duckcraft/": "simulation",
   "/gun-spin/": "arcade",
   "/golf-orbit/": "sports",
@@ -142,7 +163,7 @@ document.querySelector(".dashboard-shortcuts")?.addEventListener("click",(event)
   if(!action)return;
   if(action==="games")openLibrary();
   if(action==="favorites"){if(!favoritesOnly)favoritesFilter.click();openLibrary()}
-  if(action==="account")document.querySelector("#account-open")?.click();
+  if(action==="account"){document.querySelector("#account-open")?.click();document.querySelector('[data-social-view="friends"]')?.click()}
   if(action==="ai")document.querySelector("#ai-panel").hidden=false;
   if(action==="servers")document.querySelector("#servers-open")?.click();
   if(action==="leaderboard"){document.querySelector("#account-open")?.click();setTimeout(()=>document.querySelector('[data-social-view="leaderboard"]')?.click(),0)}
@@ -248,7 +269,6 @@ applyDisplaySettings();
 function applyAppearance() {
   let accent = storage.read("sg-accent", "#153a63");
   let background = storage.read("sg-background", "#050608");
-  if (accent === "#173f6d") { accent = "#153a63"; storage.write("sg-accent", accent); }
   if (background === "#202225") { background = "#050608"; storage.write("sg-background", background); }
   const image = storage.read("sg-background-image", "");
   const style = storage.read("sg-background-style", "cover");
@@ -262,6 +282,7 @@ function applyAppearance() {
 }
 
 accentColor.addEventListener("input", () => { storage.write("sg-accent", accentColor.value); applyAppearance(); });
+accentColor.addEventListener("change", () => { storage.write("sg-accent", accentColor.value); applyAppearance(); });
 backgroundColor.addEventListener("input", () => { storage.write("sg-background", backgroundColor.value); applyAppearance(); });
 backgroundImageFile?.addEventListener("change", () => {
   const file = backgroundImageFile.files?.[0];
@@ -306,7 +327,10 @@ document.querySelector("#settings-close")?.addEventListener("click", closeSettin
 settingsPanel?.addEventListener("click", (event) => { if (event.target === settingsPanel) closeSettings(); });
 document.querySelector("#reset-settings")?.addEventListener("click", () => {
   ["sg-theme", "sg-card-size", "sg-favorites", "sg-timezone", "sg-accent", "sg-background", "sg-background-image", "sg-background-style", "sg-show-menu-time", "sg-show-game-time"].forEach((key) => localStorage.removeItem(key));
-  location.reload();
+  const defaults={"sg-theme":"dark","sg-card-size":"normal","sg-timezone":"auto","sg-accent":"#153a63","sg-background":"#000000","sg-background-image":"","sg-background-style":"cover","sg-show-menu-time":true,"sg-show-game-time":true,"sg-click-sound":"soft","sg-message-popups":true,"sg-server-notifications":"pings","sg-sidebar-closed":false};
+  Object.entries(defaults).forEach(([key,value])=>storage.write(key,value));
+  applyAppearance();applyTheme("dark");themeSelect.value="dark";cardSize.value="normal";root.dataset.cardSize="normal";timezoneSelect.value="auto";applyDisplaySettings();dispatchEvent(new Event("simplegames:timezone"));
+  document.dispatchEvent(new Event("simplegames:settings-reset"));
 });
 
 window.addEventListener("simplegames:play", () => {
@@ -316,6 +340,7 @@ player?.addEventListener("load", () => { loader.hidden = true; });
 
 const updateVersion = "2026-09-24-accounts";
 const updateDot = document.querySelector("#update-dot");
+document.addEventListener('click',event=>{if(event.target.closest('[data-page="updates"]')){storage.write('sg-seen-update',updateVersion);updateDot.hidden=true;updateDot.style.display='none'}},true);
 updateDot.hidden = storage.read("sg-seen-update", "") === updateVersion;
 document.querySelector("[data-page='updates']")?.addEventListener("click", () => {
   storage.write("sg-seen-update", updateVersion);

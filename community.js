@@ -4,7 +4,7 @@ import{collection,doc,getFirestore,increment,onSnapshot,serverTimestamp,setDoc,u
 
 const auth=getAuth(getApp()),db=getFirestore(getApp()),$=s=>document.querySelector(s);
 let currentUser=null,currentProfile=null,playSession=null,playTimer=0,syncTimer=0,ratings=[];
-const preferenceKeys=["sg-theme","sg-card-size","sg-timezone","sg-accent","sg-background","sg-background-image","sg-background-style","sg-show-menu-time","sg-show-game-time"];
+const preferenceKeys=["sg-theme","sg-card-size","sg-timezone","sg-accent","sg-background","sg-background-image","sg-background-style","sg-show-menu-time","sg-show-game-time","sg-click-sound","sg-message-popups","sg-server-notifications","sg-sidebar-closed"];
 const ratingPanel=document.createElement("section");
 ratingPanel.className="settings-panel";ratingPanel.hidden=true;ratingPanel.innerHTML='<div class="settings-card"><div class="settings-heading"><h2 id="rating-title">Rate game</h2><button id="rating-close" type="button" aria-label="Close ratings">×</button></div><div class="rating-picker" id="rating-picker"></div><p class="social-status" id="rating-status"></p></div>';
 document.body.append(ratingPanel);
@@ -31,9 +31,24 @@ window.addEventListener("simplegames:play",async e=>{playSession={...e.detail,st
 window.addEventListener("simplegames:stop-playing",async()=>{clearInterval(playTimer);await flushPlaytime();playSession=null});
 
 function localPreferences(){return Object.fromEntries(preferenceKeys.map(k=>[k,localStorage.getItem(k)]).filter(([,v])=>v!==null&&v.length<650000))}
-function savePreferences(){if(!currentUser)return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>updateDoc(doc(db,"users",currentUser.uid),{preferences:localPreferences()}).catch(()=>{}),700)}
-$("#settings-panel").addEventListener("change",savePreferences);$("#settings-panel").addEventListener("input",savePreferences);$("#background-image-file").addEventListener("change",()=>setTimeout(savePreferences,2000));$("#theme-toggle").addEventListener("click",savePreferences);
-function loadCloudPreferences(profile){if(!currentUser)return;const remote=profile.preferences;if(!remote){updateDoc(doc(db,"users",currentUser.uid),{preferences:localPreferences()}).catch(()=>{});return}const marker=`sg-cloud-loaded-${currentUser.uid}`;if(sessionStorage.getItem(marker))return;let changed=false;for(const[key,value]of Object.entries(remote)){if(preferenceKeys.includes(key)&&value!==null&&localStorage.getItem(key)!==value){localStorage.setItem(key,value);changed=true}}sessionStorage.setItem(marker,"1");if(changed)location.reload()}
+const preferenceStatus=document.createElement('p');preferenceStatus.className='result-count';preferenceStatus.setAttribute('aria-live','polite');$("#settings-panel .settings-card")?.append(preferenceStatus);
+function savePreferences(){
+  preferenceStatus.textContent='Saved on this browser.';if(!currentUser)return;
+  const uid=currentUser.uid,snapshot=localPreferences();localStorage.setItem(`sg-local-preferences-${uid}`,JSON.stringify(snapshot));
+  preferenceStatus.textContent='Saved locally · syncing account…';clearTimeout(syncTimer);
+  syncTimer=setTimeout(async()=>{try{await updateDoc(doc(db,'users',uid),{preferences:snapshot});preferenceStatus.textContent='Settings saved to your account.'}catch(error){preferenceStatus.textContent='Saved on this browser. Account sync failed—check your connection or Firebase rules.';console.error('Settings sync:',error)}},300);
+}
+$("#settings-panel")?.addEventListener("change",savePreferences);$("#settings-panel")?.addEventListener("input",savePreferences);$("#background-image-file")?.addEventListener("change",()=>setTimeout(savePreferences,2000));$("#theme-toggle")?.addEventListener("click",savePreferences);
+document.addEventListener('simplegames:settings-reset',savePreferences);
+function loadCloudPreferences(profile){
+  if(!currentUser)return;const uid=currentUser.uid,marker=`sg-cloud-loaded-${uid}`;if(sessionStorage.getItem(marker))return;
+  let local;try{local=JSON.parse(localStorage.getItem(`sg-local-preferences-${uid}`))}catch{}
+  const source=local||profile.preferences;sessionStorage.setItem(marker,'1');
+  if(!source){savePreferences();return}
+  let changed=false;for(const[key,value]of Object.entries(source)){if(preferenceKeys.includes(key)&&typeof value==='string'&&localStorage.getItem(key)!==value){localStorage.setItem(key,value);changed=true}}
+  if(local){updateDoc(doc(db,'users',uid),{preferences:local}).catch(error=>console.error('Settings sync:',error))}
+  if(changed)location.reload();
+}
 document.addEventListener("simplegames:profile",e=>{currentProfile=e.detail.profile;renderAchievements(currentProfile);sendCommunityData();loadCloudPreferences(currentProfile)});
 onAuthStateChanged(auth,user=>{currentUser=user;if(!user){currentProfile=null;renderAchievements({})}});
 renderRatings();renderAchievements({});

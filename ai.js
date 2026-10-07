@@ -9,8 +9,28 @@ const panel=document.querySelector("#ai-panel"),messages=document.querySelector(
 let chat;
 
 function addMessage(text,kind){const message=document.createElement("p");message.className=`ai-message ${kind}`;message.textContent=text;messages.append(message);messages.scrollTop=messages.scrollHeight;return message}
-function setupMessage(error){const detail=String(error?.message||error);if(detail.includes("API")||detail.includes("403")||detail.includes("permission"))return"Simple AI needs Firebase AI Logic enabled first. Open Firebase → AI Services → AI Logic → Get started, choose Gemini Developer API, and finish App Check setup.";return"Simple AI could not answer right now. Please try again in a moment."}
-async function ask(question){if(send.disabled)return;addMessage(question,"user");const waiting=addMessage("","assistant");waiting.classList.add("ai-thinking");waiting.setAttribute("aria-label","AI is responding");waiting.innerHTML="<span></span><span></span><span></span>";send.disabled=true;field.disabled=true;try{if(!chat){const ai=getAI(app,{backend:new GoogleAIBackend()});const model=getGenerativeModel(ai,{model:"gemini-3.8-flash",systemInstruction:"You are Simple AI, a friendly general-purpose assistant inside the Simple Games website. Answer questions clearly and safely. You may answer questions about any subject, not only games. Keep normal answers concise unless the user asks for detail."});chat=model.startChat()}const result=await chat.sendMessage(question);waiting.textContent=result.response.text()||"I couldn't generate an answer."}catch(error){console.error("Simple AI:",error);waiting.textContent=setupMessage(error)}finally{waiting.classList.remove("ai-thinking");waiting.removeAttribute("aria-label");send.disabled=false;field.disabled=false;field.focus();messages.scrollTop=messages.scrollHeight}}
+function setupMessage(error){
+  const detail=String(error?.message||error),code=String(error?.code||"unknown");
+  if(code==="ai/timeout")return "AI took too long to respond. Please try again. [ai/timeout]";
+  if(/app.?check|recaptcha|attestation/i.test(detail+code))return "AI security verification failed. Try the live website; local previews need an authorized App Check debug setup. ["+code+"]";
+  if(/429|quota|resource.exhausted/i.test(detail+code))return "AI has reached its usage limit. Try again later. ["+code+"]";
+  if(/403|permission|API.*blocked|API.*enabled/i.test(detail+code))return "AI access is blocked by the project setup. Check Firebase AI Logic, API restrictions, and App Check. ["+code+"]";
+  if(/404|not.found|model/i.test(detail+code))return "The configured AI model could not be reached. ["+code+"]";
+  return "AI couldn't respond. Please try again. ["+code+"]";
+}
+async function ask(question){
+  if(!send||send.disabled)return;
+  addMessage(question,"user");const waiting=addMessage("","assistant");
+  waiting.classList.add("ai-thinking");waiting.setAttribute("aria-label","AI is responding");waiting.innerHTML="<span></span><span></span><span></span>";
+  send.disabled=true;field.disabled=true;let timer;
+  try{
+    if(!chat){const ai=getAI(app,{backend:new GoogleAIBackend()});const model=getGenerativeModel(ai,{model:"gemini-3.8-flash",systemInstruction:"You are Simple AI, a friendly general-purpose assistant inside the Simple Games website. Answer questions clearly and safely. You may answer questions about any subject, not only games. Keep normal answers concise unless the user asks for detail."});chat=model.startChat()}
+    const request=chat.sendMessage(question);
+    const result=await Promise.race([request,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(new Error("AI response timed out"),{code:"ai/timeout"})),30000)})]);
+    waiting.textContent=result.response.text()||"I couldn't generate an answer.";
+  }catch(error){chat=null;console.error("Simple AI:",error);waiting.textContent=setupMessage(error)}
+  finally{clearTimeout(timer);waiting.classList.remove("ai-thinking");waiting.removeAttribute("aria-label");send.disabled=false;field.disabled=false;field.focus();messages.scrollTop=messages.scrollHeight}
+}
 
 document.querySelector("#ai-close")?.addEventListener("click",()=>panel.hidden=true);
 panel?.addEventListener("click",event=>{if(event.target===panel)panel.hidden=true});

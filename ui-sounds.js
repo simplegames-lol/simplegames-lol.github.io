@@ -1,22 +1,7 @@
 (() => {
-  let context;
-  document.addEventListener("click", event => {
-    const control = event.target.closest("button,a,select");
-    if (!control || control.disabled || control.id === "startup-enter") return;
-    try {
-      context ||= new AudioContext();
-      if (context.state === "suspended") context.resume();
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      const now = context.currentTime;
-      oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(720, now);
-      oscillator.frequency.exponentialRampToValueAtTime(380, now + .045);
-      gain.gain.setValueAtTime(.022, now);
-      gain.gain.exponentialRampToValueAtTime(.001, now + .06);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(now);
-      oscillator.stop(now + .065);
-    } catch {}
-  });
+ let context;const select=document.querySelector('#click-sound');select.value=JSON.parse(localStorage.getItem('sg-click-sound')||'"soft"');
+ function play(choice){if(choice==='off')return;try{context ||= new AudioContext();context.resume();const o=context.createOscillator(),g=context.createGain(),t=context.currentTime;const [type,a,b,d]=({soft:['sine',720,380,.06],pop:['sine',480,160,.1],tap:['triangle',1100,600,.035],arcade:['square',540,880,.07]})[choice]||['sine',720,380,.06];o.type=type;o.frequency.setValueAtTime(a,t);o.frequency.exponentialRampToValueAtTime(b,t+d);g.gain.setValueAtTime(.02,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(context.destination);o.start();o.stop(t+d+.01)}catch{}}
+ document.addEventListener('simplegames:settings-reset',()=>select.value='soft');
+ select.onchange=()=>localStorage.setItem('sg-click-sound',JSON.stringify(select.value));document.querySelector('#click-sound-preview').onclick=()=>play(select.value);
+ document.addEventListener('click',e=>{const c=e.target.closest('button,a,select');if(c&&!c.disabled&&!['startup-enter','click-sound-preview'].includes(c.id))play(select.value)});
 })();

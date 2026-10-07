@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/cat-favicon.svg?v=1" />
     <link rel="icon" type="image/jpeg" href="assets/cat-logo-original.jpg?v=2" />
     <link rel="apple-touch-icon" href="assets/cat-logo-original.jpg" />
-    <link rel="stylesheet" href="styles.css?v=32" />
+    <link rel="stylesheet" href="styles.css?v=37" />
   </head>
   <body>
     <div class="startup-loader" id="startup-loader" role="dialog" aria-modal="true" aria-labelledby="startup-title">
@@ -28,6 +28,7 @@
         <a class="rail-link active" href="/"><span class="rail-icon">🏠</span><span>Home</span></a>
         <a class="rail-link" id="games-open" href="#game-library"><span class="rail-icon">🎮</span><span>Games</span></a>
         <button class="header-button" id="servers-open" type="button"><span class="rail-icon">🌐</span><span>Servers</span></button>
+        <button class="header-button" id="movies-open" type="button"><span class="rail-icon">🎬</span><span>Movies</span></button>
         <button class="header-button account-button" id="account-open" type="button"><span class="rail-icon">👤</span><span class="account-label">Account</span><span class="notification-badge" id="account-unread" hidden>0</span></button>
         <a class="rail-link" href="/" data-form="request"><span class="rail-icon">💡</span><span>Request</span></a>
         <a class="rail-link" href="/" data-form="bug"><span class="rail-icon">🐛</span><span>Report bug</span></a>
@@ -48,11 +49,12 @@
           <label class="hero-search"><span class="sr-only">Search games</span><span aria-hidden="true">⌕</span><input id="hero-game-search" type="search" placeholder="Search games..." autocomplete="off" /></label>
         </div>
         <div class="dashboard-shortcuts" aria-label="Quick actions">
-          <button type="button" data-dashboard-action="games"><span>🎮</span><strong>Games</strong><small>Browse the library</small></button>
-          <button type="button" data-dashboard-action="account"><span>💬</span><strong>Friends</strong><small>Chat and profiles</small></button>
           <button type="button" data-dashboard-action="ai"><span>🪄</span><strong>AI</strong><small>Ask Simple AI</small></button>
-          <button type="button" data-dashboard-action="servers"><span>🌐</span><strong>Servers</strong><small>Your communities</small></button>
+          <button type="button" data-dashboard-action="account"><span>💬</span><strong>Friends</strong><small>Chat and profiles</small></button>
+          <button type="button" data-dashboard-action="games"><span>🎮</span><strong>Games</strong><small>Browse the library</small></button>
           <button type="button" data-dashboard-action="leaderboard"><span>🏆</span><strong>Leaderboard</strong><small>Top playtime</small></button>
+          <button type="button" id="movies-home-open"><span>🎬</span><strong>Movies</strong><small>Watch inside the site</small></button>
+          <button type="button" data-dashboard-action="servers"><span>🌐</span><strong>Servers</strong><small>Your communities</small></button>
           <button type="button" data-dashboard-action="settings"><span>⚙️</span><strong>Settings</strong><small>Make it yours</small></button>
         </div>
       </section>
@@ -85,6 +87,27 @@
       </section>
 
       <section class="game-grid" aria-label="Games" hidden>
+        <article class="game-card"><a class="game-card__image-link" href="/snow-rider-3d/" aria-label="Play Snow Rider 3D"><img src="https://nicmath.com/lessons/snowrider3d.webp" alt="Snow Rider 3D game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/snow-rider-3d/">Snow Rider 3D</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/cookie-clicker/" aria-label="Play Cookie Clicker"><img src="https://nicmath.com/lessons/cookieclicker.webp" alt="Cookie Clicker game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/cookie-clicker/">Cookie Clicker</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/1v1-lol/" aria-label="Play 1v1.LOL"><img src="https://nicmath.com/lessons/1v1.lol-old.webp" alt="1v1.LOL game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/1v1-lol/">1v1.LOL</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/dune/" aria-label="Play Dune"><img src="https://nicmath.com/lessons/img/dune.jpg" alt="Dune game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/dune/">Dune</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/doge-miner/" aria-label="Play Doge Miner"><img src="https://nicmath.com/lessons/img/doge-miner.jpg" alt="Doge Miner game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/doge-miner/">Doge Miner</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/rooftop-snipers/" aria-label="Play Rooftop Snipers"><img src="https://nicmath.com/lessons/rooftop.webp" alt="Rooftop Snipers game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/rooftop-snipers/">Rooftop Snipers</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/house-painter/" aria-label="Play House Painter"><img src="https://nicmath.com/lessons/img2/house-painter-512.jpg" alt="House Painter game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/house-painter/">House Painter</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/tap-tap-shots/" aria-label="Play Tap Tap Shots"><img src="https://nicmath.com/lessons/img/TapTap-Shots.jpg" alt="Tap Tap Shots game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/tap-tap-shots/">Tap Tap Shots</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/blocky-puzzle/" aria-label="Play Blocky Puzzle"><img src="https://nicmath.com/lessons/img/blocky-puzzle.jpg" alt="Blocky Puzzle game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/blocky-puzzle/">Blocky Puzzle</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/backrooms/" aria-label="Play Backrooms"><img src="https://nicmath.com/lessons/backrooms1.webp" alt="Backrooms game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/backrooms/">Backrooms</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/drift-king/" aria-label="Play Drift King"><img src="https://nicmath.com/lessons/img/Drift-King.jpg" alt="Drift King game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/drift-king/">Drift King</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/granny/" aria-label="Play Granny"><img src="https://nicmath.com/lessons/granny.webp" alt="Granny game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/granny/">Granny</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/president-simulator/" aria-label="Play President Simulator"><img src="https://nicmath.com/lessons/pres_sim.webp" alt="President Simulator game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/president-simulator/">President Simulator</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/pac-man/" aria-label="Play Pac-Man"><img src="https://nicmath.com/lessons/pacman.webp" alt="Pac-Man game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/pac-man/">Pac-Man</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/8-ball-pool-billiard/" aria-label="Play 8 Ball Pool Billiard"><img src="https://nicmath.com/lessons/img/8-Ball-Pool-Billiard.jpg" alt="8 Ball Pool Billiard game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/8-ball-pool-billiard/">8 Ball Pool Billiard</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/flappy-bird/" aria-label="Play Flappy Bird"><img src="https://nicmath.com/lessons/img2/flappy-bird-game.webp" alt="Flappy Bird game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/flappy-bird/">Flappy Bird</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/stickman-parkour/" aria-label="Play Stickman Parkour"><img src="https://nicmath.com/lessons/img/stickman-parkour.webp" alt="Stickman Parkour game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/stickman-parkour/">Stickman Parkour</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/mini-golf/" aria-label="Play Mini Golf"><img src="https://nicmath.com/lessons/golfmini.webp" alt="Mini Golf game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/mini-golf/">Mini Golf</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/plants-vs-zombies/" aria-label="Play Plants vs Zombies"><img src="https://nicmath.com/lessons/pvz.webp" alt="Plants vs Zombies game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/plants-vs-zombies/">Plants vs Zombies</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/fast-food-rush/" aria-label="Play Fast Food Rush"><img src="https://nicmath.com/lessons/img/fast-food-rush.jpg" alt="Fast Food Rush game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/fast-food-rush/">Fast Food Rush</a></h2></div></article>
+        <article class="game-card"><a class="game-card__image-link" href="/football-legends/" aria-label="Play Football Legends"><span class="game-cover-placeholder" aria-hidden="true">⚽</span></a><div class="game-card__body"><h2><a href="/football-legends/">Football Legends</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/snek-io/" aria-label="Play Snek.io"><img src="https://nicmath.com/lessons/img2/snek-io.webp" alt="Snek.io game cover" /></a><div class="game-card__body"><h2><a href="/snek-io/">Snek.io</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/super-liquid-soccer/" aria-label="Play Super Liquid Soccer"><img src="https://nicmath.com/lessons/img/super-liquid-soccer.jpg" alt="Super Liquid Soccer game cover" /></a><div class="game-card__body"><h2><a href="/super-liquid-soccer/">Super Liquid Soccer</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/moto-x3m/" aria-label="Play Moto X3M"><img src="https://nicmath.com/lessons/motox3m.webp" alt="Moto X3M game cover" /></a><div class="game-card__body"><h2><a href="/moto-x3m/">Moto X3M</a></h2></div></article>
@@ -230,10 +253,11 @@
       <header class="game-toolbar">
         <button class="back-link game-close" id="game-close" type="button">← All games</button>
         <h1 id="game-title">Game</h1>
+        <button class="back-link" id="game-fullscreen" type="button">⛶ Fullscreen</button>
         <time class="local-time game-time" aria-label="Your local time"></time>
       </header>
       <div class="game-frame-wrap">
-        <iframe id="game-player" class="game-frame" title="Game" allow="autoplay; fullscreen; gamepad; pointer-lock" allowfullscreen></iframe>
+        <iframe id="game-player" class="game-frame" title="Game" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-orientation-lock allow-presentation" allow="autoplay; fullscreen; gamepad; pointer-lock" allowfullscreen></iframe>
       </div>
     </section>
     <section class="info-overlay" id="info-overlay" hidden aria-label="Site information">
@@ -257,6 +281,9 @@
         <label>Accent color<input id="accent-color" type="color" value="#173f6d" /></label>
         <label>Background color<input id="background-color" type="color" value="#202225" /></label>
         <button class="secondary-button" id="reset-settings" type="button">Reset saved settings</button>
+        <label>Click sound<select id="click-sound"><option value="soft">Soft</option><option value="pop">Pop</option><option value="tap">Tap</option><option value="arcade">Arcade</option><option value="off">Off</option></select></label><button id="click-sound-preview" class="secondary-button" type="button">Preview sound</button>
+        <label class="check-setting"><input id="message-popups" type="checkbox" checked /> Message pop-ups with quick reply</label>
+        <label>Server notifications<select id="server-notifications"><option value="pings">Only pings</option><option value="all">All messages</option><option value="off">Off</option></select></label>
       </div>
     </section>
     <section class="social-panel" id="social-panel" hidden aria-label="Account and messages">
@@ -339,13 +366,16 @@
     <div class="game-loader" id="game-loader" hidden><div class="startup-card"><div class="startup-logo"><img src="assets/cat-logo-original.jpg" alt="" /></div><strong>Simple Games</strong><p id="game-loader-status" role="status">Loading game…</p><div class="game-load-progress" id="game-loader-spinner" aria-hidden="true"></div><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">← Home</button></div></div></div>
     <script src="clock.js?v=2"></script>
     <script src="startup.js?v=3"></script>
-    <script src="ui-sounds.js?v=1"></script>
+    <script src="ui-sounds.js?v=2"></script>
+    <script src="interface-extras.js?v=1"></script>
+    <script src="movies.js?v=1"></script>
+    <script src="message-popups.js?v=1"></script>
     <script src="game-availability.js?v=1"></script>
-    <script src="features.js?v=31"></script>
+    <script src="features.js?v=33"></script>
     <script type="module" src="ai.js?v=4"></script>
-    <script src="play.js?v=33"></script>
-    <script type="module" src="social.js?v=27"></script>
-    <script type="module" src="community.js?v=6"></script>
-    <script type="module" src="servers.js?v=6"></script>
+    <script src="play.js?v=34"></script>
+    <script type="module" src="social.js?v=28"></script>
+    <script type="module" src="community.js?v=7"></script>
+    <script type="module" src="servers.js?v=10"></script>
   </body>
 </html>
