@@ -1,9 +1,10 @@
 import{getApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import{collection,doc,getFirestore,increment,onSnapshot,serverTimestamp,setDoc,updateDoc}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import{createPlaytimeTracker}from'./playtime.js?v=1';
 
 const auth=getAuth(getApp()),db=getFirestore(getApp()),$=s=>document.querySelector(s);
-let currentUser=null,currentProfile=null,playSession=null,playTimer=0,syncTimer=0,ratings=[];
+let currentUser=null,currentProfile=null,syncTimer=0,ratings=[];
 const preferenceKeys=["sg-theme","sg-card-size","sg-timezone","sg-accent","sg-background","sg-background-image","sg-background-style","sg-show-menu-time","sg-show-game-time","sg-click-sound","sg-message-popups","sg-server-notifications","sg-sidebar-closed"];
 const ratingPanel=document.createElement("section");
 ratingPanel.className="settings-panel";ratingPanel.hidden=true;ratingPanel.innerHTML='<div class="settings-card"><div class="settings-heading"><h2 id="rating-title">Rate game</h2><button id="rating-close" type="button" aria-label="Close ratings">×</button></div><div class="rating-picker" id="rating-picker"></div><p class="social-status" id="rating-status"></p></div>';
@@ -26,9 +27,17 @@ const achievements=[
   {icon:"⏱️",name:"One Hour Club",test:s=>(s.playSeconds||0)>=3600}
 ];
 function renderAchievements(profile={}){const stats=profile.stats||{},total=$("#playtime-total");if(total)total.textContent=`${Math.floor((stats.playSeconds||0)/60)} minutes played`}
-async function flushPlaytime(){if(!currentUser||!playSession)return;const seconds=Math.max(1,Math.round((Date.now()-playSession.started)/1000));playSession.started=Date.now();await updateDoc(doc(db,"users",currentUser.uid),{"stats.playSeconds":increment(seconds)}).catch(()=>{})}
-window.addEventListener("simplegames:play",async e=>{playSession={...e.detail,started:Date.now()};if(currentUser)await updateDoc(doc(db,"users",currentUser.uid),{"stats.gamesOpened":increment(1),[`stats.games.${pathKey(e.detail.path)}`]:increment(1)}).catch(()=>{});clearInterval(playTimer);playTimer=setInterval(flushPlaytime,60000)});
-window.addEventListener("simplegames:stop-playing",async()=>{clearInterval(playTimer);await flushPlaytime();playSession=null});
+const syncStatus=document.createElement('p');syncStatus.className='result-count';syncStatus.setAttribute('aria-live','polite');document.querySelector('#leaderboard-view')?.append(syncStatus);
+const tracker=createPlaytimeTracker({
+  send:async(uid,delta)=>{const changes={};if(delta.seconds)changes['stats.playSeconds']=increment(delta.seconds);if(delta.opened)changes['stats.gamesOpened']=increment(delta.opened);for(const [path,count]of Object.entries(delta.games))changes[`stats.games.${path}`]=increment(count);await updateDoc(doc(db,'users',uid),changes)},
+  status:(state,error)=>{syncStatus.textContent=state==='saved'?'Playtime saved · updates about every 15 seconds.':state==='syncing'?'Syncing playtime…':error?.code==='permission-denied'?'Playtime save blocked. Publish the latest Firestore rules.':'Playtime could not sync. Keep this page open; it will retry when connected.';if(error)console.error('Playtime sync:',error)}
+});
+window.addEventListener('simplegames:play',event=>{tracker.start(pathKey(event.detail.path));void tracker.flush()});
+window.addEventListener('simplegames:stop-playing',()=>void tracker.stop());
+setInterval(()=>void tracker.flush(),15000);
+document.addEventListener('visibilitychange',()=>void tracker.flush());
+window.addEventListener('pagehide',()=>void tracker.flush());
+window.addEventListener('online',()=>void tracker.flush());
 
 function localPreferences(){return Object.fromEntries(preferenceKeys.map(k=>[k,localStorage.getItem(k)]).filter(([,v])=>v!==null&&v.length<650000))}
 const preferenceStatus=document.createElement('p');preferenceStatus.className='result-count';preferenceStatus.setAttribute('aria-live','polite');$("#settings-panel .settings-card")?.append(preferenceStatus);
@@ -50,5 +59,5 @@ function loadCloudPreferences(profile){
   if(changed)location.reload();
 }
 document.addEventListener("simplegames:profile",e=>{currentProfile=e.detail.profile;renderAchievements(currentProfile);sendCommunityData();loadCloudPreferences(currentProfile)});
-onAuthStateChanged(auth,user=>{currentUser=user;if(!user){currentProfile=null;renderAchievements({})}});
+onAuthStateChanged(auth,user=>{tracker.setUser(user?.uid||null);currentUser=user;if(user)void tracker.flush();else{currentProfile=null;syncStatus.textContent='Sign in to save playtime to the leaderboard.';renderAchievements({})}});
 renderRatings();renderAchievements({});

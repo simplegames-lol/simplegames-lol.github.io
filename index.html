@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/cat-favicon.svg?v=1" />
     <link rel="icon" type="image/jpeg" href="assets/cat-logo-original.jpg?v=2" />
     <link rel="apple-touch-icon" href="assets/cat-logo-original.jpg" />
-    <link rel="stylesheet" href="styles.css?v=37" />
+    <link rel="stylesheet" href="styles.css?v=38" />
   </head>
   <body>
     <div class="startup-loader" id="startup-loader" role="dialog" aria-modal="true" aria-labelledby="startup-title">
@@ -29,6 +29,7 @@
         <a class="rail-link" id="games-open" href="#game-library"><span class="rail-icon">🎮</span><span>Games</span></a>
         <button class="header-button" id="servers-open" type="button"><span class="rail-icon">🌐</span><span>Servers</span></button>
         <button class="header-button" id="movies-open" type="button"><span class="rail-icon">🎬</span><span>Movies</span></button>
+        <button class="header-button" id="sports-open" type="button"><span class="rail-icon">🏟️</span><span>Live Sports</span></button>
         <button class="header-button account-button" id="account-open" type="button"><span class="rail-icon">👤</span><span class="account-label">Account</span><span class="notification-badge" id="account-unread" hidden>0</span></button>
         <a class="rail-link" href="/" data-form="request"><span class="rail-icon">💡</span><span>Request</span></a>
         <a class="rail-link" href="/" data-form="bug"><span class="rail-icon">🐛</span><span>Report bug</span></a>
@@ -53,6 +54,7 @@
           <button type="button" data-dashboard-action="account"><span>💬</span><strong>Friends</strong><small>Chat and profiles</small></button>
           <button type="button" data-dashboard-action="games"><span>🎮</span><strong>Games</strong><small>Browse the library</small></button>
           <button type="button" data-dashboard-action="leaderboard"><span>🏆</span><strong>Leaderboard</strong><small>Top playtime</small></button>
+          <button type="button" id="sports-home-open"><span>🏟️</span><strong>Live Sports</strong><small>Live matches</small></button>
           <button type="button" id="movies-home-open"><span>🎬</span><strong>Movies</strong><small>Watch inside the site</small></button>
           <button type="button" data-dashboard-action="servers"><span>🌐</span><strong>Servers</strong><small>Your communities</small></button>
           <button type="button" data-dashboard-action="settings"><span>⚙️</span><strong>Settings</strong><small>Make it yours</small></button>
@@ -284,6 +286,7 @@
         <label>Click sound<select id="click-sound"><option value="soft">Soft</option><option value="pop">Pop</option><option value="tap">Tap</option><option value="arcade">Arcade</option><option value="off">Off</option></select></label><button id="click-sound-preview" class="secondary-button" type="button">Preview sound</button>
         <label class="check-setting"><input id="message-popups" type="checkbox" checked /> Message pop-ups with quick reply</label>
         <label>Server notifications<select id="server-notifications"><option value="pings">Only pings</option><option value="all">All messages</option><option value="off">Off</option></select></label>
+        <button id="notification-preview" class="secondary-button" type="button">Preview notification</button><p id="notification-preview-status" class="result-count" aria-live="polite">Server alerts follow your selection above. Do Not Disturb mutes pop-ups and notification sounds.</p>
       </div>
     </section>
     <section class="social-panel" id="social-panel" hidden aria-label="Account and messages">
@@ -366,16 +369,17 @@
     <div class="game-loader" id="game-loader" hidden><div class="startup-card"><div class="startup-logo"><img src="assets/cat-logo-original.jpg" alt="" /></div><strong>Simple Games</strong><p id="game-loader-status" role="status">Loading game…</p><div class="game-load-progress" id="game-loader-spinner" aria-hidden="true"></div><div class="loader-actions" id="loader-actions" hidden><button class="submit-button" id="game-retry" type="button">Try again</button><button class="secondary-button" id="game-error-close" type="button">← Home</button></div></div></div>
     <script src="clock.js?v=2"></script>
     <script src="startup.js?v=3"></script>
-    <script src="ui-sounds.js?v=2"></script>
+    <script src="ui-sounds.js?v=3"></script>
     <script src="interface-extras.js?v=1"></script>
     <script src="movies.js?v=1"></script>
-    <script src="message-popups.js?v=1"></script>
+    <script src="sports.js?v=2"></script>
+    <script src="message-popups.js?v=2"></script>
     <script src="game-availability.js?v=1"></script>
     <script src="features.js?v=33"></script>
     <script type="module" src="ai.js?v=4"></script>
     <script src="play.js?v=34"></script>
-    <script type="module" src="social.js?v=28"></script>
-    <script type="module" src="community.js?v=7"></script>
-    <script type="module" src="servers.js?v=10"></script>
+    <script type="module" src="social.js?v=30"></script>
+    <script type="module" src="community.js?v=8"></script>
+    <script type="module" src="servers.js?v=11"></script>
   </body>
 </html>
