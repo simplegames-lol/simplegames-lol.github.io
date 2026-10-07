@@ -15,6 +15,7 @@ export function canSendChannel(server,channel,uid) {
 }
 export function channelEditor(server,name,card,profiles) {
   const config=server.channelSettings?.[name]||{},controls={},selections={roles:[],members:[],sendRoles:[],sendMembers:[]};
+  const type=document.createElement('select');type.setAttribute('aria-label','Channel type');for(const [value,text]of [['text','Text channel'],['voice','Voice channel']]){const option=document.createElement('option');option.value=value;option.textContent=text;type.append(option)}type.value=config.type||'text';card.append(type);
   for(const [key,text,checked]of [['private','Private channel — only selected roles or people can see it',config.private??!!config.roles?.length],['restrictSend','Only selected roles or people can send messages',!!config.restrictSend]]) {
     const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=checked;label.append(input,text);card.append(label);controls[key]=input;
   }
@@ -25,5 +26,5 @@ export function channelEditor(server,name,card,profiles) {
     ['sendRoles','Roles that can send',(server.roles||[]).filter(r=>r.id!=='owner').map(r=>[r.id,r.name])],
     ['sendMembers','People that can send',(server.members||[]).filter(uid=>uid!==server.ownerUid).map(uid=>[uid,profiles.get(uid)?.displayName||profiles.get(uid)?.username||uid])]
   ]) { const heading=document.createElement('strong');heading.textContent=title;card.append(heading);for(const [id,labelText]of entries){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=(config[key]||[]).includes(id);label.append(input,labelText);card.append(label);selections[key].push({id,input});} }
-  return ()=>Object.fromEntries([...Object.entries(controls).map(([key,input])=>[key,input.checked]),...Object.entries(selections).map(([key,items])=>[key,items.filter(item=>item.input.checked).map(item=>item.id)])]);
+  return ()=>Object.fromEntries([['type',type.value],...Object.entries(controls).map(([key,input])=>[key,input.checked]),...Object.entries(selections).map(([key,items])=>[key,items.filter(item=>item.input.checked).map(item=>item.id)])]);
 }
