@@ -233,10 +233,15 @@
 
     <div class="info-overlay ai-panel" id="ai-panel" hidden>
       <section class="ai-card" role="dialog" aria-modal="true" aria-labelledby="ai-title">
-        <div class="settings-heading"><div><span class="hero-kicker">SIMPLE AI</span><h2 id="ai-title">Ask anything</h2></div><button id="ai-close" type="button" aria-label="Close Simple AI">×</button></div>
-        <div class="ai-messages" id="ai-messages" aria-live="polite"><p class="ai-message assistant">Hey! Ask me anything—homework, ideas, explanations, games, or whatever is on your mind.</p></div>
-        <div class="ai-suggestions"><button type="button">Explain black holes simply</button><button type="button">Help me study</button><button type="button">Recommend a game</button></div>
-        <form class="ai-form" id="ai-form"><input name="message" maxlength="180" placeholder="Ask Simple AI..." autocomplete="off" required /><button type="submit">Send</button></form>
+        <aside class="ai-sidebar"><button class="secondary-button" id="ai-new" type="button">＋ New chat</button><nav id="ai-history" aria-label="AI conversations"></nav><small>Chats saved on this browser.</small></aside>
+        <div class="ai-workspace">
+          <header class="ai-topbar"><button id="ai-close" class="secondary-button" type="button">← Home</button><button id="ai-sidebar-toggle" class="secondary-button" type="button" aria-label="Toggle AI sidebar" aria-expanded="true">☰</button><span id="ai-title">Simple AI</span></header>
+          <div class="ai-stage"><div class="ai-welcome" id="ai-welcome"><span aria-hidden="true">✦</span><h2 id="ai-greeting">What’s on your mind?</h2></div>
+            <div class="ai-messages" id="ai-messages" aria-live="polite" hidden></div>
+            <form class="ai-form" id="ai-form"><textarea name="message" maxlength="12000" placeholder="Ask anything…" aria-label="Message Simple AI" rows="2" required></textarea><div class="ai-composer-tools"><button id="ai-attach" type="button" aria-label="Attach a text file" title="Attach a .txt or .md file">＋</button><span id="ai-attachment" role="status"></span><button id="ai-detach" type="button" aria-label="Remove attachment" hidden>×</button><button id="ai-send" type="submit" aria-label="Send message">↑</button></div><input id="ai-file" type="file" accept=".txt,.md,text/plain,text/markdown" hidden /></form>
+            <div class="ai-suggestions"><button type="button">Help me study</button><button type="button">Explain something</button><button type="button">Give me ideas</button></div><small class="ai-disclaimer">Simple AI can make mistakes. Check important answers.</small>
+          </div>
+        </div>
       </section>
     </div>
     <section class="server-panel" id="server-panel" hidden aria-label="Community servers">
@@ -381,12 +386,13 @@
     <script src="game-availability.js?v=2"></script>
     <script src="release.js?v=2"></script>
     <script src="features.js?v=34"></script>
-    <script type="module" src="ai.js?v=5"></script>
+    <link rel="stylesheet" href="ai-layout.css?v=1" />
+    <script type="module" src="ai.js?v=6"></script>
     <script src="play.js?v=36"></script>
     <script type="module" src="social.js?v=32"></script>
     <script type="module" src="community.js?v=9"></script>
-    <script type="module" src="servers.js?v=16"></script>
-    <link rel="stylesheet" href="voice.css?v=1" />
-    <script type="module" src="voice.js?v=1"></script>
+    <script type="module" src="servers.js?v=17"></script>
+    <link rel="stylesheet" href="voice.css?v=2" />
+    <script type="module" src="voice.js?v=2"></script>
   </body>
 </html>
