@@ -141,11 +141,11 @@ document.querySelector("#game-error-close")?.addEventListener("click",()=>{close
 const pages = {
   updates: {
     title: "Update Log",
-    content: '<ol class="updates-list"><li class="update-entry"><h2>Big Site Update</h2><p>Redesigned Simple Games with a cleaner dashboard, faster shortcuts, improved browsing, accounts, friends, chat, profiles, live status, ratings, playtime, AI, and community servers.</p></li></ol>'
+    content: window.simpleGamesRelease.content
   },
   announcements: {
     title: "Announcements",
-    content: '<div class="update-entry"><h2>More games coming soon</h2><p>New games and server improvements are on the way.</p></div>'
+    content: '<div class="update-entry"><h2>Latest announcements are below!</h2><p>I hope you guys are enjoying the website, much more is to come!</p></div>'
   }
 };
 

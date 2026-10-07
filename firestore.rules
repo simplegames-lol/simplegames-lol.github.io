@@ -17,7 +17,9 @@ service cloud.firestore {
       // Each feature has its own update path so accounts created by older
       // versions do not need fields that did not exist yet.
       allow update: if signedIn() && request.auth.uid == uid && (
-        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(["avatarImage", "bio", "statusText", "displayName", "displayNameChangedAt"])
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(["avatarImage", "bannerImage", "bio", "statusText", "displayName", "displayNameChangedAt"])
+          && request.resource.data.get("bannerImage", "") is string
+          && request.resource.data.get("bannerImage", "").size() <= 180000
           && request.resource.data.get("avatarImage", "") is string
           && request.resource.data.get("avatarImage", "").size() <= 180000
           && request.resource.data.get("bio", "") is string
@@ -193,7 +195,29 @@ service cloud.firestore {
       }
     }
 
+    match /serverInvites/{inviteId} {
+      allow read: if signedIn() && (resource.data.toUid == request.auth.uid || resource.data.fromUid == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid != request.auth.uid
+        && inviteId == request.resource.data.serverId + "_" + request.resource.data.toUid
+        && request.resource.data.status == "pending"
+        && request.resource.data.createdAt == request.time
+        && get(/databases/$(database)/documents/servers/$(request.resource.data.serverId)).data.ownerUid == request.auth.uid
+        && exists(/databases/$(database)/documents/users/$(request.resource.data.toUid))
+        && !exists(/databases/$(database)/documents/blocks/$(request.auth.uid + "_" + request.resource.data.toUid))
+        && !exists(/databases/$(database)/documents/blocks/$(request.resource.data.toUid + "_" + request.auth.uid));
+      allow update: if signedIn() && (
+        (resource.data.toUid == request.auth.uid && resource.data.status == "pending"
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status", "respondedAt"])
+          && request.resource.data.status in ["accepted", "declined"] && request.resource.data.respondedAt == request.time)
+        || (resource.data.fromUid == request.auth.uid && resource.data.status == "declined"
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status", "createdAt"])
+          && request.resource.data.status == "pending" && request.resource.data.createdAt == request.time
+          && get(/databases/$(database)/documents/servers/$(resource.data.serverId)).data.ownerUid == request.auth.uid));
+    }
     match /servers/{serverId} {
+      function invited() { return signedIn() && exists(/databases/$(database)/documents/serverInvites/$(serverId + "_" + request.auth.uid))
+        && get(/databases/$(database)/documents/serverInvites/$(serverId + "_" + request.auth.uid)).data.status == "pending"; }
       function server() { return get(/databases/$(database)/documents/servers/$(serverId)).data; }
       function member(s) { return signedIn() && request.auth.uid in s.members && !(request.auth.uid in s.get("banned", [])); }
       function owner(s) { return signedIn() && request.auth.uid == s.ownerUid; }
@@ -203,23 +227,37 @@ service cloud.firestore {
       function channelConfig(s, channel) { return s.get("channelSettings", {}).get(channel, {}); }
       function channelRead(s, channel) {
         return member(s) && channel in s.channels && (owner(s)
-          || channelConfig(s, channel).get("roles", []).size() == 0
-          || role(s) in channelConfig(s, channel).get("roles", []));
+          || channelConfig(s, channel).get("private", channelConfig(s, channel).get("roles", []).size() > 0) == false
+          || role(s) in channelConfig(s, channel).get("roles", [])
+          || request.auth.uid in channelConfig(s, channel).get("members", []));
       }
       function channelSend(s, channel) {
         return channelRead(s, channel) && (owner(s) || roleConfig(s).get("sendMessages", true) == true)
-          && (channelConfig(s, channel).get("locked", false) == false || moderator(s));
+          && (channelConfig(s, channel).get("locked", false) == false || moderator(s))
+          && (owner(s) || channelConfig(s, channel).get("restrictSend", false) == false
+            || role(s) in channelConfig(s, channel).get("sendRoles", [])
+            || request.auth.uid in channelConfig(s, channel).get("sendMembers", []));
       }
       function validServer(s) {
         return s.ownerUid in s.members && s.members is list && s.members.size() >= 1 && s.members.size() <= 50
           && s.name is string && s.name.size() > 0 && s.name.size() <= 32
           && s.channels is list && s.channels.size() >= 1 && s.channels.size() <= 30;
       }
-      allow read: if resource.data.get("isPublic", false) == true || member(resource.data);
+      allow get: if resource.data.get("isPublic", false) == true || member(resource.data) || invited();
+      allow list: if resource.data.get("isPublic", false) == true || member(resource.data);
       allow create: if signedIn() && request.resource.data.ownerUid == request.auth.uid && validServer(request.resource.data);
       allow update: if signedIn() && validServer(request.resource.data)
         && request.resource.data.ownerUid == resource.data.ownerUid && (
           owner(resource.data)
+          || (invited() && !(request.auth.uid in resource.data.members)
+            && !(request.auth.uid in resource.data.get("banned", []))
+            && request.resource.data.members.hasAll(resource.data.members)
+            && request.auth.uid in request.resource.data.members
+            && request.resource.data.members.size() == resource.data.members.size() + 1
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["members", "memberRoles", "updatedAt"])
+            && request.resource.data.memberRoles.diff(resource.data.get("memberRoles", {})).affectedKeys().hasOnly([request.auth.uid])
+            && request.resource.data.memberRoles[request.auth.uid] == "member"
+            && getAfter(/databases/$(database)/documents/serverInvites/$(serverId + "_" + request.auth.uid)).data.status == "accepted")
           || (member(resource.data) && request.auth.uid != resource.data.ownerUid
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["members", "updatedAt"])
             && !(request.auth.uid in request.resource.data.members)

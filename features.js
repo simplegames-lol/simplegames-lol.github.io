@@ -87,10 +87,7 @@ const categories = {
   "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports"
 };
 
-const newGames = new Set([
-  "/bouncy-basketball/",
-  "/polytrack/", "/drift-boss/", "/escape-road/"
-]);
+const newGames = new Set(window.simpleGamesRelease?.newGames || []);
 
 cards.forEach((card) => {
   const link = card.querySelector("a[href]");
@@ -338,7 +335,7 @@ window.addEventListener("simplegames:play", () => {
 });
 player?.addEventListener("load", () => { loader.hidden = true; });
 
-const updateVersion = "2026-09-24-accounts";
+const updateVersion = window.simpleGamesRelease?.version || "2026-10-06-community-invites";
 const updateDot = document.querySelector("#update-dot");
 document.addEventListener('click',event=>{if(event.target.closest('[data-page="updates"]')){storage.write('sg-seen-update',updateVersion);updateDot.hidden=true;updateDot.style.display='none'}},true);
 updateDot.hidden = storage.read("sg-seen-update", "") === updateVersion;
