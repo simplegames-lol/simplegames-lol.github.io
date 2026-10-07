@@ -821,7 +821,7 @@ body::before {
 }
 .rail-icon { display: grid; width: 24px; flex: 0 0 24px; place-items: center; color: #fff; font-size: 1.15rem; }
 .header-right .menu-time { margin-top: auto; padding: 13px 11px 0; color: #b6bdc8; text-align: left; font-size: .76rem; }
-.update-dot { top: 8px; right: 9px; }
+.update-dot { top: 50%; right: 9px; transform: translateY(-50%); }
 .page-shell { width: min(calc(100% - 246px),1240px); max-width: none; margin: 0 25px 0 auto; padding: 28px 0 70px; }
 .dashboard-hero {
   position: relative;
