@@ -1,6 +1,6 @@
 import{getApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import{collection,doc,getFirestore,increment,onSnapshot,serverTimestamp,setDoc,updateDoc}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import{collection,doc,getDoc,getFirestore,increment,onSnapshot,serverTimestamp,setDoc,updateDoc}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import{createPlaytimeTracker}from'./playtime.js?v=1';
 
 const auth=getAuth(getApp()),db=getFirestore(getApp()),$=s=>document.querySelector(s);
@@ -13,10 +13,19 @@ $("#rating-close").onclick=()=>ratingPanel.hidden=true;
 ratingPanel.onclick=e=>{if(e.target===ratingPanel)ratingPanel.hidden=true};
 
 const gameCards=[...document.querySelectorAll(".game-card")];
+let voterRequest=0;
+async function openVoters(path,title){
+  const request=++voterRequest;$("#rating-title").textContent=title+' ratings';$("#rating-picker").replaceChildren();const list=document.createElement('div');list.className='rating-voters';$("#rating-picker").append(list);ratingPanel.hidden=false;
+  if(!currentUser){$("#rating-status").textContent='Log in to see who rated this game.';return}
+  $("#rating-status").textContent='Loading voters…';const uid=currentUser.uid;
+  const votes=ratings.filter(vote=>vote.gamePath===path);
+  await Promise.all(votes.map(async vote=>{let person;try{const snap=await getDoc(doc(db,'users',vote.userId));person=snap.exists()?snap.data():null}catch{}if(request!==voterRequest||currentUser?.uid!==uid)return;const row=document.createElement('div');row.className='rating-voter';const name=document.createElement('strong'),stars=document.createElement('span');name.textContent=person?.displayName||person?.username||'Unavailable profile';stars.textContent='★'.repeat(vote.rating)+'☆'.repeat(5-vote.rating);stars.setAttribute('aria-label',vote.rating+' out of 5 stars');row.append(name,stars);list.append(row)}));
+  if(request===voterRequest)$("#rating-status").textContent=votes.length?votes.length+' ratings':'No ratings yet.';
+}
 function pathKey(path){return path.replace(/^\/+|\/+$/g,"").replace(/[^a-z0-9-]/gi,"-")}
 function ratingStats(path){const votes=ratings.filter(r=>r.gamePath===path);return{count:votes.length,average:votes.length?votes.reduce((n,r)=>n+r.rating,0)/votes.length:0}}
 function sendCommunityData(){const ratingMap={},playMap={};gameCards.forEach(card=>{const path=card.dataset.path||new URL(card.querySelector("a[href]").href,location.href).pathname;ratingMap[path]=ratingStats(path).average;playMap[path]=currentProfile?.stats?.games?.[pathKey(path)]||0});window.dispatchEvent(new CustomEvent("simplegames:community-data",{detail:{ratings:ratingMap,plays:playMap}}))}
-function renderRatings(){gameCards.forEach(card=>{const path=card.dataset.path||new URL(card.querySelector("a[href]").href,location.href).pathname,title=card.querySelector("h2").textContent.trim(),stats=ratingStats(path);let row=card.querySelector(".rating-row");if(!row){row=document.createElement("div");row.className="rating-row";row.innerHTML='<button class="rating-button" type="button"></button><span class="rating-count"></span>';card.querySelector(".game-card__body").append(row);row.querySelector("button").onclick=()=>openRating(path,title)}row.querySelector("button").textContent=stats.count?`★ ${stats.average.toFixed(1)}`:"☆ Rate";row.querySelector(".rating-count").textContent=`${stats.count} rating${stats.count===1?"":"s"}`});sendCommunityData()}
+function renderRatings(){gameCards.forEach(card=>{const path=card.dataset.path||new URL(card.querySelector("a[href]").href,location.href).pathname,title=card.querySelector("h2").textContent.trim(),stats=ratingStats(path);let row=card.querySelector(".rating-row");if(!row){row=document.createElement("div");row.className="rating-row";row.innerHTML='<button class="rating-button" type="button"></button><button class="rating-count" type="button"></button>';card.querySelector(".game-card__body").append(row);row.querySelector(".rating-button").onclick=()=>openRating(path,title);row.querySelector(".rating-count").onclick=()=>openVoters(path,title)}row.querySelector("button").textContent=stats.count?`★ ${stats.average.toFixed(1)}`:"☆ Rate";row.querySelector(".rating-count").textContent=`${stats.count} rating${stats.count===1?"":"s"}`});sendCommunityData()}
 function openRating(path,title){$("#rating-title").textContent=`Rate ${title}`;$("#rating-status").textContent=currentUser?"Choose 1–5 stars":"Log in to rate games.";const picker=$("#rating-picker");picker.replaceChildren();for(let value=1;value<=5;value++){const b=document.createElement("button");b.type="button";b.textContent="★";b.title=`${value} star${value===1?"":"s"}`;b.disabled=!currentUser;b.onclick=async()=>{try{await setDoc(doc(db,"ratings",`${pathKey(path)}_${currentUser.uid}`),{gamePath:path,userId:currentUser.uid,rating:value,updatedAt:serverTimestamp()});$("#rating-status").textContent=`You rated ${title} ${value}/5.`}catch(e){$("#rating-status").textContent=e.message}};picker.append(b)}ratingPanel.hidden=false}
 onSnapshot(collection(db,"ratings"),snap=>{ratings=snap.docs.map(x=>x.data());renderRatings()},()=>renderRatings());
 

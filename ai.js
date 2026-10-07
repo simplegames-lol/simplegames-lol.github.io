@@ -1,6 +1,7 @@
 import { getApp, getApps, initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
+import {plainAnswer} from './ai-text.js?v=1';
 
 const config={apiKey:"AIzaSyDzJu7zyLTZWwffbS5wcxAGym5orePvNKg",authDomain:"simplegames-23c2c.firebaseapp.com",projectId:"simplegames-23c2c",storageBucket:"simplegames-23c2c.firebasestorage.app",messagingSenderId:"993873419513",appId:"1:993873419513:web:14e22dfff6d7f0c7051628",measurementId:"G-NC81W7MYG0"};
 const app=getApps().length?getApp():initializeApp(config);
@@ -24,10 +25,10 @@ async function ask(question){
   waiting.classList.add("ai-thinking");waiting.setAttribute("aria-label","AI is responding");waiting.innerHTML="<span></span><span></span><span></span>";
   send.disabled=true;field.disabled=true;let timer;
   try{
-    if(!chat){const ai=getAI(app,{backend:new GoogleAIBackend()});const model=getGenerativeModel(ai,{model:"gemini-3.8-flash",systemInstruction:"You are Simple AI, a friendly general-purpose assistant inside the Simple Games website. Answer questions clearly and safely. You may answer questions about any subject, not only games. Keep normal answers concise unless the user asks for detail."});chat=model.startChat()}
-    const request=chat.sendMessage(question);
-    const result=await Promise.race([request,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(new Error("AI response timed out"),{code:"ai/timeout"})),30000)})]);
-    waiting.textContent=result.response.text()||"I couldn't generate an answer.";
+    if(!chat){const ai=getAI(app,{backend:new GoogleAIBackend()});const model=getGenerativeModel(ai,{model:"gemini-3.8-flash",systemInstruction:"You are Simple AI, a friendly general-purpose assistant inside Simple Games. Answer clearly and safely about any subject. Use plain text, no Markdown asterisks or heading syntax. Keep normal answers short unless asked for detail."});chat=model.startChat({generationConfig:{maxOutputTokens:1536}})}
+    let expired=false,answer='';
+    const request=(async()=>{const result=await chat.sendMessageStream(question);for await(const chunk of result.stream){if(expired)return;answer+=chunk.text();waiting.classList.remove('ai-thinking');waiting.textContent=plainAnswer(answer);messages.scrollTop=messages.scrollHeight}if(!answer)waiting.textContent="I couldn't generate an answer."})();
+    await Promise.race([request,new Promise((_,reject)=>{timer=setTimeout(()=>{expired=true;reject(Object.assign(new Error("AI response timed out"),{code:"ai/timeout"}))},45000)})]);
   }catch(error){chat=null;console.error("Simple AI:",error);waiting.textContent=setupMessage(error)}
   finally{clearTimeout(timer);waiting.classList.remove("ai-thinking");waiting.removeAttribute("aria-label");send.disabled=false;field.disabled=false;field.focus();messages.scrollTop=messages.scrollHeight}
 }

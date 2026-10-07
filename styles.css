@@ -1022,11 +1022,11 @@ body::before {
 .channel-form { display: grid; grid-template-columns: 1fr 38px; gap: 6px; margin-top: 14px; }
 .channel-form input,.server-message-form input,.server-dialog-card input { min-width: 0; border: 1px solid var(--border); border-radius: 10px; padding: 11px; color: var(--text); background: #0c1017; font: inherit; }
 .channel-form button { border: 0; border-radius: 10px; color: #fff; background: var(--accent); font-size: 1.15rem; cursor: pointer; }
-.server-chat { display: flex; min-width: 0; flex-direction: column; background: #171b24; }
+.server-chat { display: flex; min-width: 0; min-height: 0; overflow: hidden; flex-direction: column; background: #171b24; }
 .server-chat-heading { display: flex; min-height: 62px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding: 0 20px; }
 .server-chat-heading>div { display: flex; align-items: center; gap: 8px; }
 .server-chat-heading h3 { margin: 0; }
-.server-messages { overflow-y: auto; flex: 1; padding: 20px; }
+.server-messages { overflow-y: auto; flex: 1 1 0; min-height: 0; overscroll-behavior: contain; overflow-anchor: none; padding: 20px; }
 .server-empty { display: grid; height: 100%; place-content: center; color: #9ba5b4; text-align: center; }
 .server-message { display: grid; grid-template-columns: 38px 1fr; gap: 11px; margin: 0 0 18px; }
 .server-message-avatar { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 50%; color: #fff; background: var(--accent); font-weight: 800; }
@@ -1037,7 +1037,7 @@ body::before {
 .server-member { display: flex; align-items: center; gap: 9px; border-radius: 8px; padding: 7px; }
 .server-member-avatar { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: var(--accent); font-size: .78rem; font-weight: 800; }
 .server-dialog { position: fixed; z-index: 520; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,.7); }
-.server-dialog-card { display: grid; width: min(460px,100%); gap: 16px; border: 1px solid var(--border); border-radius: 18px; padding: 24px; background: #1a1f29; box-shadow: 0 28px 90px rgba(0,0,0,.55); }
+.server-dialog-card { display: grid; width: min(460px,100%); max-height: calc(100dvh - 40px); overflow-y: auto; gap: 16px; border: 1px solid var(--border); border-radius: 18px; padding: 24px; background: #1a1f29; box-shadow: 0 28px 90px rgba(0,0,0,.55); }
 .server-dialog-card label { display: grid; gap: 7px; font-weight: 700; }
 .server-dialog-card small { color: #9aa4b2; font-weight: 400; }
 .server-status { position: fixed; z-index: 530; right: 20px; bottom: 18px; max-width: min(430px,calc(100% - 40px)); margin: 0; border-radius: 10px; padding: 10px 14px; color: #fff; background: #b33b46; box-shadow: 0 10px 30px rgba(0,0,0,.35); }

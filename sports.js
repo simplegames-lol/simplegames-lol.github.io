@@ -21,16 +21,17 @@
   const frame = document.createElement('iframe');
   frame.className = 'sports-frame';
   frame.title = 'External sports website';
-  frame.referrerPolicy = 'no-referrer';
+  frame.referrerPolicy = 'strict-origin-when-cross-origin';
   frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-presentation');
   frame.setAttribute('allow', 'autoplay; fullscreen; encrypted-media');
   frame.allowFullscreen = true;
   const url = 'https://reedstreams.to/';
-  let timer;
+  let timer, sessionOpen=false;
   function load() {
     clearTimeout(timer);
     note.textContent = 'Loading external sports website…';
     frame.src = url;
+    window.dispatchEvent(new CustomEvent('simplegames:media-start',{detail:{title:'Watching live sports'}}));
     timer = setTimeout(() => {
       note.textContent = 'Taking a while? The provider may block embedded playback. Try Reload.';
     }, 15000);
@@ -46,10 +47,11 @@
   function close() {
     clearTimeout(timer);
     panel.hidden = true;
+    sessionOpen=false;window.dispatchEvent(new Event('simplegames:media-stop'));
     frame.src = 'about:blank';
     document.querySelector('.rail-link[href="/"]')?.click();
   }
-  function open() { panel.hidden = false; load(); home.focus(); }
+  function open() { if(sessionOpen)return;sessionOpen=true;panel.hidden=false;load();home.focus(); }
   home.onclick = close;
   retry.onclick = load;
   document.querySelector('#sports-open').onclick = open;
