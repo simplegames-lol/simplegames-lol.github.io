@@ -44,6 +44,8 @@ const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
   "/snow-rider-3d/": "racing",
+  "/mountain-bike-racer/": "racing",
+  "/stickman-golf/": "sports",
   "/cookie-clicker/": "simulation",
   "/1v1-lol/": "multiplayer",
   "/dune/": "arcade",
@@ -84,7 +86,7 @@ const categories = {
   "/bouncy-basketball/": "sports", "/basketball-stars/": "sports", "/basket-random/": "sports",
   "/polytrack/": "driving", "/drift-boss/": "driving", "/escape-road/": "driving", "/drift-hunters/": "driving",
   "/subway-surfers/": "action", "/slope/": "action",
-  "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports"
+  "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports", "/retro-bowl-college/": "sports", "/clash-of-vikings/": "strategy", "/geometry-dash/": "platformer"
 };
 
 const newGames = new Set(window.simpleGamesRelease?.newGames || []);
