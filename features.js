@@ -86,7 +86,7 @@ const categories = {
   "/bouncy-basketball/": "sports", "/basketball-stars/": "sports", "/basket-random/": "sports",
   "/polytrack/": "driving", "/drift-boss/": "driving", "/escape-road/": "driving", "/drift-hunters/": "driving",
   "/subway-surfers/": "action", "/slope/": "action",
-  "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports", "/retro-bowl-college/": "sports", "/clash-of-vikings/": "strategy", "/geometry-dash/": "platformer"
+  "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports", "/clash-of-vikings/": "strategy", "/geometry-dash/": "platformer"
 };
 
 const newGames = new Set(window.simpleGamesRelease?.newGames || []);

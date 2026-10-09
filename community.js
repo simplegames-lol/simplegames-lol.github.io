@@ -1,7 +1,8 @@
 import{getApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import{collection,doc,getDoc,getFirestore,increment,onSnapshot,serverTimestamp,setDoc,updateDoc}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import{createPlaytimeTracker}from'./playtime.js?v=1';
+import{createPlaytimeTracker}from'./playtime.js?v=2';
+import{createPlaytimeGate}from'./playtime-gate.js?v=1';
 
 const auth=getAuth(getApp()),db=getFirestore(getApp()),$=s=>document.querySelector(s);
 let currentUser=null,currentProfile=null,syncTimer=0,ratings=[];
@@ -41,11 +42,16 @@ const tracker=createPlaytimeTracker({
   send:async(uid,delta)=>{const changes={};if(delta.seconds)changes['stats.playSeconds']=increment(delta.seconds);if(delta.opened)changes['stats.gamesOpened']=increment(delta.opened);for(const [path,count]of Object.entries(delta.games))changes[`stats.games.${path}`]=increment(count);await updateDoc(doc(db,'users',uid),changes)},
   status:(state,error)=>{syncStatus.textContent=state==='saved'?'Playtime saved · updates about every 15 seconds.':state==='syncing'?'Syncing playtime…':error?.code==='permission-denied'?'Playtime save blocked. Publish the latest Firestore rules.':'Playtime could not sync. Keep this page open; it will retry when connected.';if(error)console.error('Playtime sync:',error)}
 });
-window.addEventListener('simplegames:play',event=>{tracker.start(pathKey(event.detail.path));void tracker.flush()});
-window.addEventListener('simplegames:stop-playing',()=>void tracker.stop());
+let playing=false,pageActive=true;
+const playtimeGate=createPlaytimeGate({locks:navigator.locks,onActive:active=>tracker.setActive(active)});
+function updatePlaytimeGate(){playtimeGate.update(currentUser?.uid||null,playing&&pageActive&&document.visibilityState==='visible')}
+window.addEventListener('simplegames:play',event=>{playing=true;tracker.start(pathKey(event.detail.path));updatePlaytimeGate();void tracker.flush()});
+window.addEventListener('simplegames:stop-playing',()=>{playing=false;updatePlaytimeGate();void tracker.stop()});
+setInterval(()=>{tracker.tick();updatePlaytimeGate()},1000);
 setInterval(()=>void tracker.flush(),15000);
-document.addEventListener('visibilitychange',()=>void tracker.flush());
-window.addEventListener('pagehide',()=>void tracker.flush());
+document.addEventListener('visibilitychange',()=>{updatePlaytimeGate();void tracker.flush()});
+window.addEventListener('pagehide',()=>{pageActive=false;updatePlaytimeGate();void tracker.flush()});
+window.addEventListener('pageshow',()=>{pageActive=true;updatePlaytimeGate()});
 window.addEventListener('online',()=>void tracker.flush());
 
 function localPreferences(){return Object.fromEntries(preferenceKeys.map(k=>[k,localStorage.getItem(k)]).filter(([,v])=>v!==null&&v.length<650000))}
@@ -68,5 +74,5 @@ function loadCloudPreferences(profile){
   if(changed)location.reload();
 }
 document.addEventListener("simplegames:profile",e=>{currentProfile=e.detail.profile;renderAchievements(currentProfile);sendCommunityData();loadCloudPreferences(currentProfile)});
-onAuthStateChanged(auth,user=>{tracker.setUser(user?.uid||null);currentUser=user;if(user)void tracker.flush();else{currentProfile=null;syncStatus.textContent='Sign in to save playtime to the leaderboard.';renderAchievements({})}});
+onAuthStateChanged(auth,user=>{playtimeGate.dispose();tracker.setUser(user?.uid||null);currentUser=user;updatePlaytimeGate();if(user){if(playtimeGate.supported)void tracker.flush();else syncStatus.textContent='Playtime paused: this browser does not support safe multi-tab counting. Please update your browser.'}else{currentProfile=null;syncStatus.textContent='Sign in to save playtime to the leaderboard.';renderAchievements({})}});
 renderRatings();renderAchievements({});

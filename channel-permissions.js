@@ -1,3 +1,4 @@
+import{timedOut,commandEditor}from'./server-commands.js?v=1';
 export function canReadChannel(server, channel, uid) {
   if (!uid || !server?.members?.includes(uid) || server.banned?.includes(uid) || !server.channels?.includes(channel)) return false;
   if (server.ownerUid === uid) return true;
@@ -8,6 +9,7 @@ export function canReadChannel(server, channel, uid) {
 export function canSendChannel(server,channel,uid) {
   if(!canReadChannel(server,channel,uid))return false;
   if(server.ownerUid===uid)return true;
+  if(timedOut(server,uid))return false;
   const config=server.channelSettings?.[channel]||{},role=server.memberRoles?.[uid]||'member',permissions=server.rolePermissions?.[role]||{};
   if(config.locked && permissions.manageMessages!==true)return false;
   if(permissions.sendMessages===false)return false;
@@ -26,5 +28,6 @@ export function channelEditor(server,name,card,profiles) {
     ['sendRoles','Roles that can send',(server.roles||[]).filter(r=>r.id!=='owner').map(r=>[r.id,r.name])],
     ['sendMembers','People that can send',(server.members||[]).filter(uid=>uid!==server.ownerUid).map(uid=>[uid,profiles.get(uid)?.displayName||profiles.get(uid)?.username||uid])]
   ]) { const heading=document.createElement('strong');heading.textContent=title;card.append(heading);for(const [id,labelText]of entries){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=(config[key]||[]).includes(id);label.append(input,labelText);card.append(label);selections[key].push({id,input});} }
-  return ()=>Object.fromEntries([['type',type.value],...Object.entries(controls).map(([key,input])=>[key,input.checked]),...Object.entries(selections).map(([key,items])=>[key,items.filter(item=>item.input.checked).map(item=>item.id)])]);
+  const commands=commandEditor(server,name,card);
+  return ()=>Object.fromEntries([['type',type.value],['commandRoles',commands()],...Object.entries(controls).map(([key,input])=>[key,input.checked]),...Object.entries(selections).map(([key,items])=>[key,items.filter(item=>item.input.checked).map(item=>item.id)])]);
 }
