@@ -183,7 +183,7 @@ function goHome(event) {
   search.value="";
   if(heroSearch)heroSearch.value="";
   filterGames();
-  document.querySelectorAll("#info-overlay,#ai-panel,#server-panel,#settings-panel,#social-panel").forEach(panel=>panel.hidden=true);
+  document.querySelectorAll("#info-overlay,#ai-panel,#server-panel,#settings-panel,#social-panel,#support-panel").forEach(panel=>panel.hidden=true);
   document.querySelectorAll(".server-dialog").forEach(panel=>panel.hidden=true);
   if(!document.querySelector("#game-overlay").hidden)document.querySelector("#game-close")?.click();
   document.body.classList.remove("game-is-open");
