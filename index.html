@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=2" />
     <link rel="stylesheet" href="styles.css?v=42" />
     <link rel="stylesheet" href="layout-fixes.css?v=1" />
+    <link rel="stylesheet" href="site-stats.css?v=4" />
   </head>
   <body>
     <div class="startup-loader" id="startup-loader" role="dialog" aria-modal="true" aria-labelledby="startup-title">
@@ -60,6 +61,15 @@
           <button type="button" data-dashboard-action="servers"><span>🌐</span><strong>Servers</strong><small>Your communities</small></button>
           <button type="button" data-dashboard-action="settings"><span>⚙️</span><strong>Settings</strong><small>Make it yours</small></button>
         </div>
+      <section class="site-stats" aria-labelledby="site-stats-title">
+        <div class="site-stats-heading"><h2 id="site-stats-title">Global Site Stats</h2><span id="site-stats-status">Connecting…</span></div>
+        <div class="site-stats-grid">
+          <div><h3>Using It Now</h3><strong id="stats-online">—</strong><small>active browsers in the last 2 minutes</small></div>
+          <div><h3 title="Approximate shared peak; simultaneous updates can overcount.">Peak Today</h3><strong id="stats-peak">—</strong><small>approximate highest online count</small></div>
+          <div><h3>Total Today</h3><strong id="stats-total">—</strong><small>unique browsers today</small></div>
+        </div>
+        <p id="site-stats-date">Today · Oct 10, 2026 · Resets at midnight EDT</p>
+      </section>
       </section>
       <section class="intro" id="game-library" aria-labelledby="featured-title" hidden>
         <h1 id="featured-title">Games</h1>
@@ -409,6 +419,7 @@
     <script src="startup.js?v=3"></script>
     <script src="ui-sounds.js?v=3"></script>
     <script src="interface-extras.js?v=7"></script>
+    <script src="site-stats.js?v=3"></script>
     <script src="movies.js?v=2"></script>
     <script src="sports.js?v=5"></script>
     <script src="message-popups.js?v=2"></script>
@@ -419,7 +430,7 @@
     <script type="module" src="ai.js?v=6"></script>
     <script src="play.js?v=68"></script>
     <script type="module" src="social.js?v=35"></script>
-    <script type="module" src="community.js?v=11"></script>
+    <script type="module" src="community.js?v=12"></script>
     <script type="module" src="servers.js?v=19"></script>
     <link rel="stylesheet" href="voice.css?v=2" />
     <script type="module" src="voice.js?v=4"></script>

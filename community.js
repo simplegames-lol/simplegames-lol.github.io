@@ -3,7 +3,7 @@ import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.19.
 import{collection,doc,getDoc,getFirestore,increment,onSnapshot,serverTimestamp,setDoc,updateDoc}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import{createPlaytimeTracker}from'./playtime.js?v=2';
 import{createPlaytimeGate}from'./playtime-gate.js?v=1';
-import{eligiblePlaytime}from'./playtime-activity.js?v=1';
+import{eligiblePlaytime}from'./playtime-activity.js?v=2';
 
 const auth=getAuth(getApp()),db=getFirestore(getApp()),$=s=>document.querySelector(s);
 let currentUser=null,currentProfile=null,syncTimer=0,ratings=[];
@@ -44,18 +44,10 @@ const tracker=createPlaytimeTracker({
   status:(state,error)=>{syncStatus.textContent=state==='saved'?'Playtime saved · updates about every 15 seconds.':state==='syncing'?'Syncing playtime…':error?.code==='permission-denied'?'Playtime save blocked. Publish the latest Firestore rules.':'Playtime could not sync. Keep this page open; it will retry when connected.';if(error)console.error('Playtime sync:',error)}
 });
 let playing=false,pageActive=true;
-let lastActivity=-Infinity;
 const gameOverlay=$('#game-overlay'),gamePlayer=$('#game-player');
-const resumeTime=document.createElement('button');resumeTime.type='button';resumeTime.className='secondary-button';resumeTime.textContent='Playtime paused · click to resume';resumeTime.hidden=true;resumeTime.style.cssText='position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:20';gameOverlay?.append(resumeTime);
-function activity(event){if(event&&!event.isTrusted)return;lastActivity=performance.now();updatePlaytimeGate()}
-resumeTime.addEventListener('click',activity);
-for(const name of ['pointerdown','keydown','pointermove','touchstart'])window.addEventListener(name,activity,{passive:true});
-// Cross-origin games cannot expose their keyboard/mouse activity to this page.
-// Entering their frame grants a bounded window, never an unlimited idle session.
-window.addEventListener('blur',()=>{if(document.activeElement===gamePlayer)activity()});
 const playtimeGate=createPlaytimeGate({locks:navigator.locks,onActive:active=>tracker.setActive(active)});
-function updatePlaytimeGate(){const open=!!gameOverlay&&!gameOverlay.hidden;const eligible=eligiblePlaytime({playing,pageActive,visible:document.visibilityState==='visible',overlayOpen:open,loaded:!!gamePlayer?.getAttribute('src')&&gamePlayer.getAttribute('src')!=='about:blank'&&!!$('#game-loader')?.hidden,now:performance.now(),lastActivity});resumeTime.hidden=!playing||!open||performance.now()-lastActivity<120000;playtimeGate.update(currentUser?.uid||null,eligible)}
-window.addEventListener('simplegames:play',event=>{playing=true;lastActivity=performance.now();tracker.start(pathKey(event.detail.path));updatePlaytimeGate();void tracker.flush()});
+function updatePlaytimeGate(){const open=!!gameOverlay&&!gameOverlay.hidden;const eligible=eligiblePlaytime({playing,pageActive,visible:document.visibilityState==='visible',overlayOpen:open,loaded:!!gamePlayer?.getAttribute('src')&&gamePlayer.getAttribute('src')!=='about:blank'&&!!$('#game-loader')?.hidden});playtimeGate.update(currentUser?.uid||null,eligible)}
+window.addEventListener('simplegames:play',event=>{playing=true;tracker.start(pathKey(event.detail.path));updatePlaytimeGate();void tracker.flush()});
 window.addEventListener('simplegames:stop-playing',()=>{playing=false;updatePlaytimeGate();void tracker.stop()});
 setInterval(()=>{updatePlaytimeGate();tracker.tick()},1000);
 setInterval(()=>void tracker.flush(),15000);
