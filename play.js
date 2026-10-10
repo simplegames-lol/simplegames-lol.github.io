@@ -1,5 +1,10 @@
 (() => {
 const games = {
+  "/crossy-road/": "https://brainworxedu.github.io/games/crossy-road.html",
+  "/how-to-fish/": "https://brainworxedu.github.io/games/how-to-fish.html",
+  "/happy-wheels/": "https://brainworxedu.github.io/games/happy-wheels.html",
+  "/table-tennis-world-tour/": "https://brainworxedu.github.io/games/table-tennis-world-tour.html",
+  "/skate-3/": "https://brainworxedu.github.io/games/skate-3.html",
   "/tiny-fishing/": "/tiny-fishing/player.html",
   "/stickman-hook/": "/stickman-hook/player.html",
   "/soundboard/": "/soundboard/player.html",
@@ -27,7 +32,7 @@ const games = {
   "/stickman-golf/": "/stickman-golf/player.html",
   "/mountain-bike-racer/": "/mountain-bike-racer/player.html",
   "/gorilla-tag/": "/gorilla-tag/player.html",
-  "/geometry-dash/": "/geometry-dash/player.html",
+  "/geometry-dash/": "https://brainworxedu.github.io/games/geometry-dash.html",
   "/five-nights-at-epsteins/": "/five-nights-at-epsteins/player.html",
   "/clash-of-vikings/": "/clash-of-vikings/player.html",
   "/snow-rider-3d/": "https://classroomlesson.github.io/basic-ruffle-player/html/snow_rider_3d/index.html",
@@ -62,12 +67,12 @@ const games = {
   "/thorns-and-ballons/": "https://classroomlesson.github.io/basic-ruffle-player/html/thorns_and_ballons/index.html",
   "/2d-fortnite/": "https://db2.duckmath.org/2025/more/fort-battle-royale/pre.html",
   "/worldguessr/": "https://db2.duckmath.org/2026/more/worldguessr/pre.html",
-  "/among-us/": "https://classroomlesson.github.io/basic-ruffle-player/html/among_us/index.html",
+  "/among-us/": "https://brainworxedu.github.io/games/among-us.html",
   "/funny-shooter-2/": "https://classroomlesson.github.io/basic-ruffle-player/html/funny_shooter_2/index.html",
   "/baseball-bros/": "https://classroomlesson.github.io/basic-ruffle-player/html/baseball_bros/index.html",
   "/golf-orbit/": "https://classroomlesson.github.io/basic-ruffle-player/html/golf_orbit/index.html",
   "/gun-spin/": "https://classroomlesson.github.io/basic-ruffle-player/html/gun_spin/index.html",
-  "/duckcraft/": "https://classroomlesson.github.io/basic-ruffle-player/html/minecraft/duckcraft/duckcraft-v1.html",
+  "/minecraft-1-20-6/": "https://brainworxedu.github.io/games/minecraft-1-20-6.html",
   "/bouncy-basketball/": "https://trueedu20.github.io/g177/class-282",
   "/polytrack/": "https://poly-track-online.github.io/polytrack/",
   "/drift-boss/": "https://driftbossonline.github.io/file/",
@@ -102,6 +107,18 @@ const loaderActions = document.querySelector("#loader-actions");
 const loaderSound = document.querySelector("#loader-sound");
 let loadTimer = 0;
 let currentGameUrl = "";
+let geometryAcknowledged = false;
+const geometryNotice = document.createElement('div');
+geometryNotice.id = 'geometry-loading-notice';
+geometryNotice.hidden = true;
+geometryNotice.setAttribute('role','dialog');
+geometryNotice.setAttribute('aria-modal','true');
+geometryNotice.setAttribute('aria-labelledby','geometry-loading-message');
+geometryNotice.innerHTML = '<div><p id="geometry-loading-message">When you load in please click the loading button on the black screen, this is how the game loads idk why.</p><button type="button">OK</button></div>';
+overlay.append(geometryNotice);
+const geometryNoticeStyle=document.createElement('style');
+geometryNoticeStyle.textContent='#geometry-loading-notice{position:absolute;inset:0;z-index:20;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}#geometry-loading-notice[hidden]{display:none}#geometry-loading-notice>div{max-width:520px;text-align:center;font:inherit;line-height:1.7}#geometry-loading-notice button{margin-top:18px;background:#000;color:#fff;border:1px solid #343943;border-radius:8px;padding:12px 36px;font:inherit;cursor:pointer}#geometry-loading-notice button:hover{background:#151515}';
+document.head.append(geometryNoticeStyle);
 let soundOn = true, soundTimer = 0, audioContext;
 function loadingTone(frequency=360){if(!soundOn)return;try{audioContext??=new AudioContext();const oscillator=audioContext.createOscillator(),gain=audioContext.createGain();oscillator.frequency.value=frequency;gain.gain.setValueAtTime(.035,audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+.12);oscillator.connect(gain).connect(audioContext.destination);oscillator.start();oscillator.stop(audioContext.currentTime+.13)}catch{}}
 function startLoadingSound(){clearInterval(soundTimer);loadingTone(330);soundTimer=setInterval(()=>loadingTone(430),1100)}
@@ -124,6 +141,13 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   const cardTitle = link.closest(".game-card")?.querySelector("h2")?.textContent?.trim() || "Game";
   title.textContent = cardTitle;
   player.title = cardTitle;
+  if(path==='/geometry-dash/'&&!geometryAcknowledged){
+    clearTimeout(loadTimer);stopLoadingSound();player.src='about:blank';loader.hidden=true;
+    overlay.hidden=false;document.body.classList.add('game-is-open');geometryNotice.hidden=false;
+    geometryNotice.querySelector('button').onclick=()=>{geometryAcknowledged=true;geometryNotice.hidden=true;link.click()};
+    geometryNotice.querySelector('button').focus();return;
+  }
+  geometryAcknowledged=false;geometryNotice.hidden=true;
   currentGameUrl = gameUrl;
   player.src = gameUrl;
   loaderStatus.textContent = "Loading game…";
@@ -146,6 +170,7 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
 });
 
 function closeGame() {
+  geometryAcknowledged=false;geometryNotice.hidden=true;geometryNotice.querySelector('button').onclick=null;
   if(document.fullscreenElement===overlay)document.exitFullscreen().catch(()=>{});
   clearTimeout(loadTimer);
   stopLoadingSound();

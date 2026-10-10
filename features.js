@@ -43,6 +43,11 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
+  "/crossy-road/": "arcade",
+  "/how-to-fish/": "simulation",
+  "/happy-wheels/": "action",
+  "/table-tennis-world-tour/": "sports",
+  "/skate-3/": "sports",
   "/snow-rider-3d/": "racing",
   "/mountain-bike-racer/": "racing",
   "/stickman-golf/": "sports",
@@ -66,7 +71,7 @@ const categories = {
   "/plants-vs-zombies/": "action",
   "/fast-food-rush/": "simulation",
   "/football-legends/": "sports",
-  "/duckcraft/": "simulation",
+  "/minecraft-1-20-6/": "simulation",
   "/gun-spin/": "arcade",
   "/golf-orbit/": "sports",
   "/snek-io/": "arcade",
