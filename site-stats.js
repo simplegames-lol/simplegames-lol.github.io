@@ -9,13 +9,14 @@
   const dayKey=()=>{const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(p=>[p.type,p.value]));return parts.year+'-'+parts.month+'-'+parts.day};
   async function request(action,key,options={},write=false){
     const url=new URL('https://counterapi.com/api/'+namespace+'/'+action+'/'+key);
-    url.searchParams.set('readOnly',String(!write));
+    // Omit readOnly when recording: the service treats even "false" as enabled.
+    if(!write)url.searchParams.set('readOnly','true');
     Object.entries(options).forEach(([k,v])=>url.searchParams.set(k,String(v)));
     url.searchParams.set('_',String(Date.now()));
     const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(10000)});
     // Never silently turn a service error into a zero count.
     if(response.status===404&&!write)return 0;
-    if(!response.ok)throw Error('Counter service HTTP '+response.status);
+    if(!response.ok)throw Error('CounterAPI '+action+' '+(write?'recording':'read')+' failed (HTTP '+response.status+')');
     if(write&&options.trackOnly)return 0;
     const data=await response.json(),number=Number(data.value);
     if(!Number.isFinite(number)||number<0)throw Error('Invalid counter response');return number;
@@ -56,7 +57,7 @@
       status.textContent=live?'Live global stats':'Preview · read only';card.classList.toggle('is-live',live);
       const prettyDate=new Intl.DateTimeFormat('en-US',{timeZone:zone,month:'short',day:'numeric',year:'numeric'}).format(new Date());
       dateLabel.textContent='Today · '+prettyDate+' · Resets at midnight EDT';failures=0;
-    }catch(error){failures++;card.classList.remove('is-live');status.textContent='Stats unavailable';dateLabel.textContent='Counter service unavailable · displayed counts may be stale · retrying automatically';console.warn('Site stats:',error.message)}
+    }catch(error){failures++;card.classList.remove('is-live');status.textContent='Stats unavailable';status.title=error.message;dateLabel.textContent='Counter service unavailable · retrying automatically';dateLabel.title=error.message;console.warn('Site stats:',error.message)}
     finally{inFlight=false;schedule()}
   }
   document.addEventListener('visibilitychange',()=>{clearTimeout(timer);if(document.visibilityState==='visible')sync()});
