@@ -2,7 +2,7 @@ import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {collection,doc,getDoc,getDocs,getFirestore,limit,onSnapshot,orderBy,query,serverTimestamp,setDoc,deleteDoc,updateDoc,where,writeBatch} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {findUser} from './user-lookup.js?v=1';
-import {categories,ticketHints,validTicket,staffRole} from './support-model.js?v=2';
+import {categories,ticketHints,validTicket,staffRole} from './support-model.js?v=3';
 const auth=getAuth(getApp()),db=getFirestore(getApp()),$=s=>document.querySelector(s);
 const panel=document.createElement('section');panel.id='support-panel';panel.className='support-panel';panel.hidden=true;panel.setAttribute('aria-label','Support');
 panel.innerHTML=`<header class="support-heading"><button id="support-home" type="button">← Home</button><h1>Support</h1><button id="support-close" type="button" aria-label="Close support">×</button></header>
