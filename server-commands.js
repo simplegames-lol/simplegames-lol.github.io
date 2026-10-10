@@ -37,9 +37,9 @@ export function commandChanges(server,channel,actor,name,target,duration,now=Dat
  if(name==='ban')changes.banned=[...new Set([...(server.banned||[]),target])];return changes;
 }
 export function commandEditor(server,channel,card){
- const box=document.createElement('fieldset');box.className='channel-command-settings';const legend=document.createElement('legend');legend.textContent='Commands by role';box.append(legend);
- const help=document.createElement('p');help.textContent='Owner always has access. Checked roles can run a command here, even in a locked channel. Timeout, kick, and ban affect the whole server. Higher role priority is required to target another member.';box.append(help);
- const controls={};for(const command of COMMANDS){const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='/'+command.name+' — '+command.description;details.append(summary);controls[command.name]=[];
+ const box=document.createElement('div');box.className='channel-command-settings';
+ const help=document.createElement('p');help.className='editor-hint';help.textContent='Choose which roles can use each command. The owner always has access; members cannot moderate equal or higher roles.';box.append(help);
+ const controls={};for(const command of COMMANDS){const details=document.createElement('details'),summary=document.createElement('summary'),title=document.createElement('span'),description=document.createElement('small');title.textContent='/'+command.name;description.textContent=command.description;summary.append(title,description);details.append(summary);controls[command.name]=[];
  for(const role of (server.roles||[]).filter(role=>role.id!=='owner')){const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=server.channelSettings?.[channel]?.commandRoles?.[command.name]?.includes(role.id)||false;input.setAttribute('aria-label','Allow '+role.name+' to use /'+command.name);label.append(input,role.name);details.append(label);controls[command.name].push({id:role.id,input})}box.append(details)}
  card.append(box);return()=>Object.fromEntries(Object.entries(controls).map(([name,roles])=>[name,roles.filter(role=>role.input.checked).map(role=>role.id)]));
 }
