@@ -19,3 +19,12 @@ export function cosmeticChanges(wallet,id,color,enabled=true){
 }
 export function publicCosmetics(wallet){return {nameColor:wallet.equipped.names?wallet.colors.names:'',outlineColor:wallet.equipped.frames?wallet.colors.frames:''}}
 export function earnedChanges(wallet){return {coins:wallet.coins+COINS_PER_MINUTE,earnedMinutes:wallet.earnedMinutes+1}}
+export const DAILY_COINS=100,DAILY_WAIT_MS=24*60*60*1000;
+export function dailyAvailable(wallet,now=Date.now()){
+  const last=wallet?.lastDailyAt?.toMillis?.();
+  return !!wallet&&(last===undefined||now>=last+DAILY_WAIT_MS);
+}
+export function dailyChanges(wallet,now=Date.now()){
+  if(!dailyAvailable(wallet,now))throw Error('Your next daily bonus is available 24 hours after your last claim.');
+  return {coins:wallet.coins+DAILY_COINS,dailyClaims:(wallet.dailyClaims||0)+1};
+}

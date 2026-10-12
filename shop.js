@@ -1,11 +1,11 @@
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,doc,onSnapshot,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import {items,validColor} from './shop-model.js?v=1';
-import {initializeWallet,shopAction,localShopPreview} from './shop-api.js?v=1';
+import {items,validColor,dailyAvailable} from './shop-model.js?v=2';
+import {initializeWallet,shopAction,localShopPreview} from './shop-api.js?v=2';
 const auth=getAuth(getApp()),db=getFirestore(getApp());
 const panel=document.createElement('section');panel.className='real-shop';panel.hidden=true;panel.setAttribute('aria-label','Shop');
-panel.innerHTML='<header><button id="shop-home" type="button">← Home</button><h1>Shop</h1><span class="real-shop-balance"><strong id="real-shop-coins">—</strong> coins</span></header><p class="real-shop-note">Start with 100 coins. Earn 10 per minute of active gameplay. Each unlock costs 500 coins; color changes are free.</p><p id="real-shop-status" role="status" aria-live="polite"></p><button id="shop-login" type="button" hidden>Sign in</button><div class="real-shop-layout"><div id="real-shop-items"></div><aside><h2>Profile preview</h2><span id="real-shop-avatar" class="profile-avatar"></span><strong id="real-shop-name">Player</strong><p id="real-shop-username"></p></aside></div><dialog id="real-shop-confirm" aria-labelledby="real-shop-confirm-title"><form method="dialog"><h2 id="real-shop-confirm-title"></h2><p>500 coins, paid once. Future color changes are free.</p><div><button value="cancel">Cancel</button><button value="confirm">Unlock</button></div></form></dialog>';
+panel.innerHTML='<header><button id="shop-home" type="button">← Home</button><h1>Shop</h1><span class="real-shop-balance"><strong id="real-shop-coins">—</strong> coins</span></header><p class="real-shop-note">Start with 100 coins. Earn 10 per minute of active gameplay. Each unlock costs 500 coins; color changes are free.</p><div class="daily-bonus"><div><h2>Daily bonus</h2><p>100 coins, once every 24 hours.</p></div><button id="daily-claim" type="button">Claim 100 coins</button></div><p id="real-shop-status" role="status" aria-live="polite"></p><button id="shop-login" type="button" hidden>Sign in</button><div class="real-shop-layout"><div id="real-shop-items"></div><aside><h2>Profile preview</h2><span id="real-shop-avatar" class="profile-avatar"></span><strong id="real-shop-name">Player</strong><p id="real-shop-username"></p></aside></div><dialog id="real-shop-confirm" aria-labelledby="real-shop-confirm-title"><form method="dialog"><h2 id="real-shop-confirm-title"></h2><p>500 coins, paid once. Future color changes are free.</p><div><button value="cancel">Cancel</button><button value="confirm">Unlock</button></div></form></dialog>';
 document.body.append(panel);
 const $=selector=>panel.querySelector(selector);
 let user=null,wallet=null,person={},loading=false,busy=false,stopWallet=()=>{},stopPerson=()=>{},epoch=0,earnBusy=false,pendingSeconds=0,lastAttempt=0;
@@ -23,13 +23,15 @@ function close(){panel.hidden=true;document.querySelector('#shop-open')?.focus()
 $('#shop-home').onclick=close;$('#shop-login').onclick=()=>{close();document.querySelector('#account-open')?.click()};
 document.querySelector('#shop-open')?.addEventListener('click',open);
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#real-shop-confirm').open)close()});
+$('#daily-claim').onclick=()=>void perform('daily');
 async function perform(action,id,color,enabled=true){
   if(busy||!user)return;busy=true;draw();const version=epoch,uid=user.uid;
-  try{await shopAction(uid,action,id,color,enabled);if(version===epoch)status(action==='buy'?'Unlocked. Choose a color below.':'Saved. No coins charged.')}
+  try{await shopAction(uid,action,id,color,enabled);if(version===epoch)status(action==='daily'?'Daily bonus claimed: +100 coins.':action==='buy'?'Unlocked. Choose a color below.':'Saved. No coins charged.')}
   catch(error){if(version===epoch)status(friendly(error))}
   finally{if(version===epoch){busy=false;draw()}}
 }
 function draw(){
+  const claim=$('#daily-claim');claim.disabled=!wallet||busy||localShopPreview||!dailyAvailable(wallet);claim.textContent=wallet&&!dailyAvailable(wallet)?'Claimed · available after 24 hours':'Claim 100 coins';
   $('#real-shop-coins').textContent=wallet?.coins?.toLocaleString()||'—';$('#shop-login').hidden=!!user;
   const host=$('#real-shop-items');host.replaceChildren();
   if(!user)status('Sign in to save coins and purchases to your account.');
@@ -81,5 +83,5 @@ async function earn(){
   catch(error){if(version===epoch&&error.code!=='permission-denied')status(friendly(error))}
   finally{earnBusy=false}
 }
-setInterval(()=>void earn(),15000);
+setInterval(()=>{void earn();if(!panel.hidden)draw()},15000);
 draw();
