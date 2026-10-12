@@ -16,7 +16,7 @@
     if(panel.hidden&&main){previousInert=main.inert;main.inert=true;}
     document.querySelector('.header-right')?.classList.remove('open');document.querySelector('#menu-toggle')?.setAttribute('aria-expanded','false');
     document.body.classList.remove('game-is-open');panel.hidden=false;document.body.classList.add('browser-is-open');opener.classList.add('active');opener.setAttribute('aria-expanded','true');layout();
-    status.hidden=false;status.textContent='Loading browser…';loaded=false;frame.src=origin+'/browser.html?embed=1';
+    status.hidden=false;status.textContent='Loading browser…';loaded=false;frame.src=origin+'/browser?embed=1&release=7';
     clearTimeout(timer);timer=setTimeout(()=>{if(!loaded&&!panel.hidden)status.textContent='Browser is taking longer to load. Try Home, then Browser again.'},18000);
     panel.querySelector('#browser-home').focus();
   }
