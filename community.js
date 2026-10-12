@@ -40,7 +40,7 @@ const achievements=[
 function renderAchievements(profile={}){const stats=profile.stats||{},total=$("#playtime-total");if(total)total.textContent=`${Math.floor((stats.playSeconds||0)/60)} minutes played`}
 const syncStatus=document.createElement('p');syncStatus.className='result-count';syncStatus.setAttribute('aria-live','polite');document.querySelector('#leaderboard-view')?.append(syncStatus);
 const tracker=createPlaytimeTracker({
-  send:async(uid,delta)=>{const changes={};if(delta.seconds)changes['stats.playSeconds']=increment(delta.seconds);if(delta.opened)changes['stats.gamesOpened']=increment(delta.opened);for(const [path,count]of Object.entries(delta.games))changes[`stats.games.${path}`]=increment(count);await updateDoc(doc(db,'users',uid),changes)},
+  send:async(uid,delta)=>{const changes={};if(delta.seconds)changes['stats.playSeconds']=increment(delta.seconds);if(delta.opened)changes['stats.gamesOpened']=increment(delta.opened);for(const [path,count]of Object.entries(delta.games))changes[`stats.games.${path}`]=increment(count);await updateDoc(doc(db,'users',uid),changes);if(delta.seconds)window.dispatchEvent(new CustomEvent('simplegames:playtime-saved',{detail:{uid,seconds:delta.seconds}}))},
   status:(state,error)=>{syncStatus.textContent=state==='saved'?'Playtime saved · updates about every 15 seconds.':state==='syncing'?'Syncing playtime…':error?.code==='permission-denied'?'Playtime save blocked. Publish the latest Firestore rules.':'Playtime could not sync. Keep this page open; it will retry when connected.';if(error)console.error('Playtime sync:',error)}
 });
 let playing=false,pageActive=true;
