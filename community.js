@@ -1,7 +1,8 @@
+import{leaderboardWeek,splitLeaderboardWeeks}from'./leaderboard-week.js?v=1';
 import{getApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import{collection,doc,getDoc,getFirestore,increment,onSnapshot,serverTimestamp,setDoc,updateDoc}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import{createPlaytimeTracker}from'./playtime.js?v=2';
+import{collection,doc,getDoc,getFirestore,increment,onSnapshot,serverTimestamp,setDoc,updateDoc,runTransaction,Timestamp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import{createPlaytimeTracker}from'./playtime.js?v=3';
 import{createPlaytimeGate}from'./playtime-gate.js?v=1';
 import{eligiblePlaytime}from'./playtime-activity.js?v=2';
 
@@ -40,7 +41,25 @@ const achievements=[
 function renderAchievements(profile={}){const stats=profile.stats||{},total=$("#playtime-total");if(total)total.textContent=`${Math.floor((stats.playSeconds||0)/60)} minutes played`}
 const syncStatus=document.createElement('p');syncStatus.className='result-count';syncStatus.setAttribute('aria-live','polite');document.querySelector('#leaderboard-view')?.append(syncStatus);
 const tracker=createPlaytimeTracker({
-  send:async(uid,delta)=>{const changes={};if(delta.seconds)changes['stats.playSeconds']=increment(delta.seconds);if(delta.opened)changes['stats.gamesOpened']=increment(delta.opened);for(const [path,count]of Object.entries(delta.games))changes[`stats.games.${path}`]=increment(count);await updateDoc(doc(db,'users',uid),changes);if(delta.seconds)window.dispatchEvent(new CustomEvent('simplegames:playtime-saved',{detail:{uid,seconds:delta.seconds}}))},
+  buckets:splitLeaderboardWeeks,
+  send:async(uid,delta)=>{
+    const changes={};
+    if(delta.seconds)changes['stats.playSeconds']=increment(delta.seconds);
+    if(delta.opened)changes['stats.gamesOpened']=increment(delta.opened);
+    for(const [path,count]of Object.entries(delta.games))changes[`stats.games.${path}`]=increment(count);
+    const weeks=Object.entries(delta.weeks||{}).filter(([,data])=>Date.now()>=data.start&&Date.now()<data.end+120000);
+    if(!weeks.length&&delta.opened){const week=leaderboardWeek();weeks.push([week.key,{...week,seconds:0}])}
+    await runTransaction(db,async tx=>{
+      const entries=[];
+      for(const [key,data]of weeks){const ref=doc(db,'weeklyPlaytime',key,'players',uid);entries.push({ref,data,snapshot:await tx.get(ref)})}
+      tx.update(doc(db,'users',uid),changes);
+      for(const {ref,data,snapshot}of entries){
+        if(!data.seconds&&snapshot.exists())continue;
+        tx.set(ref,{playSeconds:(snapshot.data()?.playSeconds||0)+data.seconds,periodStart:Timestamp.fromMillis(data.start),periodEnd:Timestamp.fromMillis(data.end),updatedAt:serverTimestamp()});
+      }
+    });
+    if(delta.seconds)window.dispatchEvent(new CustomEvent('simplegames:playtime-saved',{detail:{uid,seconds:delta.seconds}}));
+  },
   status:(state,error)=>{syncStatus.textContent=state==='saved'?'Playtime saved · updates about every 15 seconds.':state==='syncing'?'Syncing playtime…':error?.code==='permission-denied'?'Playtime save blocked. Publish the latest Firestore rules.':'Playtime could not sync. Keep this page open; it will retry when connected.';if(error)console.error('Playtime sync:',error)}
 });
 let playing=false,pageActive=true;

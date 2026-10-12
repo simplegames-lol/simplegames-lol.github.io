@@ -1,3 +1,4 @@
+import{leaderboardWeek,useWeeklyLeaderboard}from'./leaderboard-week.js?v=1';
 import{createFriendPresenceDetector}from'./friend-presence.js?v=1';
 import{bindCosmetics}from'./shop-cosmetics.js?v=1';
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
@@ -167,7 +168,37 @@ for(const [id,key]of[["#message-sound-setting","messageSound"],["#dnd-setting","
 $("#username-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,username=String(new FormData(f).get("username")).trim(),lower=username.toLowerCase(),oldLower=(profile.usernameLower||profile.username||"").toLowerCase();if(!/^[A-Za-z0-9_]{3,20}$/.test(username))return showStatus("Username must be 3–20 letters, numbers, or underscores.",true);if(lower===oldLower)return showStatus("Choose a different username.",true);const changed=ms(profile?.usernameChangedAt),wait=30*24*60*60*1000;if(changed&&Date.now()-changed<wait)return showStatus(`You can change it again in ${Math.ceil((wait-(Date.now()-changed))/86400000)} days.`,true);try{await runTransaction(db,async t=>{const next=doc(db,"usernames",lower),taken=await t.get(next);if(taken.exists()&&taken.data().uid!==auth.currentUser.uid)throw Error("That username is already taken.");if(oldLower)t.delete(doc(db,"usernames",oldLower));t.set(next,{uid:auth.currentUser.uid,username});t.update(doc(db,"users",auth.currentUser.uid),{username,usernameLower:lower,usernameChangedAt:serverTimestamp()})});f.reset();showStatus("Username changed.")}catch(err){showStatus(friendlyError(err),true)}};
 function listenBlocks(uid){stopBlocks();stopBlocks=onSnapshot(query(collection(db,"blocks"),where("blockerUid","==",uid)),async snap=>{const list=$("#blocked-list");list.replaceChildren();if(snap.empty)return list.append(Object.assign(document.createElement("p"),{textContent:"No blocked users"}));for(const block of snap.docs){const u=await getDoc(doc(db,"users",block.data().blockedUid)),name=u.data()?.username||"Unknown user";list.append(row(name,[button("Unblock",async()=>{await deleteDoc(block.ref);showStatus(`${name} was unblocked.`)})]))}})}
 function listLeaderboardError(error){console.error('Leaderboard:',error);document.querySelector('#leaderboard-podium')?.replaceChildren();const list=$('#leaderboard-list');list.replaceChildren(Object.assign(document.createElement('li'),{textContent:'Leaderboard could not refresh. Check your connection and sign-in.'}));showStatus(friendlyError(error),true)}
-function listenLeaderboard(){stopLeaderboard();stopLeaderboard=onSnapshot(query(collection(db,"users"),orderBy("stats.playSeconds","desc"),limit(10)),snap=>{const list=$("#leaderboard-list");renderPodium(list,snap.docs,applyAvatar);if(snap.empty)list.append(Object.assign(document.createElement("li"),{textContent:"No playtime recorded yet."}))},listLeaderboardError)}
+let leaderboardKey=null,leaderboardVersion=0;const leaderboardProfiles=new Map();
+function leaderboardResetLabel(){
+ const week=leaderboardWeek(),next=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric'}).format(new Date(week.end));
+ const minutes=Math.max(0,Math.ceil((week.end-Date.now())/60000)),hours=Math.floor(minutes/60),rest=minutes%60;
+ $("#leaderboard-reset").textContent='Resets Sunday night at midnight ET · Next: '+next+' at 12:00 AM'+(hours<24?' · '+hours+'h '+rest+'m':'');
+ return week;
+}
+function listenLeaderboard(){
+ const week=leaderboardResetLabel(),weekly=useWeeklyLeaderboard(Date.now()),key=weekly?week.key:'lifetime-before-first-reset';
+ if(leaderboardKey===key)return;
+ leaderboardKey=key;const version=++leaderboardVersion;stopLeaderboard();
+ document.querySelector('#leaderboard-podium')?.replaceChildren();$("#leaderboard-list").textContent='Loading leaderboard…';
+ const source=weekly?query(collection(db,'weeklyPlaytime',week.key,'players'),orderBy('playSeconds','desc'),limit(10)):query(collection(db,"users"),orderBy("stats.playSeconds","desc"),limit(10));
+ stopLeaderboard=onSnapshot(source,async snapshot=>{
+  try{
+   let entries=snapshot.docs;
+   if(weekly)entries=await Promise.all(snapshot.docs.filter(entry=>entry.data().playSeconds>0).map(async entry=>{
+    let person=friendProfiles.get(entry.id)||leaderboardProfiles.get(entry.id);
+    if(entry.id===auth.currentUser?.uid&&profile)person=profile;
+    if(!person){const userDoc=await getDoc(doc(db,'users',entry.id));person=userDoc.exists()?userDoc.data():{displayName:'Profile unavailable'};leaderboardProfiles.set(entry.id,person)}
+    return {id:entry.id,data:()=>({...person,stats:{...person.stats,playSeconds:entry.data().playSeconds}})};
+   }));
+   if(version!==leaderboardVersion||!auth.currentUser)return;
+   const list=$("#leaderboard-list");renderPodium(list,entries,applyAvatar);
+   if(!entries.length)list.append(Object.assign(document.createElement('li'),{textContent:weekly?'New week—no playtime recorded yet.':'No playtime recorded yet.'}));
+  }catch(error){if(version===leaderboardVersion)listLeaderboardError(error)}
+ },error=>{if(version===leaderboardVersion)listLeaderboardError(error)});
+}
+setInterval(()=>{if(auth.currentUser)listenLeaderboard();else leaderboardResetLabel()},5000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&auth.currentUser)listenLeaderboard()});
+
 async function presence(extra={}){if(auth.currentUser&&document.visibilityState==="visible")await updateDoc(doc(db,"users",auth.currentUser.uid),{status:"online",lastActive:serverTimestamp(),...extra}).catch(()=>{})}
 let lastInteractionPresence=0;function activePresence(){if(document.visibilityState!=="visible"||Date.now()-lastInteractionPresence<15000)return;lastInteractionPresence=Date.now();presence()}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){presence();if(activeFriend)void markRead(pairId(auth.currentUser.uid,activeFriend.uid));if(activeGroup)void markGroupRead(activeGroup.id)}});window.addEventListener("focus",()=>presence());for(const eventName of["pointerdown","keydown","touchstart"])window.addEventListener(eventName,activePresence,{passive:true});window.addEventListener("simplegames:play",e=>presence({currentGame:e.detail}));window.addEventListener("simplegames:stop-playing",()=>presence({currentGame:null}));
@@ -175,7 +206,7 @@ window.addEventListener('simplegames:media-start',e=>presence({currentGame:{kind
 $("#sign-out").onclick=async()=>{await updateDoc(doc(db,"users",auth.currentUser.uid),{status:"offline",lastActive:serverTimestamp(),currentGame:null}).catch(()=>{});await signOut(auth)};
 onAuthStateChanged(auth,user=>{friendPresence.clear();stopProfile();stopRequests();stopFriends();stopChats();stopMessages();stopBlocks();stopFriendProfiles.forEach(s=>s());stopFriendProfiles=[];clearInterval(presenceTimer);activeFriend=null;friends=[];chats.clear();friendProfiles.clear();chatsReady=false;document.dispatchEvent(new CustomEvent("simplegames:auth",{detail:{user}}));if(!user){friendPresence.clear();profile=null;authView.hidden=false;socialView.hidden=true;$("#account-open .account-label").textContent="Log in";$("#account-unread").hidden=true;return}authView.hidden=true;socialView.hidden=false;showView("friends");$("#account-email").textContent=user.email||"";stopProfile=onSnapshot(doc(db,"users",user.uid),p=>{if(!p.exists())return;profile=p.data();const display=profile.displayName||profile.username,earned=badgeFor(profile);$("#profile-display-name").textContent=`${display}${earned?` ${earned}`:""}`;$("#profile-username").textContent=`@${profile.username}`;$("#account-open .account-label").textContent=display;$("#message-sound-setting").checked=profile.messageSound!==false;$("#dnd-setting").checked=!!profile.doNotDisturb;$("#hide-online-setting").checked=!!profile.hideOnline;$("#private-activity-setting").checked=!!profile.privateActivity;const f=$("#profile-form");if(document.activeElement?.form!==f){f.elements.displayName.value=display;f.elements.bio.value=profile.bio||"";$("#bio-count").textContent=(profile.bio||"").length}document.dispatchEvent(new CustomEvent("simplegames:profile",{detail:{user,profile}}))});listenRequests(user.uid);listenFriends(user.uid);listenChats(user.uid);listenBlocks(user.uid);presence();presenceTimer=setInterval(()=>{if(document.visibilityState==="visible")presence();renderFriends()},25000)});
 onAuthStateChanged(auth,user=>{stopGroups();activeGroup=null;groups.clear();groupsReady=false;if(user)listenGroups(user.uid)});
-onAuthStateChanged(auth,user=>{stopLeaderboard();if(user)listenLeaderboard()});
+onAuthStateChanged(auth,user=>{stopLeaderboard();leaderboardVersion++;leaderboardKey=null;leaderboardProfiles.clear();if(user)listenLeaderboard();else leaderboardResetLabel()});
 const renderFriendsBase=renderFriends;renderFriends=()=>{renderFriendsBase();updateAccountUnread()};
 const openChatBase=openChat;openChat=f=>{const d=friendProfiles.get(f.uid);if(d)friendProfiles.set(f.uid,{...d,avatar:""});openChatBase(f);const shown=friendProfiles.get(f.uid)||f;$("#chat-title").textContent=shown.displayName||shown.username;bindCosmetics(f.uid,null,$("#chat-title"))};
 const fixedAccountLabel=$("#account-open .account-label");if(fixedAccountLabel){const keepAccountLabel=()=>{if(fixedAccountLabel.textContent!=="Account")fixedAccountLabel.textContent="Account"};keepAccountLabel();new MutationObserver(keepAccountLabel).observe(fixedAccountLabel,{childList:true,characterData:true,subtree:true})}
