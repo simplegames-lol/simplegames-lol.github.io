@@ -7,7 +7,7 @@ import{eligiblePlaytime}from'./playtime-activity.js?v=2';
 
 const auth=getAuth(getApp()),db=getFirestore(getApp()),$=s=>document.querySelector(s);
 let currentUser=null,currentProfile=null,syncTimer=0,ratings=[];
-const preferenceKeys=["sg-theme","sg-card-size","sg-timezone","sg-accent","sg-background","sg-background-image","sg-background-style","sg-show-menu-time","sg-show-game-time","sg-click-sound","sg-message-popups","sg-server-notifications","sg-sidebar-closed"];
+const preferenceKeys=["sg-theme","sg-card-size","sg-timezone","sg-accent","sg-background","sg-background-image","sg-background-style","sg-show-menu-time","sg-show-game-time","sg-click-sound","sg-message-popups","sg-friend-online-notifications","sg-server-notifications","sg-sidebar-closed"];
 const ratingPanel=document.createElement("section");
 ratingPanel.className="settings-panel";ratingPanel.hidden=true;ratingPanel.innerHTML='<div class="settings-card"><div class="settings-heading"><h2 id="rating-title">Rate game</h2><button id="rating-close" type="button" aria-label="Close ratings">×</button></div><div class="rating-picker" id="rating-picker"></div><p class="social-status" id="rating-status"></p></div>';
 document.body.append(ratingPanel);
