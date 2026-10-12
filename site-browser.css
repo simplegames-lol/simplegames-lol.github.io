@@ -1,0 +1,12 @@
+.site-browser-panel{position:fixed;inset:0 0 0 180px;z-index:410;display:flex;flex-direction:column;background:#000;color:var(--text,#fff)}
+.site-browser-panel[hidden]{display:none!important}
+.site-browser-topbar{display:flex;align-items:center;gap:18px;min-height:55px;padding:10px 18px;border-bottom:1px solid #282d34;background:#000}
+.site-browser-topbar h1{margin:0;font:inherit;font-size:16px;font-weight:700}
+.site-browser-topbar button{font:inherit;font-size:12px;background:#000;color:inherit;border:1px solid #30343b;border-radius:8px;padding:8px 12px;cursor:pointer}
+.site-browser-topbar button:hover{background:#111;border-color:#50555e}
+.site-browser-frame{flex:1;min-height:0;width:100%;border:0;background:#000}
+.site-browser-message{margin:0;padding:9px 18px;color:#98a2af;font-size:11px;border-bottom:1px solid #20252b}
+body.browser-is-open{overflow:hidden}
+body.sidebar-collapsed .site-browser-panel{left:0}
+@media(max-width:1050px){.site-browser-panel{left:180px}}
+@media(max-width:900px){.site-browser-panel{inset:58px 0 0}.site-browser-topbar{min-height:44px;padding:7px 12px}.site-browser-message{padding:7px 12px}}
