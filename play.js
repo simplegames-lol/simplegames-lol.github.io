@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/kour/": "https://kour.io/",
   "/tunnel-rush/": "https://brainworxedu.github.io/games/tunnel-rush.html",
   "/trombone-champ/": "https://brainworxedu.github.io/games/trombone-champ.html",
   "/tomb-of-the-mask/": "/tomb-of-the-mask/player.html?v=2",
