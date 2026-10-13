@@ -1,11 +1,11 @@
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,doc,onSnapshot,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import {items,validColor,dailyAvailable} from './shop-model.js?v=2';
-import {initializeWallet,shopAction,localShopPreview} from './shop-api.js?v=2';
+import {items,validColor,dailyAvailable,dailyRemaining} from './shop-model.js?v=3';
+import {initializeWallet,shopAction,localShopPreview} from './shop-api.js?v=3';
 const auth=getAuth(getApp()),db=getFirestore(getApp());
 const panel=document.createElement('section');panel.className='real-shop';panel.hidden=true;panel.setAttribute('aria-label','Shop');
-panel.innerHTML='<header><button id="shop-home" type="button">← Home</button><h1>Shop</h1><span class="real-shop-balance"><strong id="real-shop-coins">—</strong> coins</span></header><p class="real-shop-note">Start with 100 coins. Earn 10 per minute of active gameplay. Each unlock costs 500 coins; color changes are free.</p><div class="daily-bonus"><div><h2>Daily bonus</h2><p>100 coins, once every 24 hours.</p></div><button id="daily-claim" type="button">Claim 100 coins</button></div><p id="real-shop-status" role="status" aria-live="polite"></p><button id="shop-login" type="button" hidden>Sign in</button><div class="real-shop-layout"><div id="real-shop-items"></div><aside><h2>Profile preview</h2><span id="real-shop-avatar" class="profile-avatar"></span><strong id="real-shop-name">Player</strong><p id="real-shop-username"></p></aside></div><dialog id="real-shop-confirm" aria-labelledby="real-shop-confirm-title"><form method="dialog"><h2 id="real-shop-confirm-title"></h2><p>500 coins, paid once. Future color changes are free.</p><div><button value="cancel">Cancel</button><button value="confirm">Unlock</button></div></form></dialog>';
+panel.innerHTML='<header><button id="shop-home" type="button">← Home</button><h1>Shop</h1><span class="real-shop-balance"><strong id="real-shop-coins">—</strong> coins</span></header><p class="real-shop-note">Start with 100 coins. Earn 10 per minute of active gameplay. Each unlock costs 500 coins; color changes are free.</p><div class="daily-bonus"><div><h2>Daily bonus</h2><p>100 coins, once every 24 hours.</p><p id="daily-countdown"></p></div><button id="daily-claim" type="button">Claim 100 coins</button></div><p id="real-shop-status" role="status" aria-live="polite"></p><button id="shop-login" type="button" hidden>Sign in</button><div class="real-shop-layout"><div id="real-shop-items"></div><aside><h2>Profile preview</h2><span id="real-shop-avatar" class="profile-avatar"></span><strong id="real-shop-name">Player</strong><p id="real-shop-username"></p></aside></div><dialog id="real-shop-confirm" aria-labelledby="real-shop-confirm-title"><form method="dialog"><h2 id="real-shop-confirm-title"></h2><p>500 coins, paid once. Future color changes are free.</p><div><button value="cancel">Cancel</button><button value="confirm">Unlock</button></div></form></dialog>';
 document.body.append(panel);
 const $=selector=>panel.querySelector(selector);
 let user=null,wallet=null,person={},loading=false,busy=false,stopWallet=()=>{},stopPerson=()=>{},epoch=0,earnBusy=false,pendingSeconds=0,lastAttempt=0;
@@ -31,7 +31,7 @@ async function perform(action,id,color,enabled=true){
   finally{if(version===epoch){busy=false;draw()}}
 }
 function draw(){
-  const claim=$('#daily-claim');claim.disabled=!wallet||busy||localShopPreview||!dailyAvailable(wallet);claim.textContent=wallet&&!dailyAvailable(wallet)?'Claimed · available after 24 hours':'Claim 100 coins';
+  updateDailyCountdown();
   $('#real-shop-coins').textContent=wallet?.coins?.toLocaleString()||'—';$('#shop-login').hidden=!!user;
   const host=$('#real-shop-items');host.replaceChildren();
   if(!user)status('Sign in to save coins and purchases to your account.');
@@ -83,5 +83,17 @@ async function earn(){
   catch(error){if(version===epoch&&error.code!=='permission-denied')status(friendly(error))}
   finally{earnBusy=false}
 }
-setInterval(()=>{void earn();if(!panel.hidden)draw()},15000);
+function updateDailyCountdown(){
+  const claim=$('#daily-claim'),label=$('#daily-countdown');
+  const remaining=dailyRemaining(wallet),seconds=Math.ceil(remaining/1000);
+  claim.disabled=!wallet||busy||localShopPreview||remaining>0;
+  claim.textContent=remaining>0?'Claimed':'Claim 100 coins';
+  if(!user)label.textContent='Sign in to claim your daily bonus.';
+  else if(localShopPreview)label.textContent='Account rewards are disabled in this preview.';
+  else if(!wallet)label.textContent='Loading daily bonus…';
+  else if(!remaining)label.textContent='Your 100 coins are ready to claim.';
+  else label.textContent=`Next 100 coins in ${Math.floor(seconds/3600)}h ${String(Math.floor(seconds%3600/60)).padStart(2,'0')}m ${String(seconds%60).padStart(2,'0')}s`;
+}
+setInterval(()=>void earn(),15000);
+setInterval(()=>{if(!panel.hidden)updateDailyCountdown()},1000);
 draw();

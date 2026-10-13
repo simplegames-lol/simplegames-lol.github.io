@@ -20,6 +20,10 @@ export function cosmeticChanges(wallet,id,color,enabled=true){
 export function publicCosmetics(wallet){return {nameColor:wallet.equipped.names?wallet.colors.names:'',outlineColor:wallet.equipped.frames?wallet.colors.frames:''}}
 export function earnedChanges(wallet){return {coins:wallet.coins+COINS_PER_MINUTE,earnedMinutes:wallet.earnedMinutes+1}}
 export const DAILY_COINS=100,DAILY_WAIT_MS=24*60*60*1000;
+export function dailyRemaining(wallet,now=Date.now()){
+  const last=wallet?.lastDailyAt?.toMillis?.();
+  return last===undefined?0:Math.max(0,last+DAILY_WAIT_MS-now);
+}
 export function dailyAvailable(wallet,now=Date.now()){
   const last=wallet?.lastDailyAt?.toMillis?.();
   return !!wallet&&(last===undefined||now>=last+DAILY_WAIT_MS);
