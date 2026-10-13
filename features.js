@@ -51,6 +51,8 @@ const categories = {
   "/retro-bowl-college/": "sports",
   "/fruit-ninja/": "arcade",
   "/tomb-of-the-mask/": "action",
+  "/tunnel-rush/": "action",
+  "/trombone-champ/": "simulation",
   "/soccer-random/": "sports",
   "/snow-rider-3d/": "racing",
   "/mountain-bike-racer/": "racing",
