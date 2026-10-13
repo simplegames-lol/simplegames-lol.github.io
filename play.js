@@ -2,7 +2,7 @@
 const games = {
   "/tunnel-rush/": "https://brainworxedu.github.io/games/tunnel-rush.html",
   "/trombone-champ/": "https://brainworxedu.github.io/games/trombone-champ.html",
-  "/tomb-of-the-mask/": "https://brainworxedu.github.io/games/tomb-of-the-mask.html",
+  "/tomb-of-the-mask/": "/tomb-of-the-mask/player.html?v=2",
   "/crossy-road/": "https://brainworxedu.github.io/games/crossy-road.html",
   "/how-to-fish/": "https://brainworxedu.github.io/games/how-to-fish.html",
   "/happy-wheels/": "https://brainworxedu.github.io/games/happy-wheels.html",
