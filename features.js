@@ -48,6 +48,7 @@ const categories = {
   "/happy-wheels/": "action",
   "/table-tennis-world-tour/": "sports",
   "/skate-3/": "sports",
+  "/retro-bowl-college/": "sports",
   "/snow-rider-3d/": "racing",
   "/mountain-bike-racer/": "racing",
   "/stickman-golf/": "sports",

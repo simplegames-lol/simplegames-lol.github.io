@@ -85,7 +85,8 @@ const games = {
   "/bitlife/": "https://unblokedgames.github.io/projects/bitlife/index.html",
   "/project-sand/": "https://unblokedgames.github.io/projects/project-sand/index.html",
   "/slope/": "https://unblokedgames.github.io/projects/slope/index.html",
-  "/retro-bowl/": "/retro-bowl/player.html"
+  "/retro-bowl/": "/retro-bowl/player.html",
+  "/retro-bowl-college/": "/retro-bowl-college/player.html"
 };
 
 const overlay = document.querySelector("#game-overlay");
