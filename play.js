@@ -89,7 +89,8 @@ const games = {
   "/retro-bowl-college/": "/retro-bowl-college/player.html",
   "/fruit-ninja/": "/fruit-ninja/player.html",
   "/moto-x3m-spooky/": "/moto-x3m-spooky/player.html",
-  "/soccer-random/": "/soccer-random/player.html"
+  "/soccer-random/": "/soccer-random/player.html",
+  "/roblox/": "/roblox/player.html"
 };
 
 const overlay = document.querySelector("#game-overlay");
