@@ -52,6 +52,8 @@ const categories = {
   "/fruit-ninja/": "arcade",
   "/tomb-of-the-mask/": "action",
   "/kour/": "action",
+  "/shell-shockers/": "action",
+  "/rocket-soccer/": "sports",
   "/tunnel-rush/": "action",
   "/trombone-champ/": "simulation",
   "/soccer-random/": "sports",
