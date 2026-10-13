@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/growden/": "https://db.duckmath.org/html/growden_io/",
   "/shell-shockers/": "https://shellshock.io/",
   "/rocket-soccer/": "https://rocketsoccerderby.gitlab.io/file/",
   "/kour/": "https://kour.io/",
