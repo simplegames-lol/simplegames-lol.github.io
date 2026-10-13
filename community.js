@@ -38,7 +38,7 @@ const achievements=[
   {icon:"🏆",name:"Game Fan",test:s=>(s.gamesOpened||0)>=20},
   {icon:"⏱️",name:"One Hour Club",test:s=>(s.playSeconds||0)>=3600}
 ];
-function renderAchievements(profile={}){const stats=profile.stats||{},total=$("#playtime-total");if(total)total.textContent=`${Math.floor((stats.playSeconds||0)/60)} minutes played`}
+function renderAchievements(profile={}){const stats=profile.stats||{},total=$("#playtime-total");if(total)total.textContent=`${Math.floor((stats.playSeconds||0)/60)} lifetime minutes`}
 const syncStatus=document.createElement('p');syncStatus.className='result-count';syncStatus.setAttribute('aria-live','polite');document.querySelector('#leaderboard-view')?.append(syncStatus);
 const tracker=createPlaytimeTracker({
   buckets:splitLeaderboardWeeks,
