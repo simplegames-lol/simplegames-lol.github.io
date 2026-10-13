@@ -152,7 +152,8 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   const cardTitle = link.closest(".game-card")?.querySelector("h2")?.textContent?.trim() || "Game";
   title.textContent = cardTitle;
   player.title = cardTitle;
-  if(path==='/geometry-dash/'&&!geometryAcknowledged){
+  if((path==='/geometry-dash/'||path==='/skate-3/')&&!geometryAcknowledged){
+    geometryNotice.querySelector('p').textContent=path==='/skate-3/'?'This game only works in Google Chrome browser':'When you load in please click the loading button on the black screen, this is how the game loads idk why.';
     clearTimeout(loadTimer);stopLoadingSound();player.src='about:blank';loader.hidden=true;
     overlay.hidden=false;document.body.classList.add('game-is-open');geometryNotice.hidden=false;
     geometryNotice.querySelector('button').onclick=()=>{geometryAcknowledged=true;geometryNotice.hidden=true;link.click()};
