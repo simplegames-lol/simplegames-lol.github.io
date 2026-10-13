@@ -85,7 +85,7 @@ const games = {
   "/bitlife/": "https://unblokedgames.github.io/projects/bitlife/index.html",
   "/project-sand/": "https://unblokedgames.github.io/projects/project-sand/index.html",
   "/slope/": "https://unblokedgames.github.io/projects/slope/index.html",
-  "/retro-bowl/": "https://unblokedgames.github.io/projects/retro-bowl/index.html"
+  "/retro-bowl/": "https://hackz00.github.io/classroommaxxing/?id=gn%3A33"
 };
 
 const overlay = document.querySelector("#game-overlay");
