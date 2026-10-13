@@ -50,6 +50,7 @@ const categories = {
   "/skate-3/": "sports",
   "/retro-bowl-college/": "sports",
   "/fruit-ninja/": "arcade",
+  "/tomb-of-the-mask/": "action",
   "/soccer-random/": "sports",
   "/snow-rider-3d/": "racing",
   "/mountain-bike-racer/": "racing",

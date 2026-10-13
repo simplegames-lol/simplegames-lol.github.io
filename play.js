@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/tomb-of-the-mask/": "https://brainworxedu.github.io/games/tomb-of-the-mask.html",
   "/crossy-road/": "https://brainworxedu.github.io/games/crossy-road.html",
   "/how-to-fish/": "https://brainworxedu.github.io/games/how-to-fish.html",
   "/happy-wheels/": "https://brainworxedu.github.io/games/happy-wheels.html",
