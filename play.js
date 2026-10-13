@@ -87,7 +87,8 @@ const games = {
   "/slope/": "https://unblokedgames.github.io/projects/slope/index.html",
   "/retro-bowl/": "/retro-bowl/player.html",
   "/retro-bowl-college/": "/retro-bowl-college/player.html",
-  "/fruit-ninja/": "/fruit-ninja/player.html"
+  "/fruit-ninja/": "/fruit-ninja/player.html",
+  "/moto-x3m-spooky/": "/moto-x3m-spooky/player.html"
 };
 
 const overlay = document.querySelector("#game-overlay");

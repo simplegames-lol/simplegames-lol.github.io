@@ -50,6 +50,7 @@ const categories = {
   "/skate-3/": "sports",
   "/retro-bowl-college/": "sports",
   "/fruit-ninja/": "arcade",
+  "/moto-x3m-spooky/": "racing",
   "/snow-rider-3d/": "racing",
   "/mountain-bike-racer/": "racing",
   "/stickman-golf/": "sports",
