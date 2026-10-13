@@ -86,7 +86,8 @@ const games = {
   "/project-sand/": "https://unblokedgames.github.io/projects/project-sand/index.html",
   "/slope/": "https://unblokedgames.github.io/projects/slope/index.html",
   "/retro-bowl/": "/retro-bowl/player.html",
-  "/retro-bowl-college/": "/retro-bowl-college/player.html"
+  "/retro-bowl-college/": "/retro-bowl-college/player.html",
+  "/fruit-ninja/": "/fruit-ninja/player.html"
 };
 
 const overlay = document.querySelector("#game-overlay");
