@@ -2,7 +2,7 @@
   const panel = document.createElement('section');
   panel.className = 'movies-panel';
   panel.hidden = true;
-  panel.setAttribute('aria-label', 'Movies');
+  panel.setAttribute('aria-label', 'Movies/TV Shows');
   const style = document.createElement('style');
   style.textContent = '.movies-panel{position:fixed;inset:0;background:#000;z-index:550;display:flex;flex-direction:column}.movies-panel[hidden]{display:none}.movies-bar{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #222;background:#000;color:#fff}.movies-bar strong{margin-right:auto}.movies-note{margin:0;padding:8px 18px;color:#aaa;font-size:12px;background:#000}.movies-frame{width:100%;flex:1;min-height:0;border:0;background:#000}';
   document.head.append(style);
@@ -12,7 +12,13 @@
   home.className = 'secondary-button';
   home.textContent = '← Home';
   const title = document.createElement('strong');
-  title.textContent = 'Movies';
+  title.textContent = '🎬 Movies/TV Shows';
+  const picker = document.createElement('select');
+  picker.setAttribute('aria-label','Choose movie or TV provider');
+  picker.style.cssText='background:#000;color:#fff;border:1px solid #30343b;border-radius:8px;padding:9px 12px;font:inherit;max-width:100%';
+  for(const [value,label] of [['lookmovie','LookMovie2'],['rive','Rive (TV Shows and Movies)']]){
+    const option=document.createElement('option');option.value=value;option.textContent=label;picker.append(option);
+  }
   const retry = document.createElement('button');
   retry.className = 'secondary-button';
   retry.textContent = 'Reload';
@@ -20,18 +26,18 @@
   note.className = 'movies-note';
   const frame = document.createElement('iframe');
   frame.className = 'movies-frame';
-  frame.title = 'External movie website';
+  frame.title = 'External movie and TV website';
   frame.referrerPolicy = 'strict-origin-when-cross-origin';
   frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-presentation');
   frame.setAttribute('allow', 'fullscreen; encrypted-media');
   frame.allowFullscreen = true;
-  const url = 'https://www.lookmovie2.to/movies/page/717';
+  const providers={lookmovie:'https://www.lookmovie2.to/movies/page/717',rive:'https://www.rivestream.app/'};
   let timer, sessionOpen=false;
   function load() {
     clearTimeout(timer);
-    note.textContent = 'Loading external movie website…';
-    frame.src = url;
-    window.dispatchEvent(new CustomEvent('simplegames:media-start',{detail:{title:'Watching a movie'}}));
+    note.textContent = 'Loading '+picker.selectedOptions[0].textContent+'…';
+    frame.src = providers[picker.value];
+    window.dispatchEvent(new CustomEvent('simplegames:media-start',{detail:{title:'Watching movies/TV'}}));
     timer = setTimeout(() => {
       note.textContent = 'Taking a while? The provider may block embedded playback. Try Reload.';
     }, 15000);
@@ -54,12 +60,14 @@
   function open() { if(sessionOpen)return;sessionOpen=true;panel.hidden=false;load();home.focus(); }
   home.onclick = close;
   retry.onclick = load;
+  picker.onchange = load;
   document.querySelector('#movies-open').onclick = open;
   document.querySelector('#movies-home-open').onclick = open;
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && !panel.hidden) close();
   });
-  bar.append(home, title, retry);
+  bar.style.flexWrap='wrap';
+  bar.append(home, title, picker, retry);
   panel.append(bar, note, frame);
   document.body.append(panel);
 })();
