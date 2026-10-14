@@ -4,7 +4,10 @@
   const panel=document.createElement('section');panel.id='site-browser-panel';panel.className='site-browser-panel';panel.hidden=true;panel.setAttribute('aria-label','Browser');
   panel.innerHTML='<header class="site-browser-topbar"><button type="button" id="browser-home">← Home</button><h1>Browser</h1></header><p class="site-browser-message" id="browser-status" role="status">Loading browser…</p><iframe class="site-browser-frame" id="site-browser-frame" title="Simple Games Browser" referrerpolicy="no-referrer" allow="fullscreen; autoplay; gamepad" sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-pointer-lock"></iframe>';
   document.body.append(panel);
+  const tiktok=document.createElement('button');tiktok.type='button';tiktok.textContent='TikTok · third-party provider';panel.querySelector('header').append(tiktok);
   const frame=panel.querySelector('iframe'),status=panel.querySelector('#browser-status');
+  tiktok.onclick=()=>{clearTimeout(timer);loaded=false;status.hidden=false;status.textContent='Loading third-party TikTok browser. Availability depends on that provider.';frame.src='https://d1w7oj52hl4x53.cloudfront.net/search?query=aHR0cHM6Ly93d3cudGlrdG9rLmNvbQ%3D%3D'};
+  frame.addEventListener('load',()=>{if(frame.getAttribute('src')?.startsWith('https://d1w7oj52hl4x53.cloudfront.net/'))status.textContent='Third-party TikTok provider · Some features may not work.'});
   const main=document.querySelector('main.page-shell');let previousInert=false;
   let timer,loaded=false;
   function layout(){const header=document.querySelector('.site-header');if(!header)return;const rect=header.getBoundingClientRect(),mobile=window.matchMedia('(max-width:900px)').matches;panel.style.left=mobile||document.body.classList.contains('sidebar-collapsed')?'0px':rect.width+'px';panel.style.top=mobile&&!document.body.classList.contains('sidebar-collapsed')?Math.max(0,rect.bottom)+'px':'0px';}

@@ -43,6 +43,17 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
+  "/yohoho/": "action",
+  "/fps-strike/": "action",
+  "/su-battle-royale/": "action",
+  "/madalin-stunt-cars-3/": "racing",
+  "/slice-it-all/": "arcade",
+  "/station-saturn/": "action",
+  "/baseball-doodle/": "sports",
+  "/brain-test-tricky-puzzles/": "puzzle",
+  "/bank-robbery-3/": "action",
+  "/bowmasters/": "action",
+  "/time-shooter-3/": "action",
   "/mr-bullet/": "action",
   "/growden/": "simulation",
   "/crossy-road/": "arcade",
