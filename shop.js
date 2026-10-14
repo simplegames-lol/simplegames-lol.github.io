@@ -10,13 +10,24 @@ document.body.append(panel);
 const $=selector=>panel.querySelector(selector);
 let user=null,wallet=null,person={},loading=false,busy=false,stopWallet=()=>{},stopPerson=()=>{},epoch=0,earnBusy=false,pendingSeconds=0,lastAttempt=0;
 function status(message){$('#real-shop-status').textContent=message}
+const retry=document.createElement('button');retry.type='button';retry.textContent='Retry loading coins';retry.hidden=true;$('#real-shop-status').after(retry);
+let walletAttempt=0,walletTimer=0,initializingUid=null;
+retry.onclick=()=>void connect();
 function friendly(error){return error.code==='permission-denied'?'Shop setup is incomplete. Publish the included Firebase rules first.':error.code==='unavailable'?'Shop is offline. Try again when connected.':error.message||'Shop could not connect.'}
 async function connect(){
   if(!user||localShopPreview||loading)return;
-  const me=user.uid,version=epoch;loading=true;
-  try{await initializeWallet(me);if(version!==epoch)return;stopWallet();stopWallet=onSnapshot(doc(db,'shopWallets',me),snap=>{if(version!==epoch)return;wallet=snap.data();draw()},error=>status(friendly(error)));status('')}
-  catch(error){if(version===epoch)status(friendly(error))}
-  finally{if(version===epoch)loading=false}
+  const me=user.uid,version=epoch,attempt=++walletAttempt;loading=true;stopWallet();clearTimeout(walletTimer);retry.hidden=true;status('Loading your coins…');
+  const active=()=>version===epoch&&attempt===walletAttempt;
+  const failed=error=>{if(!active())return;clearTimeout(walletTimer);loading=false;retry.hidden=false;status(friendly(error))};
+  walletTimer=setTimeout(()=>{if(active()){loading=false;retry.hidden=false;status('Coins are taking longer to load. Check your connection and try Retry. Your saved balance has not been reset.')}},15000);
+  stopWallet=onSnapshot(doc(db,'shopWallets',me),{includeMetadataChanges:true},snap=>{
+    if(!active())return;
+    if(snap.exists()){clearTimeout(walletTimer);wallet=snap.data();loading=false;retry.hidden=true;status('');draw();return}
+    // A missing cache entry is not proof that the server wallet is missing.
+    if(snap.metadata.fromCache||initializingUid===me)return;
+    initializingUid=me;
+    void initializeWallet(me).catch(failed).finally(()=>{if(initializingUid===me)initializingUid=null});
+  },failed);
 }
 function open(){panel.hidden=false;draw();if(localShopPreview)status('Local preview: real account coins and purchases are disabled. Use the test shop to try colors.');else if(user)void connect();$('#shop-home').focus()}
 function close(){panel.hidden=true;document.querySelector('#shop-open')?.focus()}
@@ -69,7 +80,7 @@ function draw(){
   $('#real-shop-username').textContent=person.username?'@'+person.username:'';
 }
 onAuthStateChanged(auth,next=>{
-  epoch++;stopWallet();stopPerson();wallet=null;person={};user=next;loading=false;busy=false;pendingSeconds=0;lastAttempt=0;draw();
+  epoch++;walletAttempt++;clearTimeout(walletTimer);retry.hidden=true;stopWallet();stopPerson();wallet=null;person={};user=next;loading=false;busy=false;pendingSeconds=0;lastAttempt=0;draw();
   if(user){const version=epoch;stopPerson=onSnapshot(doc(db,'users',user.uid),snap=>{if(version!==epoch)return;person=snap.data()||{};if(!panel.hidden)draw()},()=>{});if(!panel.hidden)void connect()}
 });
 window.addEventListener('simplegames:playtime-saved',event=>{
@@ -95,5 +106,6 @@ function updateDailyCountdown(){
   else label.textContent=`Next 100 coins in ${Math.floor(seconds/3600)}h ${String(Math.floor(seconds%3600/60)).padStart(2,'0')}m ${String(seconds%60).padStart(2,'0')}s`;
 }
 setInterval(()=>void earn(),15000);
+window.addEventListener('online',()=>{if(user&&!panel.hidden&&!localShopPreview)void connect()});
 setInterval(()=>{if(!panel.hidden)updateDailyCountdown()},1000);
 draw();

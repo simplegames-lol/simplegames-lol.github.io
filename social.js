@@ -176,7 +176,8 @@ for(const [id,key]of[["#message-sound-setting","messageSound"],["#dnd-setting","
 $("#username-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,username=String(new FormData(f).get("username")).trim(),lower=username.toLowerCase(),oldLower=(profile.usernameLower||profile.username||"").toLowerCase();if(!/^[A-Za-z0-9_]{3,20}$/.test(username))return showStatus("Username must be 3–20 letters, numbers, or underscores.",true);if(lower===oldLower)return showStatus("Choose a different username.",true);const changed=ms(profile?.usernameChangedAt),wait=30*24*60*60*1000;if(changed&&Date.now()-changed<wait)return showStatus(`You can change it again in ${Math.ceil((wait-(Date.now()-changed))/86400000)} days.`,true);try{await runTransaction(db,async t=>{const next=doc(db,"usernames",lower),taken=await t.get(next);if(taken.exists()&&taken.data().uid!==auth.currentUser.uid)throw Error("That username is already taken.");if(oldLower)t.delete(doc(db,"usernames",oldLower));t.set(next,{uid:auth.currentUser.uid,username});t.update(doc(db,"users",auth.currentUser.uid),{username,usernameLower:lower,usernameChangedAt:serverTimestamp()})});f.reset();showStatus("Username changed.")}catch(err){showStatus(friendlyError(err),true)}};
 function listenBlocks(uid){stopBlocks();stopBlocks=onSnapshot(query(collection(db,"blocks"),where("blockerUid","==",uid)),async snap=>{const list=$("#blocked-list");list.replaceChildren();if(snap.empty)return list.append(Object.assign(document.createElement("p"),{textContent:"No blocked users"}));for(const block of snap.docs){const u=await getDoc(doc(db,"users",block.data().blockedUid)),name=u.data()?.username||"Unknown user";list.append(row(name,[button("Unblock",async()=>{await deleteDoc(block.ref);showStatus(`${name} was unblocked.`)})]))}})}
 function listLeaderboardError(error){console.error('Leaderboard:',error);document.querySelector('#leaderboard-podium')?.replaceChildren();const list=$('#leaderboard-list');list.replaceChildren(Object.assign(document.createElement('li'),{textContent:'Leaderboard could not refresh. Check your connection and sign-in.'}));showStatus(friendlyError(error),true)}
-let leaderboardKey=null,leaderboardVersion=0;const leaderboardProfiles=new Map();
+let leaderboardKey=null,leaderboardVersion=0,leaderboardRender=0,leaderboardRetryAt=0;const leaderboardProfiles=new Map();
+function retryLeaderboard(error){leaderboardKey=null;leaderboardRetryAt=Date.now()+30000;listLeaderboardError(error)}
 function leaderboardResetLabel(){
  const week=leaderboardWeek(),next=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric'}).format(new Date(week.end));
  const minutes=Math.max(0,Math.ceil((week.end-Date.now())/60000)),hours=Math.floor(minutes/60),rest=minutes%60;
@@ -184,28 +185,32 @@ function leaderboardResetLabel(){
  return week;
 }
 function listenLeaderboard(){
+ if(Date.now()<leaderboardRetryAt)return;
  const week=leaderboardResetLabel(),weekly=useWeeklyLeaderboard(Date.now()),key=weekly?week.key:'lifetime-before-first-reset';
  if(leaderboardKey===key)return;
  leaderboardKey=key;const version=++leaderboardVersion;stopLeaderboard();
  document.querySelector('#leaderboard-podium')?.replaceChildren();$("#leaderboard-list").textContent='Loading leaderboard…';
  const source=weekly?query(collection(db,'weeklyPlaytime',week.key,'players'),orderBy('playSeconds','desc'),limit(10)):query(collection(db,"users"),orderBy("stats.playSeconds","desc"),limit(10));
  stopLeaderboard=onSnapshot(source,async snapshot=>{
+  const render=++leaderboardRender;
   try{
    let entries=snapshot.docs;
    if(weekly)entries=await Promise.all(snapshot.docs.filter(entry=>entry.data().playSeconds>0).map(async entry=>{
-    let person=friendProfiles.get(entry.id)||leaderboardProfiles.get(entry.id);
+    const cached=leaderboardProfiles.get(entry.id);
+    let person=friendProfiles.get(entry.id)||(cached&&Date.now()-cached.at<60000?cached.person:null);
     if(entry.id===auth.currentUser?.uid&&profile)person=profile;
-    if(!person){const userDoc=await getDoc(doc(db,'users',entry.id));person=userDoc.exists()?userDoc.data():{displayName:'Profile unavailable'};leaderboardProfiles.set(entry.id,person)}
+    if(!person){try{let timeout;const userDoc=await Promise.race([getDoc(doc(db,'users',entry.id)),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Profile load timed out')),10000)})]).finally(()=>clearTimeout(timeout));if(userDoc.exists()){person=userDoc.data();leaderboardProfiles.set(entry.id,{person,at:Date.now()})}}catch(error){console.warn('Leaderboard profile could not refresh:',error.code||error.message)}person=person||cached?.person||{displayName:entry.id===auth.currentUser?.uid?(auth.currentUser.displayName||'You'):'Profile unavailable'}}
     return {id:entry.id,data:()=>({...person,stats:{...person.stats,playSeconds:entry.data().playSeconds}})};
    }));
-   if(version!==leaderboardVersion||!auth.currentUser)return;
+   if(version!==leaderboardVersion||render!==leaderboardRender||!auth.currentUser)return;
    const list=$("#leaderboard-list");renderPodium(list,entries,applyAvatar);
    if(!entries.length)list.append(Object.assign(document.createElement('li'),{textContent:weekly?'New week—no playtime recorded yet.':'No playtime recorded yet.'}));
-  }catch(error){if(version===leaderboardVersion)listLeaderboardError(error)}
- },error=>{if(version===leaderboardVersion)listLeaderboardError(error)});
+  }catch(error){if(version===leaderboardVersion&&render===leaderboardRender)retryLeaderboard(error)}
+ },error=>{if(version===leaderboardVersion)retryLeaderboard(error)});
 }
 setInterval(()=>{if(auth.currentUser)listenLeaderboard();else leaderboardResetLabel()},5000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&auth.currentUser)listenLeaderboard()});
+window.addEventListener('online',()=>{if(auth.currentUser){leaderboardRetryAt=0;listenLeaderboard()}});
 
 async function presence(extra={}){if(auth.currentUser&&document.visibilityState==="visible")await updateDoc(doc(db,"users",auth.currentUser.uid),{status:"online",lastActive:serverTimestamp(),...extra}).catch(()=>{})}
 let lastInteractionPresence=0;function activePresence(){if(document.visibilityState!=="visible"||Date.now()-lastInteractionPresence<15000)return;lastInteractionPresence=Date.now();presence()}

@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/mr-bullet/": "https://cdn.k4.games/files/58011/mr-bullet/index.html",
   "/growden/": "https://growden.io/",
   "/rocket-soccer/": "https://rocketsoccerderby.gitlab.io/file/",
   "/tunnel-rush/": "https://brainworxedu.github.io/games/tunnel-rush.html",
