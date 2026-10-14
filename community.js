@@ -40,7 +40,9 @@ const achievements=[
 ];
 function renderAchievements(profile={}){const stats=profile.stats||{},total=$("#playtime-total");if(total)total.textContent=`${Math.floor((stats.playSeconds||0)/60)} lifetime minutes`}
 const syncStatus=document.createElement('p');syncStatus.className='result-count';syncStatus.setAttribute('aria-live','polite');document.querySelector('#leaderboard-view')?.append(syncStatus);
+syncStatus.hidden=true;
 const trackingStatus=document.createElement('p');trackingStatus.className='result-count';trackingStatus.id='playtime-tracking-status';trackingStatus.setAttribute('role','status');trackingStatus.textContent='Playtime tracker starting…';syncStatus.before(trackingStatus);
+trackingStatus.hidden=true;
 const tracker=createPlaytimeTracker({
   buckets:splitLeaderboardWeeks,
   send:async(uid,delta)=>{

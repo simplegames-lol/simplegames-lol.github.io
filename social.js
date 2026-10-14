@@ -214,8 +214,9 @@ function listenLeaderboard(){
     return {id:entry.id,data:()=>({...person,stats:{...person.stats,playSeconds:entry.data().playSeconds}})};
    }));
    if(version!==leaderboardVersion||render!==leaderboardRender||!auth.currentUser)return;
+   entries=entries.filter(entry=>!['Profile loading…','Profile unavailable'].includes(entry.data().displayName));
    const list=$("#leaderboard-list");renderPodium(list,entries,applyAvatar);
-   if(!entries.length)list.append(Object.assign(document.createElement('li'),{textContent:weekly?'New week—no playtime recorded yet.':'No playtime recorded yet.'}));
+   if(!entries.length)list.append(Object.assign(document.createElement('li'),{textContent:snapshot.empty?(weekly?'New week—no playtime recorded yet.':'No playtime recorded yet.'):'Player profiles are temporarily unavailable. Try again later.'}));
   }catch(error){if(version===leaderboardVersion&&render===leaderboardRender)retryLeaderboard(error)}
  },error=>{if(version===leaderboardVersion)retryLeaderboard(error)});
 }
