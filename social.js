@@ -177,6 +177,16 @@ $("#username-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarge
 function listenBlocks(uid){stopBlocks();stopBlocks=onSnapshot(query(collection(db,"blocks"),where("blockerUid","==",uid)),async snap=>{const list=$("#blocked-list");list.replaceChildren();if(snap.empty)return list.append(Object.assign(document.createElement("p"),{textContent:"No blocked users"}));for(const block of snap.docs){const u=await getDoc(doc(db,"users",block.data().blockedUid)),name=u.data()?.username||"Unknown user";list.append(row(name,[button("Unblock",async()=>{await deleteDoc(block.ref);showStatus(`${name} was unblocked.`)})]))}})}
 function listLeaderboardError(error){console.error('Leaderboard:',error);document.querySelector('#leaderboard-podium')?.replaceChildren();const list=$('#leaderboard-list');list.replaceChildren(Object.assign(document.createElement('li'),{textContent:'Leaderboard could not refresh. Check your connection and sign-in.'}));showStatus(friendlyError(error),true)}
 let leaderboardKey=null,leaderboardVersion=0,leaderboardRender=0,leaderboardRetryAt=0;const leaderboardProfiles=new Map();
+function rememberLeaderboardIdentity(uid,person){
+ if(!uid||!person||!(person.displayName||person.username))return;
+ const identity={displayName:person.displayName||'',username:person.username||'',avatarImage:person.avatarImage||''};
+ leaderboardProfiles.set(uid,{person:identity,at:Date.now()});
+ try{sessionStorage.setItem('sg-leaderboard-identity-'+uid,JSON.stringify(identity))}catch{}
+}
+function previousLeaderboardIdentity(uid){
+ try{const identity=JSON.parse(sessionStorage.getItem('sg-leaderboard-identity-'+uid)||'null');return identity&&(typeof identity.displayName==='string'||typeof identity.username==='string')?identity:null}catch{return null}
+}
+document.addEventListener('simplegames:profile',event=>rememberLeaderboardIdentity(event.detail.user?.uid,event.detail.profile));
 function retryLeaderboard(error){leaderboardKey=null;leaderboardRetryAt=Date.now()+30000;listLeaderboardError(error)}
 function leaderboardResetLabel(){
  const week=leaderboardWeek(),next=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric'}).format(new Date(week.end));
@@ -196,10 +206,11 @@ function listenLeaderboard(){
   try{
    let entries=snapshot.docs;
    if(weekly)entries=await Promise.all(snapshot.docs.filter(entry=>entry.data().playSeconds>0).map(async entry=>{
-    const cached=leaderboardProfiles.get(entry.id);
+    const cached=leaderboardProfiles.get(entry.id)||(entry.id===auth.currentUser?.uid?{person:previousLeaderboardIdentity(entry.id),at:0}:null);
     let person=friendProfiles.get(entry.id)||(cached&&Date.now()-cached.at<60000?cached.person:null);
     if(entry.id===auth.currentUser?.uid&&profile)person=profile;
-    if(!person){try{let timeout;const userDoc=await Promise.race([getDoc(doc(db,'users',entry.id)),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Profile load timed out')),10000)})]).finally(()=>clearTimeout(timeout));if(userDoc.exists()){person=userDoc.data();leaderboardProfiles.set(entry.id,{person,at:Date.now()})}}catch(error){console.warn('Leaderboard profile could not refresh:',error.code||error.message)}person=person||cached?.person||{displayName:entry.id===auth.currentUser?.uid?(auth.currentUser.displayName||'You'):'Profile unavailable'}}
+    if(!person){try{let timeout;const userDoc=await Promise.race([getDoc(doc(db,'users',entry.id)),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Profile load timed out')),10000)})]).finally(()=>clearTimeout(timeout));if(userDoc.exists()){person=userDoc.data();leaderboardProfiles.set(entry.id,{person,at:Date.now()})}}catch(error){console.warn('Leaderboard profile could not refresh:',error.code||error.message)}person=person||cached?.person||{displayName:entry.id===auth.currentUser?.uid?(auth.currentUser.displayName||'Profile loading…'):'Profile unavailable',avatarImage:entry.id===auth.currentUser?.uid?(auth.currentUser.photoURL||''):''}}
+    if(entry.id===auth.currentUser?.uid&&person.displayName!=='Profile loading…')rememberLeaderboardIdentity(entry.id,person);
     return {id:entry.id,data:()=>({...person,stats:{...person.stats,playSeconds:entry.data().playSeconds}})};
    }));
    if(version!==leaderboardVersion||render!==leaderboardRender||!auth.currentUser)return;

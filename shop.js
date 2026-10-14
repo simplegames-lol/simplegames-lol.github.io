@@ -8,6 +8,7 @@ const panel=document.createElement('section');panel.className='real-shop';panel.
 panel.innerHTML='<header><button id="shop-home" type="button">← Home</button><h1>Shop</h1><span class="real-shop-balance"><strong id="real-shop-coins">—</strong> coins</span></header><p class="real-shop-note">Start with 100 coins. Earn 10 per minute of active gameplay. Each unlock costs 500 coins; color changes are free.</p><div class="daily-bonus"><div><h2>Daily bonus</h2><p>100 coins, once every 24 hours.</p><p id="daily-countdown"></p></div><button id="daily-claim" type="button">Claim 100 coins</button></div><p id="real-shop-status" role="status" aria-live="polite"></p><button id="shop-login" type="button" hidden>Sign in</button><div class="real-shop-layout"><div id="real-shop-items"></div><aside><h2>Profile preview</h2><span id="real-shop-avatar" class="profile-avatar"></span><strong id="real-shop-name">Player</strong><p id="real-shop-username"></p></aside></div><dialog id="real-shop-confirm" aria-labelledby="real-shop-confirm-title"><form method="dialog"><h2 id="real-shop-confirm-title"></h2><p>500 coins, paid once. Future color changes are free.</p><div><button value="cancel">Cancel</button><button value="confirm">Unlock</button></div></form></dialog>';
 document.body.append(panel);
 const $=selector=>panel.querySelector(selector);
+const colorDrafts=new Map();
 let user=null,wallet=null,person={},loading=false,busy=false,stopWallet=()=>{},stopPerson=()=>{},epoch=0,earnBusy=false,pendingSeconds=0,lastAttempt=0;
 function status(message){$('#real-shop-status').textContent=message}
 const retry=document.createElement('button');retry.type='button';retry.textContent='Retry loading coins';retry.hidden=true;$('#real-shop-status').after(retry);
@@ -44,7 +45,9 @@ async function perform(action,id,color,enabled=true){
 function draw(){
   updateDailyCountdown();
   $('#real-shop-coins').textContent=wallet?.coins?.toLocaleString()||'—';$('#shop-login').hidden=!!user;
-  const host=$('#real-shop-items');host.replaceChildren();
+  const host=$('#real-shop-items');
+  if(!busy&&host.contains(document.activeElement)&&document.activeElement?.matches('input'))return;
+  host.replaceChildren();
   if(!user)status('Sign in to save coins and purchases to your account.');
   for(const item of items){
     const owned=wallet?.owned.includes(item.id),equipped=wallet?.equipped[item.type]===item.id;
@@ -52,7 +55,8 @@ function draw(){
     card.className='real-shop-item';visual.className='real-shop-item-visual';heading.textContent=item.name;
     sample.textContent=item.type==='frames'?(person.displayName||person.username||'P')[0].toUpperCase():person.displayName||person.username||'Player';
     sample.className=item.type==='frames'?'real-shop-avatar-sample':'real-shop-name-sample';
-    const color=wallet?.colors[item.type]||'#9dbbd9';if(item.type==='frames')sample.style.borderColor=color;else sample.style.color=color;
+    const draft=colorDrafts.get(item.id),savedColor=wallet?.colors[item.type]||'#9dbbd9';
+    const color=validColor(draft)?draft:savedColor;if(item.type==='frames')sample.style.borderColor=color;else sample.style.color=color;
     visual.append(sample);const note=document.createElement('p');note.textContent='Buy once. Change the color anytime.';
     const row=document.createElement('div');row.className='real-shop-item-action';const price=document.createElement('span');price.textContent=owned?'Unlocked':'500 coins';
     const action=document.createElement('button');action.type='button';action.textContent=owned?(equipped?'Unequip':'Equip'):'Unlock';action.setAttribute('aria-label',action.textContent+' '+item.name);action.disabled=!wallet||busy||localShopPreview;
@@ -65,10 +69,10 @@ function draw(){
     if(owned){
       const controls=document.createElement('div');controls.className='real-shop-color-controls';
       const picker=document.createElement('input');picker.type='color';picker.value=color;picker.setAttribute('aria-label',item.name+' picker');
-      const hex=document.createElement('input');hex.value=color.toUpperCase();hex.maxLength=7;hex.spellcheck=false;hex.setAttribute('aria-label',item.name+' hex code');
+      const hex=document.createElement('input');hex.value=draft??color.toUpperCase();hex.maxLength=7;hex.spellcheck=false;hex.setAttribute('aria-label',item.name+' hex code');
       const apply=document.createElement('button');apply.type='button';apply.textContent='Apply';apply.setAttribute('aria-label','Apply '+item.name);apply.disabled=busy||localShopPreview;
-      picker.oninput=()=>{hex.value=picker.value.toUpperCase();if(item.type==='frames')sample.style.borderColor=picker.value;else sample.style.color=picker.value};
-      hex.oninput=()=>{if(validColor(hex.value))picker.value=hex.value};
+      picker.oninput=()=>{hex.value=picker.value.toUpperCase();colorDrafts.set(item.id,hex.value);if(item.type==='frames')sample.style.borderColor=picker.value;else sample.style.color=picker.value};
+      hex.oninput=()=>{colorDrafts.set(item.id,hex.value);if(validColor(hex.value)){picker.value=hex.value;if(item.type==='frames')sample.style.borderColor=hex.value;else sample.style.color=hex.value}};
       apply.onclick=()=>{const selected=hex.value.trim();if(!validColor(selected))return status('Enter a color like #9DBBD9.');void perform('cosmetic',item.id,selected,true)};
       controls.append(picker,hex,apply);card.append(controls);
     }host.append(card);
@@ -80,6 +84,7 @@ function draw(){
   $('#real-shop-username').textContent=person.username?'@'+person.username:'';
 }
 onAuthStateChanged(auth,next=>{
+  colorDrafts.clear();
   epoch++;walletAttempt++;clearTimeout(walletTimer);retry.hidden=true;stopWallet();stopPerson();wallet=null;person={};user=next;loading=false;busy=false;pendingSeconds=0;lastAttempt=0;draw();
   if(user){const version=epoch;stopPerson=onSnapshot(doc(db,'users',user.uid),snap=>{if(version!==epoch)return;person=snap.data()||{};if(!panel.hidden)draw()},()=>{});if(!panel.hidden)void connect()}
 });

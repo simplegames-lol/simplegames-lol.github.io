@@ -40,6 +40,7 @@ const achievements=[
 ];
 function renderAchievements(profile={}){const stats=profile.stats||{},total=$("#playtime-total");if(total)total.textContent=`${Math.floor((stats.playSeconds||0)/60)} lifetime minutes`}
 const syncStatus=document.createElement('p');syncStatus.className='result-count';syncStatus.setAttribute('aria-live','polite');document.querySelector('#leaderboard-view')?.append(syncStatus);
+const trackingStatus=document.createElement('p');trackingStatus.className='result-count';trackingStatus.id='playtime-tracking-status';trackingStatus.setAttribute('role','status');trackingStatus.textContent='Playtime tracker starting…';syncStatus.before(trackingStatus);
 const tracker=createPlaytimeTracker({
   buckets:splitLeaderboardWeeks,
   send:async(uid,delta)=>{
@@ -65,7 +66,7 @@ const tracker=createPlaytimeTracker({
 let playing=false,pageActive=true;
 const gameOverlay=$('#game-overlay'),gamePlayer=$('#game-player');
 const playtimeGate=createPlaytimeGate({locks:navigator.locks,onActive:active=>tracker.setActive(active)});
-function updatePlaytimeGate(){const open=!!gameOverlay&&!gameOverlay.hidden;const eligible=eligiblePlaytime({playing,pageActive,visible:document.visibilityState==='visible',overlayOpen:open,loaded:!!gamePlayer?.getAttribute('src')&&gamePlayer.getAttribute('src')!=='about:blank'&&!!$('#game-loader')?.hidden});playtimeGate.update(currentUser?.uid||null,eligible)}
+function updatePlaytimeGate(){const open=!!gameOverlay&&!gameOverlay.hidden;const loaded=!!gamePlayer?.getAttribute('src')&&gamePlayer.getAttribute('src')!=='about:blank'&&!!$('#game-loader')?.hidden;const eligible=eligiblePlaytime({playing,pageActive,visible:document.visibilityState==='visible',overlayOpen:open,loaded});playtimeGate.update(currentUser?.uid||null,eligible);const message=!currentUser?'Sign in to count and save playtime.':!playtimeGate.supported?'Playtime paused: browser does not support safe counting.':!playing||!open?'Tracker ready: play a game inside this site to count time.':!loaded?'Playtime paused while the game is loading.':document.visibilityState!=='visible'||!pageActive?'Playtime paused while this tab is hidden.':'Game is eligible for counting. Only one game tab can count at a time.';if(trackingStatus.textContent!==message)trackingStatus.textContent=message}
 window.addEventListener('simplegames:play',event=>{playing=true;tracker.start(pathKey(event.detail.path));updatePlaytimeGate();void tracker.flush()});
 window.addEventListener('simplegames:stop-playing',()=>{playing=false;updatePlaytimeGate();void tracker.stop()});
 setInterval(()=>{updatePlaytimeGate();tracker.tick()},1000);
