@@ -1,9 +1,6 @@
 (() => {
 const games = {
-  "/growden/": "https://db.duckmath.org/html/growden_io/",
-  "/shell-shockers/": "https://shellshock.io/",
   "/rocket-soccer/": "https://rocketsoccerderby.gitlab.io/file/",
-  "/kour/": "https://kour.io/",
   "/tunnel-rush/": "https://brainworxedu.github.io/games/tunnel-rush.html",
   "/trombone-champ/": "https://brainworxedu.github.io/games/trombone-champ.html",
   "/tomb-of-the-mask/": "/tomb-of-the-mask/player.html?v=2",
@@ -96,7 +93,7 @@ const games = {
   "/retro-bowl-college/": "/retro-bowl-college/player.html",
   "/fruit-ninja/": "/fruit-ninja/player.html",
   "/soccer-random/": "/soccer-random/player.html",
-  "/roblox/": "/roblox/player.html"
+  "/roblox/": "/roblox/player.html?v=unavailable-1"
 };
 
 const overlay = document.querySelector("#game-overlay");
