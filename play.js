@@ -1,6 +1,6 @@
 (() => {
 const games = {
-  "/kour/": "/kour/player.html",
+  "/growden/": "https://growden.io/",
   "/rocket-soccer/": "https://rocketsoccerderby.gitlab.io/file/",
   "/tunnel-rush/": "https://brainworxedu.github.io/games/tunnel-rush.html",
   "/trombone-champ/": "https://brainworxedu.github.io/games/trombone-champ.html",

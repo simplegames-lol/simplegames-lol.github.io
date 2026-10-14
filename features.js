@@ -43,7 +43,7 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
-  "/kour/": "action",
+  "/growden/": "simulation",
   "/crossy-road/": "arcade",
   "/how-to-fish/": "simulation",
   "/happy-wheels/": "action",
