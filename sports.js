@@ -10,18 +10,12 @@
   const content=document.createElement('div');content.className='sports-maintenance';
   const heading=document.createElement('h1');heading.textContent='Under maintenance';
   const note=document.createElement('p');note.textContent='Live Sports is temporarily unavailable while we make improvements. Check back soon!';
-  heading.textContent='Loading Live Sports…';note.textContent='Connecting to Streamed. If it stays blank, try Reload. Availability depends on the provider.';
-  const reload=document.createElement('button');reload.type='button';reload.className='secondary-button';reload.textContent='Reload';
-  const frame=document.createElement('iframe');frame.title='Streamed live sports';frame.style.cssText='flex:1;width:100%;border:0;background:#000';frame.hidden=true;frame.allow='fullscreen; encrypted-media';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-presentation');
-  content.append(heading,note);bar.append(home,title,reload);panel.append(bar,content,frame);document.body.append(panel);
-  function load(){content.hidden=false;content.style.display='grid';frame.hidden=true;frame.src='https://streamed.pk/'}
-  frame.onload=()=>{if(panel.hidden)return;content.hidden=true;content.style.display='none';frame.hidden=false};
-  reload.onclick=load;
+  content.append(heading,note);bar.append(home,title);panel.append(bar,content);document.body.append(panel);
   let previousOverflow='';
-  function close(){panel.hidden=true;frame.src='about:blank';document.body.style.overflow=previousOverflow;document.dispatchEvent(new CustomEvent('simplegames:media-stop'));document.querySelector('#sports-home-open')?.focus({preventScroll:true})}
-  function open(){if(!panel.hidden)return;previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';panel.hidden=false;load();home.focus({preventScroll:true})}
+  function close(){panel.hidden=true;document.body.style.overflow=previousOverflow;document.querySelector('#sports-home-open')?.focus({preventScroll:true})}
+  function open(){if(!panel.hidden)return;previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';panel.hidden=false;home.focus({preventScroll:true})}
   home.onclick=close;
   for(const selector of ['#sports-open','#sports-home-open']){const button=document.querySelector(selector);if(button)button.onclick=open}
-  const subtitle=document.querySelector('#sports-home-open small');if(subtitle)subtitle.textContent='Live matches';
+  const subtitle=document.querySelector('#sports-home-open small');if(subtitle)subtitle.textContent='Under maintenance';
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden)close()});
 })();
