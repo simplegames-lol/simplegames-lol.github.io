@@ -35,6 +35,7 @@ function open(){panel.hidden=false;draw();if(localShopPreview)status('Local prev
 function close(){panel.hidden=true;document.querySelector('#shop-open')?.focus()}
 $('#shop-home').onclick=close;$('#shop-login').onclick=()=>{close();document.querySelector('#account-open')?.click()};
 document.querySelector('#shop-open')?.addEventListener('click',open);
+document.querySelector('#shop-home-open')?.addEventListener('click',open);
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#real-shop-confirm').open)close()});
 $('#daily-claim').onclick=()=>void perform('daily');
 async function perform(action,id,color,enabled=true){
