@@ -11,7 +11,7 @@ const games = {
   "/bank-robbery-3/": "/bank-robbery-3/player.html",
   "/bowmasters/": "/bowmasters/player.html",
   "/time-shooter-3/": "/time-shooter-3/player.html",
-  "/mr-bullet/": "https://cdn.k4.games/files/58011/mr-bullet/index.html",
+  "/mr-bullet/": "/mr-bullet/player.html?v=2",
   "/growden/": "https://growden.io/",
   "/rocket-soccer/": "https://rocketsoccerderby.gitlab.io/file/",
   "/tunnel-rush/": "https://brainworxedu.github.io/games/tunnel-rush.html",

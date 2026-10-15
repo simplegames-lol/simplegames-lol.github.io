@@ -235,6 +235,7 @@ function applyTheme(choice) {
     ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
     : choice;
   root.dataset.theme = effective;
+  window.SimpleGamesAppearance?.apply();
   const themeIcon = document.querySelector("#theme-toggle .rail-icon");
   if (themeIcon) themeIcon.textContent = effective === "dark" ? "☀" : "☾";
 }
@@ -299,15 +300,18 @@ function applyAppearance() {
   accentColor.value = accent;
   backgroundColor.value = background;
   root.style.setProperty("--accent", accent);
-  root.style.setProperty("--background", background);
+  if(root.dataset.theme!=="light")root.style.setProperty("--background", background);
   root.style.setProperty("--custom-background-image", image ? `url("${image.replaceAll('"', '%22')}")` : "none");
   root.style.setProperty("--custom-background-size", style === "repeat" ? "auto" : style);
   root.style.setProperty("--custom-background-repeat", style === "repeat" ? "repeat" : "no-repeat");
+  window.SimpleGamesAppearance?.apply();
 }
 
 accentColor.addEventListener("input", () => { storage.write("sg-accent", accentColor.value); applyAppearance(); });
 accentColor.addEventListener("change", () => { storage.write("sg-accent", accentColor.value); applyAppearance(); });
 backgroundColor.addEventListener("input", () => { storage.write("sg-background", backgroundColor.value); applyAppearance(); });
+backgroundColor.addEventListener("change", () => { storage.write("sg-background", backgroundColor.value); applyAppearance(); });
+document.addEventListener('simplegames:preferences-loaded',()=>{themeSelect.value=storage.read('sg-theme','dark');applyTheme(themeSelect.value);applyAppearance();cardSize.value=storage.read('sg-card-size','normal');root.dataset.cardSize=cardSize.value;timezoneSelect.value=storage.read('sg-timezone','auto');applyDisplaySettings();dispatchEvent(new Event('simplegames:timezone'))});
 backgroundImageFile?.addEventListener("change", () => {
   const file = backgroundImageFile.files?.[0];
   if (!file) return;
@@ -366,6 +370,7 @@ const updateVersion = window.simpleGamesRelease?.version || "2026-10-06-communit
 const updateDot = document.querySelector("#update-dot");
 document.addEventListener('click',event=>{if(event.target.closest('[data-page="updates"]')){storage.write('sg-seen-update',updateVersion);updateDot.hidden=true;updateDot.style.display='none'}},true);
 updateDot.hidden = storage.read("sg-seen-update", "") === updateVersion;
+window.addEventListener('storage',event=>{if(event.key==='sg-seen-update')updateDot.hidden=storage.read('sg-seen-update','')===updateVersion});
 document.querySelector("[data-page='updates']")?.addEventListener("click", () => {
   storage.write("sg-seen-update", updateVersion);
   updateDot.hidden = true;

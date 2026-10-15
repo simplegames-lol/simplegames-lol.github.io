@@ -1,3 +1,4 @@
+import './firebase-client.js?v=1';
 import { getApp, getApps, initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
@@ -34,11 +35,11 @@ function setupMessage(error){
 }
 async function ask(question){
   if(!send||send.disabled)return;
-  const requestGeneration=generation;if(!active){active={id:crypto.randomUUID(),title:question.slice(0,42),messages:[]};conversations.unshift(active);conversations=conversations.slice(0,20);}const saved=active,previous=[];for(let i=0;i<saved.messages.length-1;i++){const user=saved.messages[i],answer=saved.messages[i+1];if(user.kind==='user'&&answer.kind==='assistant'&&!answer.error&&typeof user.text==='string'&&typeof answer.text==='string'){previous.push(user,answer);i++;}}previous.splice(0,Math.max(0,previous.length-20));saved.messages.push({text:question,kind:'user'});save();addMessage(question,'user');const waiting=addMessage('','assistant');layout();
+  const requestGeneration=generation;if(!active){active={id:crypto.randomUUID(),title:question.slice(0,42),messages:[]};conversations.unshift(active);conversations=conversations.slice(0,20);}const saved=active,previous=[];for(let i=0;i<saved.messages.length-1;i++){const user=saved.messages[i],answer=saved.messages[i+1];if(user.kind==='user'&&answer.kind==='assistant'&&!answer.error&&typeof user.text==='string'&&typeof answer.text==='string'){previous.push(user,answer);i++;}}previous.splice(0,Math.max(0,previous.length-8));saved.messages.push({text:question,kind:'user'});save();addMessage(question,'user');const waiting=addMessage('','assistant');layout();
   waiting.classList.add("ai-thinking");waiting.setAttribute("aria-label","AI is responding");waiting.innerHTML="<span></span><span></span><span></span>";
   send.disabled=true;field.disabled=true;newChat.disabled=true;renderHistory();let timer;
   try{
-    if(!chat){const ai=getAI(app,{backend:new GoogleAIBackend()});const model=getGenerativeModel(ai,{model:"gemini-3.8-flash",systemInstruction:"You are Simple AI, a friendly general-purpose assistant inside Simple Games. Answer clearly and safely about any subject. Use plain text, no Markdown asterisks or heading syntax. Keep normal answers short unless asked for detail."});chat=model.startChat({history:previous.map(m=>({role:m.kind==='user'?'user':'model',parts:[{text:m.text}]})),generationConfig:{maxOutputTokens:1536}})}
+    if(!chat){const ai=getAI(app,{backend:new GoogleAIBackend()});const model=getGenerativeModel(ai,{model:"gemini-3.5-flash-lite",systemInstruction:"You are Simple AI, a friendly general-purpose assistant inside Simple Games. Answer clearly and safely about any subject. Use plain text, no Markdown asterisks or heading syntax. Keep normal answers short unless asked for detail."});chat=model.startChat({history:previous.map(m=>({role:m.kind==='user'?'user':'model',parts:[{text:m.text}]})),generationConfig:{maxOutputTokens:1024}})}
     let expired=false,answer='';
     const request=(async()=>{const result=await chat.sendMessageStream(question);for await(const chunk of result.stream){if(expired||requestGeneration!==generation)return;answer+=chunk.text();waiting.classList.remove('ai-thinking');waiting.textContent=plainAnswer(answer);messages.scrollTop=messages.scrollHeight}if(!answer)waiting.textContent="I couldn't generate an answer."})();
     await Promise.race([request,new Promise((_,reject)=>{timer=setTimeout(()=>{expired=true;reject(Object.assign(new Error("AI response timed out"),{code:"ai/timeout"}))},45000)})]);

@@ -1,3 +1,4 @@
+import './firebase-client.js?v=1';
 import{getApp}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import{getAuth}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import{getFirestore,doc,getDoc,updateDoc,arrayUnion,arrayRemove}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';

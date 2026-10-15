@@ -1,3 +1,4 @@
+import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {collection,doc,getDoc,getDocs,getFirestore,limit,onSnapshot,orderBy,query,serverTimestamp,setDoc,deleteDoc,updateDoc,where,writeBatch} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
@@ -34,32 +35,34 @@ async function open(){panel.hidden=false;stop();const version=generation;owner=s
 document.addEventListener('click',event=>{if(event.target.closest('#support-open')){event.preventDefault();open()}});
 panel.querySelector('.support-nav').onclick=event=>{const b=event.target.closest('[data-support-view]');if(b)show(b.dataset.supportView)};
 let notificationStops=[],notificationVersion=0,stopTicketNotifications=()=>{};
+const supportBadge=document.createElement('span');supportBadge.className='support-unread-badge';supportBadge.hidden=true;supportBadge.setAttribute('aria-label','Unread support notifications');document.querySelector('#support-open')?.append(supportBadge);
+let badgeTickets=new Map(),readTickets={};
+function updateSupportBadge(){const count=[...badgeTickets.entries()].filter(([id,data])=>(data.updatedAt?.toMillis?.()||data.createdAt?.toMillis?.()||0)>(readTickets[id]||0)).length;supportBadge.textContent=String(count);supportBadge.hidden=!count}
+function readTicketNotification(id,data){if(!user)return;readTickets[id]=data.updatedAt?.toMillis?.()||data.createdAt?.toMillis?.()||Date.now();try{localStorage.setItem('sg-support-read-'+user.uid,JSON.stringify(readTickets))}catch{}updateSupportBadge()}
 function beginStaffNotifications(next){
-  notificationVersion++;const version=notificationVersion;
-  notificationStops.forEach(stop=>stop());notificationStops=[];stopTicketNotifications();stopTicketNotifications=()=>{};
-  document.querySelectorAll('.support-ticket-toast').forEach(el=>el.remove());
-  if(!next)return;
-  let configReady=false,roleReady=false,isOwner=false,isStaff=false,watching=false;
-  const refresh=()=>{
-    if(version!==notificationVersion||!configReady||!roleReady)return;
-    owner=isOwner;staff=isOwner||isStaff;
-    panel.querySelector('[data-support-view="staff"]').hidden=!staff;
-    panel.querySelector('[data-support-view="team"]').hidden=!owner;
-    if(!staff){stopTicketNotifications();stopTicketNotifications=()=>{};watching=false;document.querySelectorAll('.support-ticket-toast').forEach(el=>el.remove());return}
-    if(watching)return;watching=true;
-    let baseline=false;const seen=new Set(),started=Date.now();
-    stopTicketNotifications=onSnapshot(query(collection(db,'supportTickets'),orderBy('createdAt','desc'),limit(100)),snap=>{
-      if(version!==notificationVersion)return;
-      for(const change of snap.docChanges()){
-        const id=change.doc.id,data=change.doc.data(),created=data.createdAt?.toMillis?.();
-        if(change.type==='added'&&baseline&&!seen.has(id)&&created>=started&&data.status==='open')ticketNotification(id,data);
-        seen.add(id);
-      }
-      baseline=true;
-    },()=>{watching=false});
-  };
-  notificationStops.push(onSnapshot(doc(db,'supportSettings','access'),snap=>{configReady=true;isOwner=snap.exists()&&snap.data().ownerUid===next.uid;refresh()},()=>{configReady=true;isOwner=false;refresh()}));
-  notificationStops.push(onSnapshot(doc(db,'supportStaff',next.uid),snap=>{roleReady=true;isStaff=snap.exists()&&staffRole(snap.data().role);refresh()},()=>{roleReady=true;isStaff=false;refresh()}));
+ notificationVersion++;const version=notificationVersion;
+ notificationStops.forEach(stop=>stop());notificationStops=[];stopTicketNotifications();stopTicketNotifications=()=>{};
+ document.querySelectorAll('.support-ticket-toast').forEach(el=>el.remove());badgeTickets.clear();readTickets={};updateSupportBadge();
+ if(!next)return;
+ try{readTickets=JSON.parse(localStorage.getItem('sg-support-read-'+next.uid)||'{}')}catch{}
+ let configReady=false,roleReady=false,isOwner=false,isStaff=false,mode=null;
+ const refresh=()=>{
+  if(version!==notificationVersion||!configReady||!roleReady)return;
+  owner=isOwner;staff=isOwner||isStaff;
+  panel.querySelector('[data-support-view="staff"]').hidden=!staff;panel.querySelector('[data-support-view="team"]').hidden=!owner;
+  const nextMode=staff?'staff':'member';if(mode===nextMode)return;mode=nextMode;stopTicketNotifications();
+  let baseline=false;const seen=new Set(),started=Date.now();
+  const source=staff?query(collection(db,'supportTickets'),orderBy('createdAt','desc'),limit(100)):query(collection(db,'supportTickets'),where('ownerUid','==',next.uid),limit(100));
+  stopTicketNotifications=onSnapshot(source,snap=>{
+   if(version!==notificationVersion)return;
+   badgeTickets=new Map(snap.docs.map(item=>[item.id,item.data()]));
+   if(active&&!panel.hidden&&badgeTickets.has(active.id))readTicketNotification(active.id,badgeTickets.get(active.id));
+   for(const change of snap.docChanges()){const id=change.doc.id,data=change.doc.data(),created=data.createdAt?.toMillis?.();if(staff&&change.type==='added'&&baseline&&!seen.has(id)&&created>=started&&data.status==='open')ticketNotification(id,data);seen.add(id)}
+   baseline=true;updateSupportBadge();
+  },()=>{mode=null});
+ };
+ notificationStops.push(onSnapshot(doc(db,'supportSettings','access'),snap=>{configReady=true;isOwner=snap.exists()&&snap.data().ownerUid===next.uid;refresh()},()=>{configReady=true;isOwner=false;refresh()}));
+ notificationStops.push(onSnapshot(doc(db,'supportStaff',next.uid),snap=>{roleReady=true;isStaff=snap.exists()&&staffRole(snap.data().role);refresh()},()=>{roleReady=true;isStaff=false;refresh()}));
 }
 function ticketNotification(id,data){
   if(document.querySelectorAll('.support-ticket-toast').length>=3)document.querySelector('.support-ticket-toast')?.remove();
@@ -75,7 +78,7 @@ $('#support-image-remove').onclick=()=>{screen='';$('#support-image').value='';$
 $('#support-image').onchange=async event=>{screen='';const file=event.target.files?.[0];if(!file)return;if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>8*1024*1024){say('Choose a PNG, JPG or WebP under 8 MB.');event.target.value='';return}imageBusy=true;const version=generation;try{const bitmap=await createImageBitmap(file),canvas=document.createElement('canvas'),scale=Math.min(1,1000/Math.max(bitmap.width,bitmap.height));canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();let quality=.8,data=canvas.toDataURL('image/jpeg',quality);while(data.length>180000&&quality>.25){quality-=.1;data=canvas.toDataURL('image/jpeg',quality)}if(data.length>180000)throw Error('large');if(version!==generation)return;screen=data;$('#support-image-preview').src=screen;$('#support-image-preview').hidden=false;$('#support-image-remove').hidden=false;say('Screenshot ready.')}catch{say('Could not prepare that screenshot. Try a smaller image.')}finally{imageBusy=false}};
 $('#support-new').onsubmit=async event=>{event.preventDefault();if(!user)return say('Log in first.');if(imageBusy)return say('Wait for the screenshot to finish.');const form=event.currentTarget,submit=form.querySelector('[type=submit]'),uid=user.uid,data={category,subject:form.elements.subject.value.trim(),description:form.elements.description.value.trim()};if(!validTicket(data))return say('Add a subject and at least 10 characters of detail.');submit.disabled=true;try{const profile=await getDoc(doc(db,'users',uid));if(user?.uid!==uid)return;const ref=doc(collection(db,'supportTickets')),batch=writeBatch(db);batch.set(ref,{...data,ownerUid:uid,ownerName:profile.data()?.username||'Member',status:'open',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});if(screen)batch.set(doc(db,'supportTickets',ref.id,'attachments','screenshot'),{dataUrl:screen});await batch.commit();form.reset();screen='';$('#support-image-preview').hidden=true;$('#support-image-remove').hidden=true;await openTicket(ref.id);say('Ticket opened. Staff will reply here.')}catch(e){say(errorText(e))}finally{submit.disabled=false}};
 async function openTicket(id){const back=view==='closed'?'closed':view==='staff'?'staff':'mine';stop();const version=generation;for(const key of ['new','list','team'])$('#support-'+key).hidden=true;$('#support-detail').hidden=false;$('#support-ticket-description').textContent='Loading…';$('#support-ticket-title').textContent='Ticket';$('#support-ticket-image').hidden=true;$('#support-replies').replaceChildren();$('#support-reply-form').hidden=true;$('#support-ticket-state').hidden=true;$('#support-back').onclick=()=>show(back);
- stops.push(onSnapshot(doc(db,'supportTickets',id),snapshot=>{if(version!==generation)return;if(!snapshot.exists()){say('Ticket unavailable.');return}active={id,...snapshot.data()};$('#support-ticket-title').textContent=active.subject;$('#support-ticket-description').textContent=active.description;$('#support-ticket-meta').textContent=active.category+' · '+active.ownerName+' · '+active.status;$('#support-ticket-state').hidden=!staff;$('#support-ticket-state').textContent=active.status==='closed'?'Reopen Ticket':'Close Ticket';$('#support-reply-form').hidden=active.status==='closed'},e=>{if(version===generation){active=null;$('#support-detail').hidden=true;say(errorText(e))}}));
+ stops.push(onSnapshot(doc(db,'supportTickets',id),snapshot=>{if(version!==generation)return;if(!snapshot.exists()){say('Ticket unavailable.');return}active={id,...snapshot.data()};readTicketNotification(id,active);$('#support-ticket-title').textContent=active.subject;$('#support-ticket-description').textContent=active.description;$('#support-ticket-meta').textContent=active.category+' · '+active.ownerName+' · '+active.status;$('#support-ticket-state').hidden=!staff;$('#support-ticket-state').textContent=active.status==='closed'?'Reopen Ticket':'Close Ticket';$('#support-reply-form').hidden=active.status==='closed'},e=>{if(version===generation){active=null;$('#support-detail').hidden=true;say(errorText(e))}}));
  stops.push(onSnapshot(query(collection(db,'supportTickets',id,'messages'),orderBy('createdAt','desc'),limit(100)),snap=>{if(version!==generation)return;const list=$('#support-replies');list.replaceChildren();if(snap.empty)list.textContent='No replies yet.';for(const item of [...snap.docs].reverse()){const data=item.data(),row=document.createElement('div'),meta=document.createElement('small'),body=document.createElement('div');row.className='support-message';meta.textContent=(data.staff?'Staff · ':'')+data.senderName+' · '+(data.createdAt?.toDate?.().toLocaleString()||'Sending…');body.textContent=data.text;row.append(meta,body);list.append(row)}},e=>{if(version===generation)say(errorText(e))}));
  try{const screenshot=await getDoc(doc(db,'supportTickets',id,'attachments','screenshot'));if(version===generation&&screenshot.exists()){$('#support-ticket-image').src=screenshot.data().dataUrl;$('#support-ticket-image').hidden=false}}catch(e){if(version===generation)say(errorText(e))}
 }
