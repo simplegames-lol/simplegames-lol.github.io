@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/only-up/": "/only-up/player.html",
   "/line-rider/": "/line-rider/player.html",
   "/blackjack-battle/": "/blackjack-battle/player.html",
   "/yohoho/": "/yohoho/player.html",
