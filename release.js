@@ -8,8 +8,8 @@ const content="<ol class=\"updates-list\"><li class=\"update-entry\"><h2>October
   window.simpleGamesRelease={version:'2026-10-13-games-shop-provider-update',newGames,content:content.replace('<ol class="updates-list">','<ol class="updates-list">'+tonight)};
   const board=document.querySelector('main > .updates-list');if(board)board.outerHTML=window.simpleGamesRelease.content;
   if(location.pathname.startsWith('/updates')){try{localStorage.setItem('sg-seen-update',JSON.stringify(window.simpleGamesRelease.version))}catch{}}
+  newGames.splice(0,newGames.length,'/blackjack-battle/');
   const fresh=new Set(newGames);
-  fresh.add('/blackjack-battle/');newGames.push('/blackjack-battle/');
   document.querySelectorAll('.game-card').forEach(card=>{
     const link=card.querySelector('.game-card__image-link');
     if(link&&!fresh.has(new URL(link.href,location.href).pathname)){card.querySelectorAll('.game-new-badge').forEach(badge=>badge.remove());return}
