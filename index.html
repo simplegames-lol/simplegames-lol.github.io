@@ -37,7 +37,7 @@
         <a class="rail-link active" href="/"><span class="rail-icon">🏠</span><span>Home</span></a>
         <a class="rail-link" id="games-open" href="#game-library"><span class="rail-icon">🎮</span><span>Games</span></a>
         <button class="header-button" id="servers-open" type="button"><span class="rail-icon">🌐</span><span>Servers</span></button>
-        <button class="header-button" id="movies-open" type="button"><span class="rail-icon">🎬</span><span>Movies/TV Shows</span></button>
+        <button class="header-button" id="movies-open" type="button"><span class="rail-icon">🎬</span><span>Movies</span></button>
         <button class="rail-link" id="browser-open" type="button"><span class="rail-icon">🌐</span><span>Browser (Beta)</span></button>
         <button class="header-button" id="sports-open" type="button"><span class="rail-icon">🏟️</span><span>Live Sports</span></button>
         <button class="header-button account-button" id="account-open" type="button"><span class="rail-icon">👤</span><span class="account-label">Account</span><span class="notification-badge" id="account-unread" hidden>0</span></button>
@@ -65,7 +65,7 @@
           <button type="button" data-dashboard-action="games"><span>🎮</span><strong>Games</strong><small>Browse the library</small></button>
           <button type="button" data-dashboard-action="leaderboard"><span>🏆</span><strong>Leaderboard</strong><small>Top playtime</small></button>
           <button type="button" id="sports-home-open"><span>🏟️</span><strong>Live Sports</strong><small>Live matches</small></button>
-          <button type="button" id="movies-home-open"><span>🎬</span><strong>Movies/TV Shows</strong><small>Choose a provider</small></button>
+          <button type="button" id="movies-home-open"><span>🎬</span><strong>Movies</strong><small>Watch movies</small></button>
           <button type="button" data-dashboard-action="servers"><span>🌐</span><strong>Servers</strong><small>Your communities</small></button>
           <button type="button" data-dashboard-action="settings"><span>⚙️</span><strong>Settings</strong><small>Make it yours</small></button>
         </div>
@@ -109,18 +109,13 @@
 
       <section class="game-grid" aria-label="Games" hidden>
         <article class="game-card"><a class="game-card__image-link" href="/yohoho/" aria-label="Play YoHoHo.io"><img src="yohoho/cover.png" alt="YoHoHo.io game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/yohoho/">YoHoHo.io</a></h2></div></article>
-        <article class="game-card"><a class="game-card__image-link" href="/fps-strike/" aria-label="Play FPS Strike"><img src="fps-strike/cover.png" alt="FPS Strike game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/fps-strike/">FPS Strike</a></h2></div></article>
-        <article class="game-card"><a class="game-card__image-link" href="/su-battle-royale/" aria-label="Play SU Battle Royale"><img src="su-battle-royale/cover.png" alt="SU Battle Royale game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/su-battle-royale/">SU Battle Royale</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/madalin-stunt-cars-3/" aria-label="Play Madalin Stunt Cars 3"><img src="madalin-stunt-cars-3/cover.png" alt="Madalin Stunt Cars 3 game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/madalin-stunt-cars-3/">Madalin Stunt Cars 3</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/slice-it-all/" aria-label="Play Slice It All"><img src="slice-it-all/cover.png" alt="Slice It All game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/slice-it-all/">Slice It All</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/station-saturn/" aria-label="Play Station Saturn"><img src="station-saturn/cover.png" alt="Station Saturn game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/station-saturn/">Station Saturn</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/baseball-doodle/" aria-label="Play Baseball Doodle"><img src="baseball-doodle/cover.png" alt="Baseball Doodle game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/baseball-doodle/">Baseball Doodle</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/brain-test-tricky-puzzles/" aria-label="Play Brain Test: Tricky Puzzles"><img src="brain-test-tricky-puzzles/cover.png" alt="Brain Test: Tricky Puzzles game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/brain-test-tricky-puzzles/">Brain Test: Tricky Puzzles</a></h2></div></article>
-        <article class="game-card"><a class="game-card__image-link" href="/bank-robbery-3/" aria-label="Play Bank Robbery 3"><img src="bank-robbery-3/cover.png" alt="Bank Robbery 3 game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/bank-robbery-3/">Bank Robbery 3</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/bowmasters/" aria-label="Play Bowmasters"><img src="bowmasters/cover.png" alt="Bowmasters game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/bowmasters/">Bowmasters</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/time-shooter-3/" aria-label="Play Time Shooter 3: SWAT"><img src="time-shooter-3/cover.png" alt="Time Shooter 3: SWAT game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/time-shooter-3/">Time Shooter 3: SWAT</a></h2></div></article>
-        <article class="game-card"><a class="game-card__image-link" href="/mr-bullet/" aria-label="Play Mr Bullet"><img src="mr-bullet/cover.jpg" alt="Mr Bullet game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/mr-bullet/">Mr Bullet</a></h2></div></article>
-        <article class="game-card"><a class="game-card__image-link" href="/growden/" aria-label="Play Growden"><img src="growden/cover.png" alt="Growden game cover" loading="lazy"><span class="game-new-badge">NEW</span></a><div class="game-card__body"><h2><a href="/growden/">Growden</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/snow-rider-3d/" aria-label="Play Snow Rider 3D"><img src="assets/cover-cache/snow-rider-3d.webp" alt="Snow Rider 3D game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/snow-rider-3d/">Snow Rider 3D</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/cookie-clicker/" aria-label="Play Cookie Clicker"><img src="assets/cover-cache/cookie-clicker.webp" alt="Cookie Clicker game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/cookie-clicker/">Cookie Clicker</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/1v1-lol/" aria-label="Play 1v1.LOL"><img src="assets/cover-cache/1v1-lol.webp" alt="1v1.LOL game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/1v1-lol/">1v1.LOL</a></h2></div></article>
@@ -457,24 +452,24 @@
     <script src="interface-extras.js?v=7"></script>
     <script src="site-stats-config.js?v=1"></script>
     <script src="site-stats.js?v=5"></script>
-    <script src="movies.js?v=4"></script>
+    <script src="movies.js?v=5"></script>
     <script src="sports.js?v=8"></script>
     <script src="message-popups.js?v=3"></script>
     <script src="game-availability.js?v=4"></script>
     <script src="cover-fallback.js?v=1"></script>
     <script src="release.js?v=59"></script>
     <script src="features.js?v=66"></script>
-    <script src="browser-maintenance.js?v=1"></script>
+    <script src="browser-maintenance.js?v=2"></script>
     <link rel="stylesheet" href="ai-layout.css?v=1" />
     <script type="module" src="ai.js?v=7"></script>
-    <script src="play.js?v=100"></script>
+    <script src="play.js?v=101"></script>
     <script type="module" src="social.js?v=44"></script>
 <script type="module" src="support.js?v=6"></script>
     <script type="module" src="community.js?v=19"></script>
     <script type="module" src="servers.js?v=24"></script>
     <script type="module" src="shop.js?v=7"></script>
     <link rel="stylesheet" href="voice.css?v=2" />
-    <link rel="stylesheet" href="theme-overrides.css?v=1" />
+    <link rel="stylesheet" href="theme-overrides.css?v=2" />
     <script type="module" src="voice.js?v=6"></script>
   </body>
 </html>

@@ -1,18 +1,13 @@
 (() => {
 const games = {
   "/yohoho/": "/yohoho/player.html",
-  "/fps-strike/": "https://db2.duckmath.org/2024/unity2/fps-strike/index.html",
-  "/su-battle-royale/": "https://db2.duckmath.org/2024/su-battle-royale/index.html",
   "/madalin-stunt-cars-3/": "/madalin-stunt-cars-3/player.html",
   "/slice-it-all/": "/slice-it-all/player.html",
   "/station-saturn/": "/station-saturn/player.html",
   "/baseball-doodle/": "https://doodle-games.vercel.app/doodle-baseball.html",
   "/brain-test-tricky-puzzles/": "https://htmlxm.github.io/h2/brain-test-tricky-puzzles/",
-  "/bank-robbery-3/": "/bank-robbery-3/player.html",
   "/bowmasters/": "/bowmasters/player.html",
   "/time-shooter-3/": "/time-shooter-3/player.html",
-  "/mr-bullet/": "/mr-bullet/player.html?v=2",
-  "/growden/": "https://growden.io/",
   "/rocket-soccer/": "https://rocketsoccerderby.gitlab.io/file/",
   "/tunnel-rush/": "https://brainworxedu.github.io/games/tunnel-rush.html",
   "/trombone-champ/": "https://brainworxedu.github.io/games/trombone-champ.html",
