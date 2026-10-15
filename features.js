@@ -43,7 +43,7 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
-  "/blackjack/": "puzzle",
+  "/blackjack-battle/": "puzzle",
   "/yohoho/": "action",
   "/fps-strike/": "action",
   "/su-battle-royale/": "action",
