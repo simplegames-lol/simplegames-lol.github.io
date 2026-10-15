@@ -13,4 +13,4 @@ html[data-theme="light"] .header-right :is(button,a){color:var(--text)!important
 html[data-theme="light"] :is(#real-shop-status,.support-status,.social-status){color:var(--text)}
 .game-cover-fallback{display:grid;place-items:center;background:var(--surface);color:var(--text);width:100%;height:100%;padding:20px;text-align:center;border:1px solid var(--accent)}
 #browser-open{display:flex;align-items:center;justify-content:flex-start;gap:9px;white-space:nowrap;flex-wrap:nowrap;width:100%}
-#browser-open .browser-status-badge{margin-left:auto;font-family:inherit;font-size:9px;font-weight:500;line-height:1.2;padding:3px 6px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:5px;color:var(--muted);background:color-mix(in srgb,var(--accent) 8%,var(--surface));letter-spacing:0}
+#browser-open .browser-status-badge{margin-left:-4px;font-family:inherit;font-size:9px;font-weight:500;line-height:1.2;padding:3px 6px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:5px;color:var(--muted);background:color-mix(in srgb,var(--accent) 8%,var(--surface));letter-spacing:0}
