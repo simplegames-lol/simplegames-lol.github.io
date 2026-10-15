@@ -117,3 +117,4 @@ window.addEventListener('online',()=>{if(user&&!panel.hidden&&!localShopPreview)
 setInterval(()=>{if(!panel.hidden)updateDailyCountdown()},1000);
 draw();
 void import('./shop-gifts.js?v=1').catch(error=>console.error('Owner coin tools could not load:',error));
+void import('./gift-boxes.js?v=1').catch(error=>console.error('Gift boxes could not load:',error));
