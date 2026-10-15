@@ -34,3 +34,6 @@ html[data-theme="light"] :is(#real-shop-status,.support-status,.social-status){c
 .game-ratings-panel .rating-stars{font-size:14px;color:var(--accent);white-space:nowrap}
 .game-ratings-panel .rating-comment{grid-column:1/-1;margin:0;padding-top:10px;border-top:1px solid var(--border);font-size:13px;font-weight:400;line-height:1.6;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}
 .game-ratings-panel #rating-status{margin:14px 0 0;font-size:12px;line-height:1.5;font-weight:400;color:var(--muted);text-align:left}
+#browser-open,#sports-open{display:flex;align-items:center;justify-content:flex-start;gap:9px;text-align:left;min-width:0}
+#browser-open>span:last-child,#sports-open>span:last-child{white-space:nowrap;font-family:inherit;font-size:11px;line-height:1.4;letter-spacing:0;text-align:left}
+#browser-open>.rail-icon,#sports-open>.rail-icon{flex:0 0 18px;text-align:center}
