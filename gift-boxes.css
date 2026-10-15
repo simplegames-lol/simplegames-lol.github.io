@@ -6,3 +6,19 @@
 @keyframes gift-bob{50%{transform:translateY(-7px) rotate(2deg)}}@keyframes gift-twinkle{50%{opacity:.3;transform:scale(.7)}}@keyframes gift-shake{25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}@keyframes gift-lift{to{transform:translateY(-80px) rotate(-20deg);opacity:0}}@keyframes gift-reveal{from{opacity:0;transform:translateY(12px) scale(.9)}to{opacity:1;transform:none}}
 @media(max-width:500px){.gift-send-form{grid-template-columns:1fr}.gift-message-label,.gift-price-note{grid-column:auto}.gift-shop-heading{flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){.gift-opening *{animation:none!important;transition:none!important}}
+.real-shop .gift-box-shop{padding:16px;background:var(--background);border-color:var(--border);border-radius:9px;margin:20px 0}
+.real-shop .gift-shop-heading{gap:10px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--border)}
+.real-shop .gift-shop-heading>span{font-size:22px}
+.real-shop .gift-shop-heading h2{font-size:16px;margin:0 0 5px}
+.real-shop .gift-shop-heading p{font-size:11px;color:var(--muted)}
+.real-shop .gift-send-form{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);max-width:850px;gap:12px}
+.real-shop .gift-send-form label{font-size:11px;gap:6px}
+.real-shop .gift-send-form input,.real-shop .gift-send-form select{height:38px;padding:8px 10px;border-radius:7px;border:1px solid var(--border);background:var(--background);color:var(--text);font-family:inherit;font-size:12px}
+.real-shop .gift-amount-label,.real-shop .gift-item-label{grid-column:3;grid-row:1}
+.real-shop .gift-message-label{grid-column:1/-1}
+.real-shop .gift-send-button,.real-shop .gift-inbox{padding:9px 12px;border-radius:7px;border:1px solid var(--border);background:var(--background);color:var(--text);font-family:inherit;font-size:12px;min-height:36px}
+.real-shop .gift-send-button:hover:not(:disabled),.real-shop .gift-inbox:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--background))}
+.real-shop .gift-price-note,.real-shop .gift-help,.real-shop .gift-send-status{font-size:11px;color:var(--muted);line-height:1.6}
+.real-shop .gift-help{max-width:850px;padding-top:12px;margin-top:14px;border-top:1px solid var(--border)}
+@media(max-width:700px){.real-shop .gift-send-form{grid-template-columns:repeat(2,minmax(0,1fr))}.real-shop .gift-amount-label,.real-shop .gift-item-label{grid-column:1/-1;grid-row:auto}}
+@media(max-width:440px){.real-shop .gift-send-form{grid-template-columns:1fr}.real-shop .gift-message-label,.real-shop .gift-amount-label,.real-shop .gift-item-label{grid-column:1}}
