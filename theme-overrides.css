@@ -14,3 +14,23 @@ html[data-theme="light"] :is(#real-shop-status,.support-status,.social-status){c
 .game-cover-fallback{display:grid;place-items:center;background:var(--surface);color:var(--text);width:100%;height:100%;padding:20px;text-align:center;border:1px solid var(--accent)}
 #browser-open{display:flex;align-items:center;justify-content:flex-start;gap:9px;white-space:nowrap;flex-wrap:nowrap;width:100%}
 #browser-open .browser-status-badge{margin-left:-4px;font-family:inherit;font-size:9px;font-weight:500;line-height:1.2;padding:3px 6px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:5px;color:var(--muted);background:color-mix(in srgb,var(--accent) 8%,var(--surface));letter-spacing:0}
+.game-ratings-panel .settings-card{width:min(480px,calc(100vw - 32px));max-height:85vh;overflow:auto;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:22px;box-sizing:border-box}
+.game-ratings-panel .settings-heading{margin-bottom:18px;gap:16px}
+.game-ratings-panel .settings-heading h2{font-size:18px;line-height:1.35;margin:0;color:var(--text)}
+.game-ratings-panel #rating-close{font-size:24px;line-height:1;padding:6px;background:transparent;color:var(--muted);border:0;cursor:pointer}
+.game-ratings-panel .rating-picker{display:block;margin:0;text-align:left}
+.game-ratings-panel .rating-form{display:grid;gap:9px;width:100%;text-align:left}
+.game-ratings-panel .rating-form label{font-size:12px;font-weight:600;color:var(--text);margin-top:4px}
+.game-ratings-panel .rating-form select,.game-ratings-panel .rating-form textarea{width:100%;box-sizing:border-box;background:var(--background);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:11px 12px;font:inherit;font-size:13px;line-height:1.5}
+.game-ratings-panel .rating-form textarea{min-height:106px;resize:vertical}
+.game-ratings-panel .rating-form textarea::placeholder{color:var(--muted);opacity:.85}
+.game-ratings-panel .rating-form select:focus,.game-ratings-panel .rating-form textarea:focus{outline:2px solid var(--accent);outline-offset:2px}
+.game-ratings-panel .rating-comment-hint{font-size:11px;color:var(--muted)}
+.game-ratings-panel .rating-picker .rating-save{margin-top:8px;padding:11px 16px;border:1px solid var(--accent);border-radius:9px;background:var(--accent);color:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.game-ratings-panel .rating-save:disabled{opacity:.5;cursor:not-allowed}
+.game-ratings-panel .rating-voters{display:grid;gap:12px;width:100%}
+.game-ratings-panel .rating-voter{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:14px;background:var(--background);border:1px solid var(--border);border-radius:10px;text-align:left;align-items:center;width:100%;box-sizing:border-box}
+.game-ratings-panel .rating-author{font-size:13px;color:var(--text);overflow-wrap:anywhere}
+.game-ratings-panel .rating-stars{font-size:14px;color:var(--accent);white-space:nowrap}
+.game-ratings-panel .rating-comment{grid-column:1/-1;margin:0;padding-top:10px;border-top:1px solid var(--border);font-size:13px;font-weight:400;line-height:1.6;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}
+.game-ratings-panel #rating-status{margin:14px 0 0;font-size:12px;line-height:1.5;font-weight:400;color:var(--muted);text-align:left}
