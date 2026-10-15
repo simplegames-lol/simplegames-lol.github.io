@@ -36,13 +36,15 @@ document.addEventListener('click',event=>{if(event.target.closest('#support-open
 panel.querySelector('.support-nav').onclick=event=>{const b=event.target.closest('[data-support-view]');if(b)show(b.dataset.supportView)};
 let notificationStops=[],notificationVersion=0,stopTicketNotifications=()=>{};
 const supportBadge=document.createElement('span');supportBadge.className='support-unread-badge';supportBadge.hidden=true;supportBadge.setAttribute('aria-label','Unread support notifications');document.querySelector('#support-open')?.append(supportBadge);
-let badgeTickets=new Map(),readTickets={};
-function updateSupportBadge(){const count=[...badgeTickets.entries()].filter(([id,data])=>(data.updatedAt?.toMillis?.()||data.createdAt?.toMillis?.()||0)>(readTickets[id]||0)).length;supportBadge.textContent=String(count);supportBadge.hidden=!count}
+let badgeTickets=new Map(),readTickets={},ticketReplyState=new Map();
+function ticketNeedsAttention(data,last,staffView,readAt=0){if(data.status!=='open'||!last)return false;if(staffView)return !last.staff;return last.staff&&(data.updatedAt?.toMillis?.()||data.createdAt?.toMillis?.()||0)>readAt}
+function updateSupportBadge(){const count=[...badgeTickets.entries()].filter(([id,data])=>ticketNeedsAttention(data,ticketReplyState.get(id)?.last,staff,readTickets[id]||0)).length;supportBadge.textContent=String(count);supportBadge.hidden=!count;supportBadge.setAttribute('aria-label',staff?'Open tickets awaiting a staff reply':'Unread support replies')}
+function refreshTicketReplies(version){for(const[id,data]of badgeTickets){if(data.status!=='open'){ticketReplyState.delete(id);continue}const stamp=data.updatedAt?.toMillis?.()||data.createdAt?.toMillis?.()||0;if(ticketReplyState.get(id)?.stamp===stamp)continue;ticketReplyState.set(id,{stamp,last:null});getDocs(query(collection(db,'supportTickets',id,'messages'),orderBy('createdAt','desc'),limit(1))).then(snap=>{if(version!==notificationVersion||ticketReplyState.get(id)?.stamp!==stamp)return;ticketReplyState.set(id,{stamp,last:snap.empty?{staff:false}:snap.docs[0].data()});updateSupportBadge()}).catch(()=>{if(version===notificationVersion&&ticketReplyState.get(id)?.stamp===stamp)ticketReplyState.delete(id)})}}
 function readTicketNotification(id,data){if(!user)return;readTickets[id]=data.updatedAt?.toMillis?.()||data.createdAt?.toMillis?.()||Date.now();try{localStorage.setItem('sg-support-read-'+user.uid,JSON.stringify(readTickets))}catch{}updateSupportBadge()}
 function beginStaffNotifications(next){
  notificationVersion++;const version=notificationVersion;
  notificationStops.forEach(stop=>stop());notificationStops=[];stopTicketNotifications();stopTicketNotifications=()=>{};
- document.querySelectorAll('.support-ticket-toast').forEach(el=>el.remove());badgeTickets.clear();readTickets={};updateSupportBadge();
+ document.querySelectorAll('.support-ticket-toast').forEach(el=>el.remove());badgeTickets.clear();ticketReplyState.clear();readTickets={};updateSupportBadge();
  if(!next)return;
  try{readTickets=JSON.parse(localStorage.getItem('sg-support-read-'+next.uid)||'{}')}catch{}
  let configReady=false,roleReady=false,isOwner=false,isStaff=false,mode=null;
@@ -58,7 +60,7 @@ function beginStaffNotifications(next){
    badgeTickets=new Map(snap.docs.map(item=>[item.id,item.data()]));
    if(active&&!panel.hidden&&badgeTickets.has(active.id))readTicketNotification(active.id,badgeTickets.get(active.id));
    for(const change of snap.docChanges()){const id=change.doc.id,data=change.doc.data(),created=data.createdAt?.toMillis?.();if(staff&&change.type==='added'&&baseline&&!seen.has(id)&&created>=started&&data.status==='open')ticketNotification(id,data);seen.add(id)}
-   baseline=true;updateSupportBadge();
+   baseline=true;refreshTicketReplies(version);updateSupportBadge();
   },()=>{mode=null});
  };
  notificationStops.push(onSnapshot(doc(db,'supportSettings','access'),snap=>{configReady=true;isOwner=snap.exists()&&snap.data().ownerUid===next.uid;refresh()},()=>{configReady=true;isOwner=false;refresh()}));
