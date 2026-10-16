@@ -38,3 +38,8 @@ html[data-theme="light"] :is(#real-shop-status,.support-status,.social-status){c
 #browser-open,#sports-open{display:flex;align-items:center;justify-content:flex-start;gap:6px;text-align:left;min-width:0;box-sizing:border-box;padding-left:7px;padding-right:7px}
 #browser-open>span:last-child,#sports-open>span:last-child{white-space:nowrap;font-family:inherit;font-size:10px;line-height:1.4;letter-spacing:-.02em;text-align:left;min-width:0}
 #browser-open>.rail-icon,#sports-open>.rail-icon{flex:0 0 15px;font-size:14px;text-align:center}
+.social-unread-badge{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;min-width:17px;height:17px;width:auto;padding:0 5px;margin-left:6px;box-sizing:border-box;border:0;border-radius:999px;background:#e34747!important;color:#fff!important;font-size:10px!important;line-height:17px;vertical-align:middle}
+.social-unread-badge[hidden]{display:none!important}
+.friends-tabs button{white-space:nowrap}
+.dashboard-shortcuts [data-dashboard-action="account"]{position:relative}
+.dashboard-shortcuts .social-unread-badge{position:absolute;top:7px;right:7px;margin:0;width:auto;height:17px;min-width:17px;font-size:10px!important;background:#e34747!important}
