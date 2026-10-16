@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="layout-fixes.css?v=1" />
     <link rel="stylesheet" href="site-stats.css?v=4" />
     <link rel="stylesheet" href="site-polls.css?v=2" />
-    <script type="module" src="site-polls.js?v=1"></script>
+    <script type="module" src="site-polls-cloudflare.js?v=1"></script>
     <link rel="stylesheet" href="friends-page.css?v=1" />
     <link rel="stylesheet" href="dropdowns.css?v=1" />
     <link rel="stylesheet" href="support.css?v=4" />
@@ -81,10 +81,11 @@
         <p id="site-stats-date">Today · Oct 10, 2026 · Resets at midnight EDT</p>
       </section>
       <section id="site-polls" class="site-polls" aria-labelledby="poll-heading">
-        <header><h2 id="poll-heading">Website Poll</h2><span>Live results</span></header>
+        <header><h2 id="poll-heading">Website Poll</h2><span>Updates every 30s</span></header>
         <h3 id="poll-question">How are you guys liking the website?</h3>
         <div id="poll-choices"></div>
         <p id="poll-status" role="status">Connecting to polls…</p>
+        <p id="poll-staff-status" role="status"></p>
         <details id="poll-tools" hidden><summary>Manage polls</summary>
           <form id="poll-create"><label>Question<input name="question" maxlength="160" required value="How are you guys liking the website?" /></label>
           <label>Choice 1<input name="a" maxlength="80" required value="It's good" /></label>
