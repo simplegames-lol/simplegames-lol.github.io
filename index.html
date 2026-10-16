@@ -12,6 +12,8 @@
     <script src="appearance.js?v=1"></script>
     <link rel="stylesheet" href="layout-fixes.css?v=1" />
     <link rel="stylesheet" href="site-stats.css?v=4" />
+    <link rel="stylesheet" href="site-polls.css?v=1" />
+    <script type="module" src="site-polls.js?v=1"></script>
     <link rel="stylesheet" href="friends-page.css?v=1" />
     <link rel="stylesheet" href="dropdowns.css?v=1" />
     <link rel="stylesheet" href="support.css?v=4" />
@@ -77,6 +79,21 @@
           <div><h3>Total Today</h3><strong id="stats-total">—</strong><small>unique browsers today</small></div>
         </div>
         <p id="site-stats-date">Today · Oct 10, 2026 · Resets at midnight EDT</p>
+      </section>
+      <section id="site-polls" class="site-polls" aria-labelledby="poll-heading">
+        <header><h2 id="poll-heading">Website Poll</h2><span>Live results</span></header>
+        <h3 id="poll-question">How are you guys liking the website?</h3>
+        <div id="poll-choices"></div>
+        <p id="poll-status" role="status">Connecting to polls…</p>
+        <details id="poll-tools" hidden><summary>Manage polls</summary>
+          <form id="poll-create"><label>Question<input name="question" maxlength="160" required value="How are you guys liking the website?" /></label>
+          <label>Choice 1<input name="a" maxlength="80" required value="It's good" /></label>
+          <label>Choice 2<input name="b" maxlength="80" required value="It's okay" /></label>
+          <label>Choice 3<input name="c" maxlength="80" required value="It's bad" /></label>
+          <button type="submit">Publish new poll</button></form>
+          <button type="button" id="poll-close">Close voting</button>
+          <p>Access follows Support → Manage Staff. New polls replace the displayed poll, but keep past votes.</p>
+        </details>
       </section>
       </section>
       <section class="intro" id="game-library" aria-labelledby="featured-title" hidden>
