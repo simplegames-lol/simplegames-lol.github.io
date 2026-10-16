@@ -1,4 +1,4 @@
-import{bindCosmetics}from'./shop-cosmetics.js?v=1';
+import{bindCosmetics}from'./shop-cosmetics.js?v=2';
 export function renderPodium(list,entries,applyAvatar){
   let podium=document.querySelector('#leaderboard-podium');if(!podium){podium=document.createElement('div');podium.id='leaderboard-podium';podium.className='leaderboard-podium';list.before(podium)}podium.replaceChildren();list.replaceChildren();list.style.counterReset='ranks 3';
   for(const rank of [2,1,3]){const entry=entries[rank-1];if(!entry)continue;const d=entry.data(),card=document.createElement('article'),badge=document.createElement('strong'),avatar=document.createElement('span'),name=document.createElement('strong'),time=document.createElement('span');card.className='podium-card podium-'+({1:'first',2:'second',3:'third'}[rank]);badge.textContent=({1:'🥇',2:'🥈',3:'🥉'}[rank])+' #'+rank;avatar.className='profile-avatar';applyAvatar(avatar,d);name.textContent=d.displayName||d.username||'Player';time.textContent=formatTime(d.stats?.playSeconds);card.append(badge,avatar,name,time);bindCosmetics(entry.id,avatar,name);podium.append(card)}

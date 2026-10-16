@@ -1,3 +1,4 @@
+import {watchCosmetics} from './economy-client.js?v=1';
 import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
@@ -15,7 +16,7 @@ function paint(uid){
 }
 function watch(uid){
   if(watchers.has(uid)||!auth?.currentUser)return;
-  watchers.set(uid,onSnapshot(doc(db,'shopProfiles',uid),snapshot=>{cache.set(uid,snapshot.data()||{});paint(uid)},()=>{}));
+  watchers.set(uid,watchCosmetics(uid,snapshot=>{cache.set(uid,snapshot.data()||{});paint(uid)},()=>{}));
 }
 export function bindCosmetics(uid,avatar,name){
   if(!uid)return;

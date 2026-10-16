@@ -1,6 +1,6 @@
 import{leaderboardWeek,useWeeklyLeaderboard}from'./leaderboard-week.js?v=1';
 import{createFriendPresenceDetector}from'./friend-presence.js?v=1';
-import{bindCosmetics}from'./shop-cosmetics.js?v=1';
+import{bindCosmetics}from'./shop-cosmetics.js?v=2';
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import{createUserWithEmailAndPassword,deleteUser,getAuth,onAuthStateChanged,reload,sendPasswordResetEmail,signInWithEmailAndPassword,signOut,updatePassword,verifyBeforeUpdateEmail}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import{addDoc,collection,deleteDoc,doc,FieldPath,getDoc,getFirestore,increment,limit,onSnapshot,orderBy,query,runTransaction,serverTimestamp,setDoc,updateDoc,where,writeBatch}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
