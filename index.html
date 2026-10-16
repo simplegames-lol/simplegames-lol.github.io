@@ -12,8 +12,8 @@
     <script src="appearance.js?v=1"></script>
     <link rel="stylesheet" href="layout-fixes.css?v=1" />
     <link rel="stylesheet" href="site-stats.css?v=4" />
-    <link rel="stylesheet" href="site-polls.css?v=2" />
-    <script type="module" src="site-polls-cloudflare.js?v=1"></script>
+    <link rel="stylesheet" href="site-polls.css?v=3" />
+    <script type="module" src="site-polls-cloudflare.js?v=2"></script>
     <link rel="stylesheet" href="friends-page.css?v=1" />
     <link rel="stylesheet" href="dropdowns.css?v=1" />
     <link rel="stylesheet" href="support.css?v=4" />
@@ -86,6 +86,7 @@
         <div id="poll-choices"></div>
         <p id="poll-status" role="status">Connecting to polls…</p>
         <p id="poll-staff-status" role="status"></p>
+        <details id="poll-account" hidden><summary>My poll account ID</summary><p>Share this ID with the owner if they want to give you poll staff access.</p><input id="poll-account-id" aria-label="Your account ID" readonly /><button type="button" id="poll-copy-id">Copy account ID</button></details>
         <details id="poll-tools" hidden><summary>Manage polls</summary>
           <form id="poll-create"><label>Question<input name="question" maxlength="160" required value="How are you guys liking the website?" /></label>
           <label>Choice 1<input name="a" maxlength="80" required value="It's good" /></label>
@@ -93,7 +94,8 @@
           <label>Choice 3<input name="c" maxlength="80" required value="It's bad" /></label>
           <button type="submit">Publish new poll</button></form>
           <button type="button" id="poll-close">Close voting</button>
-          <p>Access follows Support → Manage Staff. New polls replace the displayed poll, but keep past votes.</p>
+          <p>Poll permissions are managed by the owner in Cloudflare, separately from ticket staff. New polls replace the displayed poll, but keep past votes.</p>
+          <section id="poll-staff-manager" hidden aria-label="Manage poll staff"><h3>Poll staff · Owner only</h3><p>Chosen staff can publish and close polls, but cannot grant access. Labels are reminders, not verified usernames.</p><form id="poll-staff-grant"><label>Staff label<input name="label" maxlength="60" placeholder="Their username" required /></label><label>Exact account ID<input name="uid" maxlength="128" placeholder="Ask them to copy My poll account ID" required /></label><button type="submit">Give poll access</button></form><button type="button" id="poll-staff-refresh">Refresh staff list</button><div id="poll-staff-list"></div><p id="poll-team-status" role="status"></p></section>
         </details>
       </section>
       </section>

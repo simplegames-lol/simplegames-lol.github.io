@@ -22,3 +22,9 @@
 .dashboard-hero .site-polls details>p{font-size:9px;margin-top:10px}
 html[data-theme=light] .dashboard-hero .site-polls{background:var(--surface,#fff);border-color:var(--border,#ddd)}
 @media(max-width:380px){#poll-create{grid-template-columns:1fr}.site-polls label:first-child,#poll-create button{grid-column:auto}}
+.site-polls #poll-account input{margin:8px 0;font-size:10px}.site-polls #poll-account button{width:100%}
+#poll-staff-manager{border-top:1px solid var(--border,#24262c);margin-top:14px;padding-top:2px}
+#poll-staff-grant{display:grid;gap:10px;margin:12px 0}
+#poll-staff-grant label{grid-column:auto}
+.poll-staff-row{display:grid;gap:8px;border-top:1px solid var(--border,#24262c);padding:10px 0;overflow-wrap:anywhere}
+#poll-staff-list{font-size:10px;margin-top:10px;line-height:1.5}
