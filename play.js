@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/veck-io/": "https://ozgames.io/veck-io.embed",
   "/openguessr/": "https://openguessr.com/",
   "/overtide-io/": "https://overtide.io/",
   "/growden/": "https://growden.io/",
