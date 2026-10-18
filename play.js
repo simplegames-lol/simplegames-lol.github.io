@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/driven-wild/": "https://killedbyapixel.github.io/Drive13K/",
   "/drive-mad/": "/drive-mad/player.html",
   "/only-up/": "/only-up/player.html",
   "/line-rider/": "/line-rider/player.html",
