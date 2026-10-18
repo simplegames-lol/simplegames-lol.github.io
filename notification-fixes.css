@@ -1,0 +1,9 @@
+/* Keep count bubbles inside their button, using one consistent size. */
+#account-open #account-unread,.social-unread-badge{box-sizing:border-box;min-width:17px;height:17px;padding:0 5px;flex:0 0 auto;font-size:10px!important;line-height:17px;letter-spacing:0;border-radius:999px;vertical-align:middle}
+#account-open #account-unread{display:inline-flex;align-items:center;justify-content:center;margin-left:6px}
+#account-open #account-unread[hidden]{display:none!important}
+.dashboard-shortcuts [data-dashboard-action="account"]{position:relative;overflow:visible}
+.dashboard-shortcuts [data-dashboard-action="account"]>.social-unread-badge{position:absolute!important;top:6px!important;right:6px!important;bottom:auto;left:auto;margin:0!important;transform:none!important;display:inline-flex;align-items:center;justify-content:center}
+.dashboard-shortcuts [data-dashboard-action="account"]>.social-unread-badge[hidden]{display:none!important}
+.friends-tabs button,[data-social-view="friends"]{align-items:center;gap:0}
+.friends-tabs button>.social-unread-badge,[data-social-view="friends"]>.social-unread-badge{position:static!important;transform:none!important;margin-left:6px!important}

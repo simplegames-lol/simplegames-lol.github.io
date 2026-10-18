@@ -45,11 +45,10 @@
   const expire=()=>{if(card.contains(document.activeElement))setTimeout(expire,20000);else card.remove()};setTimeout(expire,data.kind==='friend-online'?7000:20000);
  });
  document.addEventListener('simplegames:auth',()=>{doNotDisturb=false;stack.replaceChildren()});
- const friends=document.querySelector('[data-dashboard-action="account"]'),servers=document.querySelector('[data-dashboard-action="servers"]'),serverRail=document.querySelector('#servers-open');
- for(const button of [friends,servers,serverRail]){const badge=document.createElement('span');badge.className=button===serverRail?'notification-badge':'home-unread-badge';badge.hidden=true;button.append(badge)}
+ // Friends badges belong to social.js (DMs, groups and requests combined).
+ // This module only owns the server badges; never mirror the account badge.
+ const servers=document.querySelector('[data-dashboard-action="servers"]'),serverRail=document.querySelector('#servers-open');
+ for(const button of [servers,serverRail]){if(!button)continue;const selector=button===serverRail?'.notification-badge':'.home-unread-badge';if(button.querySelector(selector))continue;const badge=document.createElement('span');badge.className=button===serverRail?'notification-badge':'home-unread-badge';badge.hidden=true;button.append(badge)}
  const update=(badge,count)=>{count=Math.max(0,Math.floor(Number(count)||0));badge.textContent=count;badge.hidden=!count;badge.setAttribute('aria-label',count+' unread messages')};
- const account=document.querySelector('#account-unread');
- const syncFriends=()=>update(friends.querySelector('.home-unread-badge'),account.hidden?0:account.textContent);
- new MutationObserver(syncFriends).observe(account,{attributes:true,childList:true,characterData:true,subtree:true});syncFriends();
- document.addEventListener('simplegames:server-unread',event=>{update(servers.querySelector('.home-unread-badge'),event.detail.count);update(serverRail.querySelector('.notification-badge'),event.detail.count)});
+ document.addEventListener('simplegames:server-unread',event=>{const count=event.detail.count;const homeBadge=servers?.querySelector('.home-unread-badge'),railBadge=serverRail?.querySelector('.notification-badge');if(homeBadge)update(homeBadge,count);if(railBadge)update(railBadge,count)});
 })();
