@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/overtide-io/": "https://overtide.io/",
   "/growden/": "https://growden.io/",
   "/kour-io/": "https://kour.io/",
   "/evoworld-io/": "https://evoworld.io/",
