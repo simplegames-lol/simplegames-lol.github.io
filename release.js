@@ -10,6 +10,7 @@ const content="<ol class=\"updates-list\"><li class=\"update-entry\"><h2>October
   const board=document.querySelector('main > .updates-list');if(board)board.outerHTML=window.simpleGamesRelease.content;
   if(location.pathname.startsWith('/updates')){try{localStorage.setItem('sg-seen-update',JSON.stringify(window.simpleGamesRelease.version))}catch{}}
   newGames.splice(0,newGames.length,'/blackjack-battle/','/line-rider/','/only-up/');
+  newGames.push('/drive-mad/');
   const fresh=new Set(newGames);
   document.querySelectorAll('.game-card').forEach(card=>{
     const link=card.querySelector('.game-card__image-link');
