@@ -43,6 +43,7 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
+  "/evoworld-io/": "action",
   "/drive-mad/": "racing",
   "/driven-wild/": "racing",
   "/only-up/": "action",
