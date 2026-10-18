@@ -18,12 +18,18 @@ export async function initializeWallet(uid){
 }
 export async function shopAction(uid,action,id,color,enabled=true){
   requireUser(uid);
-  await runTransaction(db,async tx=>{
+  return runTransaction(db,async tx=>{
     requireUser(uid);const ref=doc(db,'shopWallets',uid),snap=await tx.get(ref);
     if(!snap.exists())throw Error('Open the shop to initialize your wallet first.');
     const wallet=snap.data();
     const changes=action==='daily'?{...dailyChanges(wallet),lastDailyAt:serverTimestamp()}:action==='buy'?purchaseChanges(wallet,id):action==='earn'?{...earnedChanges(wallet),lastEarnAt:serverTimestamp()}:cosmeticChanges(wallet,id,color,enabled);
     tx.update(ref,{...changes,updatedAt:serverTimestamp()});
     if(action==='cosmetic')tx.set(doc(db,'shopProfiles',uid),{...publicCosmetics({...wallet,...changes}),updatedAt:serverTimestamp()});
+    // Returned only after the transaction commits. Snapshots still reconcile
+    // exact server timestamps; display an estimated cooldown in the meantime.
+    const now=Date.now(),display={...wallet,...changes};
+    if(action==='daily')display.lastDailyAt={toMillis:()=>now};
+    if(action==='earn')display.lastEarnAt={toMillis:()=>now};
+    return display;
   });
 }
