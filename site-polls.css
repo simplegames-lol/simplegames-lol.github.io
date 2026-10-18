@@ -28,3 +28,15 @@ html[data-theme=light] .dashboard-hero .site-polls{background:var(--surface,#fff
 #poll-staff-grant label{grid-column:auto}
 .poll-staff-row{display:grid;gap:8px;border-top:1px solid var(--border,#24262c);padding:10px 0;overflow-wrap:anywhere}
 #poll-staff-list{font-size:10px;margin-top:10px;line-height:1.5}
+.site-polls .poll-manage-actions{display:flex;gap:8px;margin:12px 0}
+.site-polls .poll-manage-actions button{width:auto!important;flex:1;margin:0!important;min-height:34px;font-size:10px}
+#poll-timer{display:flex;align-items:end;gap:8px;margin:12px 0}
+#poll-timer label{flex:1;min-width:0}
+#poll-timer select,.site-polls .poll-duration-label select{width:100%;box-sizing:border-box;min-height:35px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--background);color:var(--text);font:inherit;font-size:11px}
+#poll-timer button{white-space:nowrap;min-height:35px}
+.site-polls .poll-duration-label{grid-column:1/-1}
+.site-polls .poll-create-details{margin-top:12px;padding-top:10px}
+.site-polls #poll-timer-note{font-size:9px;margin:6px 0 10px}
+.site-polls #poll-staff-manager{padding-top:10px}
+.site-polls #poll-staff-manager h3{font-size:11px}
+.site-polls #poll-account{font-size:9px}
