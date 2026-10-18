@@ -1,0 +1,13 @@
+.youtube-panel{position:fixed;inset:0;z-index:560;display:flex;flex-direction:column;background:var(--background,#000);color:var(--text);font:inherit;padding:16px;box-sizing:border-box}
+.youtube-panel[hidden],.youtube-panel [hidden]{display:none!important}
+.youtube-panel header{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.youtube-panel h1{margin:0;font-size:17px}.youtube-panel h1 small{font-size:10px;color:var(--muted);font-weight:400;margin-left:8px}
+.youtube-panel button{font:inherit;font-size:11px;padding:9px 12px;border:1px solid var(--border);border-radius:7px;background:var(--background);color:var(--text);cursor:pointer}
+.youtube-panel button:hover{border-color:var(--accent)}.youtube-panel button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.youtube-panel .youtube-reload{margin-left:auto}
+.youtube-warning{max-width:540px;margin:auto;padding:24px;border:1px solid var(--border);border-radius:12px;background:var(--background)}
+.youtube-warning h2{font-size:18px;margin:0 0 14px}.youtube-warning p{font-size:12px;line-height:1.7;color:var(--muted)}
+.youtube-panel .youtube-load{margin-top:10px;border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--background))}
+.youtube-status{font-size:10px;line-height:1.5;color:var(--muted);margin:10px 0}.youtube-status:empty{display:none}
+.youtube-frame{width:100%;flex:1;min-height:0;border:1px solid var(--border);border-radius:8px;background:#fff}
+@media(max-width:500px){.youtube-panel{padding:10px}.youtube-panel header{gap:8px}.youtube-panel h1{font-size:14px}.youtube-panel h1 small{display:block;margin:3px 0 0}.youtube-warning{padding:18px}}
