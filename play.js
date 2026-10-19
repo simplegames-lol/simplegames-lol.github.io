@@ -1,6 +1,5 @@
 (() => {
 const games = {
-  "/chunk-io/": "/chunk-io/player.html",
   "/veck-io/": "https://veck.io/",
   "/openguessr/": "https://openguessr.com/",
   "/overtide-io/": "https://overtide.io/",
