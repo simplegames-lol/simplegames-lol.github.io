@@ -1,5 +1,7 @@
 (() => {
 const games = {
+  "/paper-io/": "https://gaming-escape.github.io/public/assets/games/paper-io/",
+  "/poor-eddie/": "https://gaming-escape.github.io/public/assets/games/poor-eddie/",
   "/driven-wild/": "https://killedbyapixel.github.io/Drive13K/",
   "/drive-mad/": "/drive-mad/player.html",
   "/only-up/": "/only-up/player.html",
