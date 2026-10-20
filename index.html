@@ -14,10 +14,10 @@
     <link rel="stylesheet" href="site-stats.css?v=4" />
     <link rel="stylesheet" href="site-polls.css?v=4" />
     <link rel="stylesheet" href="game-requests.css?v=1" />
-    <script type="module" src="game-requests.js?v=2"></script>
-    <link rel="stylesheet" href="moderation.css?v=1" />
-    <script type="module" src="moderation.js?v=1"></script>
-    <script type="module" src="site-polls-cloudflare.js?v=4"></script>
+    <script type="module" src="game-requests.js?v=3"></script>
+    <link rel="stylesheet" href="moderation.css?v=2" />
+    <script type="module" src="moderation.js?v=2"></script>
+    <script type="module" src="site-polls-cloudflare.js?v=5"></script>
     <link rel="stylesheet" href="friends-page.css?v=1" />
     <link rel="stylesheet" href="dropdowns.css?v=1" />
     <link rel="stylesheet" href="support.css?v=4" />
@@ -89,7 +89,7 @@
         <h3 id="poll-question">How are you guys liking the website?</h3>
         <div id="poll-choices"></div>
         <p id="poll-status" role="status">Connecting to polls…</p>
-        <p class="vote-privacy">Votes are not anonymous: the owner can see your account ID and answer.</p>
+        <p class="vote-privacy">Votes are visible to the owner. Click your selected answer to undo while voting is open.</p>
         <p id="poll-staff-status" role="status"></p>
         <details id="poll-account" hidden><summary>My poll account ID</summary><p>Share this ID with the owner if they want to give you poll staff access.</p><input id="poll-account-id" aria-label="Your account ID" readonly /><button type="button" id="poll-copy-id">Copy account ID</button></details>
         <details id="poll-tools" hidden><summary>Manage polls</summary>
@@ -116,7 +116,7 @@
         <p id="request-matches"></p><ul aria-label="Game requests"></ul>
         <button id="request-more" type="button" hidden>Show all</button>
         <p role="status">Connecting to game requests…</p>
-        <p class="vote-privacy">The owner can see voter account IDs. Staff can see who submits requests.</p>
+        <p class="vote-privacy">Voter usernames are visible to the owner. Use Undo to remove your vote while voting is open.</p>
         <details id="request-management" class="moderation-panel" hidden><summary>Manage requests</summary><p>Approve submissions, update status, hide spam or delete requests.</p><button id="request-manage-refresh" type="button">Refresh requests</button><div id="request-manage-list"></div><p id="request-manage-status" role="status"></p></details>
       </section>
       </section>

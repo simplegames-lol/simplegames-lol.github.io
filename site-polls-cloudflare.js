@@ -15,7 +15,7 @@ function render(){
  $('poll-timer-note').textContent=poll?.endsAt?'Ends '+new Date(poll.endsAt).toLocaleString()+(poll.closed?' · Voting closed':''):poll?'No automatic end time.':'';
  if(!poll){$('poll-question').textContent='No poll is published.';say('Create a poll below when you’re ready.');return}
  $('poll-question').textContent=poll.question;const total=keys.reduce((sum,k)=>sum+poll.counts[k],0);
- if(!poll.hidden)for(const k of keys){const button=document.createElement('button'),fill=document.createElement('span'),label=document.createElement('span'),result=document.createElement('span');button.type='button';button.className='poll-choice';button.disabled=!user||!readReady||!!choice||poll.closed||busy;button.setAttribute('aria-pressed',String(choice===k));fill.className='poll-fill';const percent=total?Math.round(poll.counts[k]/total*100):0;fill.style.width=percent+'%';label.textContent=poll.options[k]+(choice===k?' ✓':'');result.textContent=percent+'% · '+poll.counts[k];button.append(fill,label,result);button.onclick=()=>vote(k);list.append(button)}
+ if(!poll.hidden)for(const k of keys){const button=document.createElement('button'),fill=document.createElement('span'),label=document.createElement('span'),result=document.createElement('span');button.type='button';button.className='poll-choice';button.disabled=!user||!readReady||(!!choice&&choice!==k)||poll.closed||busy;button.setAttribute('aria-pressed',String(choice===k));fill.className='poll-fill';const percent=total?Math.round(poll.counts[k]/total*100):0;fill.style.width=percent+'%';label.textContent=poll.options[k]+(choice===k?' ✓ · Undo':'');result.textContent=percent+'% · '+poll.counts[k];button.append(fill,label,result);button.onclick=()=>choice===k?unvote():vote(k);list.append(button)}
  say(poll.hidden?'Hidden from visitors · Only staff can see these controls.':`${total} vote${total===1?'':'s'} · ${poll.closed?'Voting closed':choice?'Thanks for voting!':user?readReady?'Choose one answer. One vote per account.':'Checking your vote…':'Sign in to vote.'}`);
 }
 async function refresh(){
@@ -28,6 +28,11 @@ async function refresh(){
   render();
  }catch(e){if(version===generation)say(e.message||'Could not connect to Cloudflare polls.')}
  finally{loading=false;if(version!==generation||staffMode!==staff)refresh()}
+}
+async function unvote(){
+ if(!user||!poll||!choice||busy||poll.closed||poll.hidden)return;const account=user,id=poll.id,version=generation;busy=true;render();let failure;
+ try{await api('/polls/unvote',{body:{id},account});if(version===generation&&poll?.id===id)choice=null}catch(e){failure=e}
+ finally{busy=false;if(version===generation){render();if(failure)say(failure.message);else refresh()}}
 }
 async function vote(k){
  if(!user||!poll||!readReady||busy||choice)return;const account=user,id=poll.id,version=generation;busy=true;render();let failure=null;
