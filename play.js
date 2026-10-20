@@ -1,11 +1,5 @@
 (() => {
 const games = {
-  "/veck-io/": "https://veck.io/",
-  "/openguessr/": "https://openguessr.com/",
-  "/overtide-io/": "https://overtide.io/",
-  "/growden/": "https://growden.io/",
-  "/kour-io/": "https://kour.io/",
-  "/evoworld-io/": "https://evoworld.io/",
   "/driven-wild/": "https://killedbyapixel.github.io/Drive13K/",
   "/drive-mad/": "/drive-mad/player.html",
   "/only-up/": "/only-up/player.html",

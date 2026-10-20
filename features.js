@@ -43,11 +43,6 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
-  "/veck-io/": "action",
-  "/openguessr/": "puzzle",
-  "/overtide-io/": "action",
-  "/kour-io/": "action",
-  "/evoworld-io/": "action",
   "/drive-mad/": "racing",
   "/driven-wild/": "racing",
   "/only-up/": "action",
@@ -65,7 +60,6 @@ const categories = {
   "/bowmasters/": "action",
   "/time-shooter-3/": "action",
   "/mr-bullet/": "action",
-  "/growden/": "simulation",
   "/crossy-road/": "arcade",
   "/how-to-fish/": "simulation",
   "/happy-wheels/": "action",
