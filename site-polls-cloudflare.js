@@ -75,3 +75,4 @@ function visible(){return !document.hidden&&document.querySelector('.dashboard-h
 // No Firestore reads for vote/status updates. Stop background-tab refreshes.
 setInterval(()=>{if(visible())refresh()},30000);
 document.addEventListener('visibilitychange',()=>{if(visible())refresh()});
+document.addEventListener('simplegames:moderation-changed',()=>{if(visible())refresh()});
