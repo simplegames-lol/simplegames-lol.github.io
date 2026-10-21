@@ -13,10 +13,8 @@
     <link rel="stylesheet" href="layout-fixes.css?v=1" />
     <link rel="stylesheet" href="site-stats.css?v=4" />
     <link rel="stylesheet" href="site-polls.css?v=4" />
-    <link rel="stylesheet" href="game-requests.css?v=1" />
-    <script type="module" src="game-requests.js?v=3"></script>
     <link rel="stylesheet" href="moderation.css?v=2" />
-    <script type="module" src="moderation.js?v=3"></script>
+    <script type="module" src="moderation.js?v=4"></script>
     <script type="module" src="site-polls-cloudflare.js?v=5"></script>
     <link rel="stylesheet" href="friends-page.css?v=1" />
     <link rel="stylesheet" href="dropdowns.css?v=1" />
@@ -105,16 +103,6 @@
           <details id="poll-extra-controls" class="moderation-panel" hidden><summary>Edit, reopen &amp; voter details</summary><button id="poll-reopen" type="button">Reopen voting</button><button id="poll-view-voters" type="button" hidden>View voters · Owner only</button><form id="poll-edit-form" hidden><label>Question<input name="question" maxlength="160" required /></label><label>Choice 1<input name="a" maxlength="80" required /></label><label>Choice 2<input name="b" maxlength="80" required /></label><label>Choice 3<input name="c" maxlength="80" required /></label><button type="submit">Save edits</button></form><p id="poll-extra-status" role="status"></p><div id="poll-voters"></div></details>
           <details id="poll-staff-manager" hidden aria-label="Manage poll staff"><summary>Staff access · Owner only</summary><p>Staff can publish, hide and close polls. Only you can grant access.</p><form id="poll-staff-grant"><label>Staff label<input name="label" maxlength="60" placeholder="Their username" required /></label><label>Exact account ID<input name="uid" maxlength="128" placeholder="Ask them to copy My poll account ID" required /></label><button type="submit">Give poll access</button></form><button type="button" id="poll-staff-refresh">Refresh staff list</button><div id="poll-staff-list"></div><p id="poll-team-status" role="status"></p></details>
         </details>
-      </section>
-      <section id="game-requests" class="game-requests" aria-labelledby="request-heading">
-        <header><h2 id="request-heading">What should we add next?</h2></header>
-        <p>Suggest a game. Staff review requests before they appear.</p>
-        <form><label class="sr-only" for="request-name">Game name</label><input id="request-name" name="name" placeholder="Game name" minlength="2" maxlength="60" required /><button type="submit" disabled>Request</button></form>
-        <p id="request-matches"></p><ul aria-label="Game requests"></ul>
-        <button id="request-more" type="button" hidden>Show all</button>
-        <p role="status">Connecting to game requests…</p>
-        <p class="vote-privacy">Voter usernames are visible to the owner. Use Undo to remove your vote while voting is open.</p>
-        <details id="request-management" class="moderation-panel" hidden><summary>Manage requests</summary><p>Approve submissions, update status, hide spam or delete requests.</p><button id="request-manage-refresh" type="button">Refresh requests</button><div id="request-manage-list"></div><p id="request-manage-status" role="status"></p></details>
       </section>
       </section>
       <section class="intro" id="game-library" aria-labelledby="featured-title" hidden>
