@@ -18,6 +18,9 @@
     .movies-provider-card img{width:140px;height:80px;object-fit:contain}.movies-provider-card[data-provider="vidnest"] img{width:80px;border-radius:14px}
     @media(max-width:600px){.movies-provider-grid{grid-template-columns:1fr;max-width:340px}.movies-choice{align-content:start}.movies-provider-card{flex-direction:row;padding:18px;gap:18px}.movies-provider-card img{width:100px;height:58px}.movies-provider-card[data-provider="vidnest"] img{width:58px;margin:0 21px}.movies-bar{padding:10px}.movies-choice h2{font-size:20px}}
   `;document.head.append(style);
+  const notice=document.createElement('dialog');notice.className='movies-id-notice';notice.setAttribute('aria-labelledby','movies-id-title');
+  notice.innerHTML='<h2 id="movies-id-title">Before you watch</h2><p>When loading in, make sure you go to Google and look up “Movie ID (TMDB) (Movie name here)” to find the right movie so you can copy and paste its ID to watch. Do the same for TV shows and other titles.</p><form method="dialog"><button type="submit" value="ok" class="secondary-button">OK</button></form>';
+  const noticeStyle=document.createElement('style');noticeStyle.textContent='.movies-id-notice{width:min(480px,calc(100vw - 40px));box-sizing:border-box;padding:24px;border:1px solid var(--border);border-radius:14px;background:var(--surface);color:var(--text);font:inherit}.movies-id-notice::backdrop{background:rgba(0,0,0,.75)}.movies-id-notice h2{font-size:20px;margin:0 0 14px}.movies-id-notice p{color:var(--muted);line-height:1.65;margin:0 0 22px}.movies-id-notice form{display:flex;justify-content:flex-end}.movies-id-notice button{min-width:82px}';document.head.append(noticeStyle);document.body.append(notice);
   function button(label){const b=document.createElement('button');b.type='button';b.className='secondary-button';b.textContent=label;return b}
   const bar=document.createElement('header');bar.className='movies-bar';
   const home=button('← Home'),change=button('Change provider'),reload=button('Reload');
@@ -47,12 +50,13 @@
     const label=document.createElement('span');label.className='movies-provider-label';
     const name=document.createElement('strong');name.textContent=provider.name;
     const description=document.createElement('small');description.textContent=provider.description;label.append(name,description);card.append(logo,label);
-    card.onclick=()=>{selected=id;load();change.focus()};choice.querySelector('.movies-provider-grid').append(card);
+    card.onclick=()=>{selected=id;if(id==='vidnest'){notice.returnValue='';notice.showModal()}else{load();change.focus()}};choice.querySelector('.movies-provider-grid').append(card);
   }
   function open(event){if(!panel.hidden)return;opener=event?.currentTarget;panel.hidden=false;showChoice();choice.querySelector('button').focus()}
-  function close(){panel.hidden=true;showChoice();opener?.focus()}
+  notice.addEventListener('close',()=>{if(notice.returnValue==='ok'&&selected==='vidnest'&&!panel.hidden){load();change.focus()}else if(!panel.hidden){selected=null;choice.querySelector('button').focus()}});
+  function close(){panel.hidden=true;if(notice.open)notice.close();showChoice();opener?.focus()}
   home.onclick=close;reload.onclick=load;change.onclick=()=>{showChoice();choice.querySelector('button').focus()};
   document.querySelector('#movies-open')?.addEventListener('click',open);document.querySelector('#movies-home-open')?.addEventListener('click',open);
-  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden)close()});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden&&!notice.open)close()});
   showChoice();panel.append(bar,choice,frame);document.body.append(panel);
 })();
