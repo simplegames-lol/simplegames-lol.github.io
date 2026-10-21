@@ -1,6 +1,6 @@
 (() => {
   const providers = {
-    nubana: {name:'Nubana',description:'(Movies & TV Shows)',logo:'assets/media-providers/nubana.png',url:'https://nubana.cfd/?m=rosin%3A%2F%2Fmovies'},
+    vidnest: {name:'VidNest',description:'(Movies & TV Shows)',logo:'assets/media-providers/vidnest.ico',url:'https://vidnest.fun/'},
     lookmovie: {name:'LookMovie2',description:'(Movies only)',logo:'assets/media-providers/lookmovie.webp',url:'https://www.lookmovie2.to/movies/page/717'}
   };
   const panel=document.createElement('section');panel.className='movies-panel';panel.hidden=true;panel.setAttribute('aria-label','Movies');
@@ -15,8 +15,8 @@
     .movies-provider-card{min-width:0;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:14px;padding:28px 16px;display:flex;flex-direction:column;align-items:center;gap:20px;font:inherit;cursor:pointer}
     .movies-provider-card:hover{border-color:var(--muted)}.movies-provider-card:focus-visible{outline:2px solid var(--text);outline-offset:3px}
     .movies-provider-label{display:flex;flex-direction:column;align-items:center;gap:6px}.movies-provider-label small{color:var(--muted);font-size:12px;font-weight:400}
-    .movies-provider-card img{width:140px;height:80px;object-fit:contain}.movies-provider-card[data-provider="nubana"] img{width:80px;border-radius:14px}
-    @media(max-width:600px){.movies-provider-grid{grid-template-columns:1fr;max-width:340px}.movies-choice{align-content:start}.movies-provider-card{flex-direction:row;padding:18px;gap:18px}.movies-provider-card img{width:100px;height:58px}.movies-provider-card[data-provider="nubana"] img{width:58px;margin:0 21px}.movies-bar{padding:10px}.movies-choice h2{font-size:20px}}
+    .movies-provider-card img{width:140px;height:80px;object-fit:contain}.movies-provider-card[data-provider="vidnest"] img{width:80px;border-radius:14px}
+    @media(max-width:600px){.movies-provider-grid{grid-template-columns:1fr;max-width:340px}.movies-choice{align-content:start}.movies-provider-card{flex-direction:row;padding:18px;gap:18px}.movies-provider-card img{width:100px;height:58px}.movies-provider-card[data-provider="vidnest"] img{width:58px;margin:0 21px}.movies-bar{padding:10px}.movies-choice h2{font-size:20px}}
   `;document.head.append(style);
   function button(label){const b=document.createElement('button');b.type='button';b.className='secondary-button';b.textContent=label;return b}
   const bar=document.createElement('header');bar.className='movies-bar';
