@@ -3,7 +3,7 @@
     nubana: {name:'Nubana',description:'(Movies & TV Shows)',logo:'assets/media-providers/nubana.png',url:'https://nubana.cfd/?m=rosin%3A%2F%2Fmovies'},
     lookmovie: {name:'LookMovie2',description:'(Movies only)',logo:'assets/media-providers/lookmovie.webp',url:'https://www.lookmovie2.to/movies/page/717'}
   };
-  const panel=document.createElement('section');panel.className='movies-panel';panel.hidden=true;panel.setAttribute('aria-label','Movies & TV Shows');
+  const panel=document.createElement('section');panel.className='movies-panel';panel.hidden=true;panel.setAttribute('aria-label','Movies');
   const style=document.createElement('style');
   style.textContent=`
     .movies-panel{position:fixed;inset:0;z-index:550;background:var(--background);color:var(--text);display:flex;flex-direction:column}
@@ -21,17 +21,17 @@
   function button(label){const b=document.createElement('button');b.type='button';b.className='secondary-button';b.textContent=label;return b}
   const bar=document.createElement('header');bar.className='movies-bar';
   const home=button('← Home'),change=button('Change provider'),reload=button('Reload');
-  const title=document.createElement('strong');title.textContent='🎬 Movies & TV Shows';bar.append(home,title,change,reload);
+  const title=document.createElement('strong');title.textContent='🎬 Movies';bar.append(home,title,change,reload);
   const choice=document.createElement('div');choice.className='movies-choice';choice.innerHTML='<h2>Choose where to watch</h2><div class="movies-provider-grid"></div>';
-  const frame=document.createElement('iframe');frame.className='movies-frame';frame.hidden=true;frame.title='Movies & TV Shows';frame.referrerPolicy='no-referrer';
+  const frame=document.createElement('iframe');frame.className='movies-frame';frame.hidden=true;frame.title='Movies';frame.referrerPolicy='no-referrer';
   frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-presentation');frame.setAttribute('allow','fullscreen; encrypted-media');frame.allowFullscreen=true;
   let selected=null,opener=null;
   function stop(){frame.src='about:blank';frame.hidden=true;window.dispatchEvent(new Event('simplegames:media-stop'))}
-  function showChoice(){stop();selected=null;choice.hidden=false;change.hidden=true;reload.hidden=true;title.textContent='🎬 Movies & TV Shows'}
+  function showChoice(){stop();selected=null;choice.hidden=false;change.hidden=true;reload.hidden=true;title.textContent='🎬 Movies'}
   function load(){
     if(panel.hidden||!selected)return;
     choice.hidden=true;frame.hidden=false;change.hidden=false;reload.hidden=false;
-    frame.title=providers[selected].name+' — Movies & TV Shows';frame.src=providers[selected].url;title.textContent='🎬 '+providers[selected].name;
+    frame.title=providers[selected].name+' — Movies';frame.src=providers[selected].url;title.textContent='🎬 '+providers[selected].name;
     window.dispatchEvent(new CustomEvent('simplegames:media-start',{detail:{title:'Watching movies & TV'}}));
   }
   for(const [id,provider] of Object.entries(providers)){
