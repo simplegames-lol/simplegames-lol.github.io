@@ -23,13 +23,20 @@
   const home=button('← Home'),change=button('Change provider'),reload=button('Reload');
   const title=document.createElement('strong');title.textContent='🎬 Movies';bar.append(home,title,change,reload);
   const choice=document.createElement('div');choice.className='movies-choice';choice.innerHTML='<h2>Choose where to watch</h2><div class="movies-provider-grid"></div>';
-  const frame=document.createElement('iframe');frame.className='movies-frame';frame.hidden=true;frame.title='Movies';frame.referrerPolicy='no-referrer';
-  frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-presentation');frame.setAttribute('allow','fullscreen; encrypted-media');frame.allowFullscreen=true;
+  function createPlayer(provider){
+    const player=document.createElement('iframe');player.className='movies-frame';player.hidden=true;player.title='Movies';player.referrerPolicy='no-referrer';
+    // VidNest requires an unsandboxed frame; approved for this provider only.
+    if(provider!=='vidnest')player.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-presentation');
+    player.setAttribute('allow','fullscreen; encrypted-media');player.allowFullscreen=true;return player;
+  }
+  let frame=createPlayer(null);
   let selected=null,opener=null;
   function stop(){frame.src='about:blank';frame.hidden=true;window.dispatchEvent(new Event('simplegames:media-stop'))}
   function showChoice(){stop();selected=null;choice.hidden=false;change.hidden=true;reload.hidden=true;title.textContent='🎬 Movies'}
   function load(){
     if(panel.hidden||!selected)return;
+    // A fresh browsing context prevents VidNest's relaxed permissions carrying over.
+    const previous=frame;frame=createPlayer(selected);previous.replaceWith(frame);previous.src='about:blank';
     choice.hidden=true;frame.hidden=false;change.hidden=false;reload.hidden=false;
     frame.title=providers[selected].name+' — Movies';frame.src=providers[selected].url;title.textContent='🎬 '+providers[selected].name;
     window.dispatchEvent(new CustomEvent('simplegames:media-start',{detail:{title:'Watching movies & TV'}}));
