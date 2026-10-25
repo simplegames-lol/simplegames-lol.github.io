@@ -21,7 +21,7 @@ function watch(uid){
 }
 export function bindCosmetics(uid,avatar,name){
   if(!uid)return;
-  if(!auth){auth=getAuth(getApp());db=getFirestore(getApp());onAuthStateChanged(auth,user=>{watchers.forEach(stop=>stop());watchers.clear();cache.clear();for(const key of bindings.keys()){paint(key);if(user)watch(key)}})}
+  if(!auth){auth=getAuth(getApp());db=getFirestore(getApp());onAuthStateChanged(auth,user=>{watchers.forEach(stop=>stop());watchers.clear();cache.clear();for(const [key,rows] of bindings){const connected=rows.filter(row=>row.avatar?.isConnected||row.name?.isConnected);if(!connected.length){bindings.delete(key);continue}bindings.set(key,connected);paint(key);if(user)watch(key)}})}
   const rows=(bindings.get(uid)||[]).filter(row=>row.avatar?.isConnected||row.name?.isConnected);
   if(!rows.some(row=>row.avatar===avatar&&row.name===name))rows.push({avatar,name,color:name?.style.color||'',outline:avatar?.style.outline||'',offset:avatar?.style.outlineOffset||''});
   bindings.set(uid,rows);watch(uid);paint(uid);

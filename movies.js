@@ -26,6 +26,14 @@
   const home=button('← Home'),change=button('Change provider'),reload=button('Reload');
   const title=document.createElement('strong');title.textContent='🎬 Movies';bar.append(home,title,change,reload);
   const choice=document.createElement('div');choice.className='movies-choice';choice.innerHTML='<h2>Choose where to watch</h2><div class="movies-provider-grid"></div>';
+  const idForm=document.createElement('form');idForm.className='vidnest-id-form';idForm.hidden=true;
+  idForm.innerHTML='<h2>What are we watching?</h2><div class="vidnest-fields"><label>Type<select name="kind"><option value="movie">Movie</option><option value="tv">TV show</option></select></label><label>TMDB ID<input name="tmdb" inputmode="numeric" pattern="[1-9][0-9]{0,8}" maxlength="9" placeholder="Movie or show ID" required /></label><label data-tv hidden>Season<input name="season" inputmode="numeric" value="1" /></label><label data-tv hidden>Episode<input name="episode" inputmode="numeric" value="1" /></label><button type="submit" class="secondary-button">Play</button></div><p role="status"></p>';
+  const idStyle=document.createElement('style');idStyle.textContent='.vidnest-id-form{padding:20px;margin:0 auto;width:min(720px,100%);box-sizing:border-box}.vidnest-id-form h2{font-size:18px;margin:0 0 18px}.vidnest-fields{display:flex;flex-wrap:wrap;align-items:end;gap:12px}.vidnest-fields label{display:grid;gap:7px;font-size:12px;color:var(--muted)}.vidnest-fields input,.vidnest-fields select{font:inherit;color:var(--text);background:var(--background);border:1px solid var(--border);border-radius:8px;padding:11px;max-width:190px}.vidnest-id-form [hidden]{display:none!important}.vidnest-id-form p{font-size:12px;color:var(--muted)}';document.head.append(idStyle);
+  let vidnestURL=null;
+  const editTitle=button('Change title');editTitle.hidden=true;bar.append(editTitle);
+  idForm.addEventListener('change',()=>{idForm.querySelectorAll('[data-tv]').forEach(label=>label.hidden=idForm.elements.kind.value!=='tv')});
+  idForm.onsubmit=event=>{event.preventDefault();try{const f=idForm.elements;vidnestURL=window.simpleGamesVidNestURL(f.kind.value,f.tmdb.value,f.season.value,f.episode.value);idForm.querySelector('[role="status"]').textContent='';load()}catch(error){idForm.querySelector('[role="status"]').textContent=error.message}};
+  editTitle.onclick=()=>{stop();vidnestURL=null;idForm.hidden=false;editTitle.hidden=true;reload.hidden=true;idForm.querySelector('input')?.focus()};
   function createPlayer(provider){
     const player=document.createElement('iframe');player.className='movies-frame';player.hidden=true;player.title='Movies';player.referrerPolicy='no-referrer';
     // VidNest requires an unsandboxed frame; approved for this provider only.
@@ -35,13 +43,15 @@
   let frame=createPlayer(null);
   let selected=null,opener=null;
   function stop(){frame.src='about:blank';frame.hidden=true;window.dispatchEvent(new Event('simplegames:media-stop'))}
-  function showChoice(){stop();selected=null;choice.hidden=false;change.hidden=true;reload.hidden=true;title.textContent='🎬 Movies'}
+  function showChoice(){stop();selected=null;vidnestURL=null;idForm.hidden=true;editTitle.hidden=true;choice.hidden=false;change.hidden=true;reload.hidden=true;title.textContent='🎬 Movies'}
   function load(){
     if(panel.hidden||!selected)return;
+    if(selected==='vidnest'&&!vidnestURL){choice.hidden=true;idForm.hidden=false;change.hidden=false;reload.hidden=true;title.textContent='🎬 VidNest';idForm.querySelector('input')?.focus();return}
+    idForm.hidden=true;editTitle.hidden=selected!=='vidnest';
     // A fresh browsing context prevents VidNest's relaxed permissions carrying over.
     const previous=frame;frame=createPlayer(selected);previous.replaceWith(frame);previous.src='about:blank';
     choice.hidden=true;frame.hidden=false;change.hidden=false;reload.hidden=false;
-    frame.title=providers[selected].name+' — Movies';frame.src=providers[selected].url;title.textContent='🎬 '+providers[selected].name;
+    frame.title=providers[selected].name+' — Movies';frame.src=selected==='vidnest'?vidnestURL:providers[selected].url;title.textContent='🎬 '+providers[selected].name;
     window.dispatchEvent(new CustomEvent('simplegames:media-start',{detail:{title:'Watching movies & TV'}}));
   }
   for(const [id,provider] of Object.entries(providers)){
@@ -58,5 +68,5 @@
   home.onclick=close;reload.onclick=load;change.onclick=()=>{showChoice();choice.querySelector('button').focus()};
   document.querySelector('#movies-open')?.addEventListener('click',open);document.querySelector('#movies-home-open')?.addEventListener('click',open);
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden&&!notice.open)close()});
-  showChoice();panel.append(bar,choice,frame);document.body.append(panel);
+  showChoice();panel.append(bar,choice,idForm,frame);document.body.append(panel);
 })();
