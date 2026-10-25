@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="shop-fixes.css?v=2" />
 <link rel="stylesheet" href="cleanup.css?v=1" />
 <link rel="stylesheet" href="updates-theme.css?v=2" />
+<link rel="stylesheet" href="menu-features.css?v=1" />
 </head>
   <body>
     <div class="startup-loader" id="startup-loader" role="dialog" aria-modal="true" aria-labelledby="startup-title">
@@ -355,6 +356,7 @@
         <button class="back-link game-close" id="game-close" type="button">← All games</button>
         <h1 id="game-title">Game</h1>
         <button class="back-link" id="game-fullscreen" type="button">⛶ Fullscreen</button>
+        <button class="back-link" id="game-audio-open" type="button">♫ Volume</button>
         <time class="local-time game-time" aria-label="Your local time"></time>
       </header>
       <div class="game-frame-wrap">
@@ -384,6 +386,8 @@
         <button class="secondary-button" id="reset-settings" type="button">Reset saved settings</button>
         <label>Click sound<select id="click-sound"><option value="soft">Soft</option><option value="pop">Pop</option><option value="tap">Tap</option><option value="arcade">Arcade</option><option value="off">Off</option></select></label><button id="click-sound-preview" class="secondary-button" type="button">Preview sound</button>
         <label class="check-setting"><input id="message-popups" type="checkbox" checked /> Message pop-ups with quick reply</label>
+        <label class="check-setting"><input id="update-popups" type="checkbox" checked /> Website update pop-ups</label>
+        <button id="update-popup-preview" class="secondary-button" type="button">Preview update popup</button>
         <label class="check-setting"><input id="friend-online-notifications" type="checkbox" checked /> Friend online notifications</label>
         <button id="friend-online-preview" class="secondary-button" type="button">Preview friend online popup</button>
         <label>Server notifications<select id="server-notifications"><option value="pings">Only pings</option><option value="all">All messages</option><option value="off">Off</option></select></label>
@@ -484,11 +488,14 @@
     <script src="cover-fallback.js?v=1"></script>
     <script src="release.js?v=85"></script>
     <script src="game-sort-model.js?v=1"></script>
-    <script src="features.js?v=84"></script>
-    <script src="play.js?v=123"></script>
+    <script src="features.js?v=85"></script>
+    <script src="play.js?v=124"></script>
+    <script src="game-audio.js?v=1"></script>
+    <script src="site-announcement.js?v=1"></script>
+    <script src="update-popups.js?v=1"></script>
     <script type="module" src="social.js?v=47"></script>
 <script type="module" src="support.js?v=6"></script>
-    <script type="module" src="community.js?v=21"></script>
+    <script type="module" src="community.js?v=22"></script>
     <script type="module" src="servers.js?v=26"></script>
     <script src="music.js?v=1"></script>
 <script type="module" src="shop.js?v=13"></script>
