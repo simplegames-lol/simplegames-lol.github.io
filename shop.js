@@ -27,7 +27,7 @@ async function connect(){
     if(snap.exists()){
       wallet=snap.data();
       const confirmed=!snap.metadata?.fromCache&&!snap.metadata?.hasPendingWrites;
-      if(confirmed){const wasLoading=loading;clearTimeout(walletTimer);loading=false;walletReady=true;retry.hidden=true;if(wasLoading&&!busy)status('')}
+      if(confirmed){if(panel.hidden)queueMicrotask(()=>stopWallet());const wasLoading=loading;clearTimeout(walletTimer);loading=false;walletReady=true;retry.hidden=true;if(wasLoading&&!busy)status('')}
       else{walletReady=false;if(loading&&!busy)status('Showing your saved balance while Firebase confirms it…')}
       draw();return;
     }
@@ -37,8 +37,8 @@ async function connect(){
     void initializeWallet(me).catch(failed).finally(()=>{if(initializingUid===me)initializingUid=null});
   },failed);
 }
-function open(){panel.hidden=false;draw();if(localShopPreview)status('Local preview: real account coins and purchases are disabled. Use the test shop to try colors.');else if(user)void connect();$('#shop-home').focus()}
-function close(){panel.hidden=true;document.querySelector('#shop-open')?.focus()}
+function open(){panel.hidden=false;if(user){const version=epoch;getDoc(doc(db,'users',user.uid)).then(snap=>{if(version===epoch){person=snap.data()||{};draw()}}).catch(()=>{})}draw();if(localShopPreview)status('Local preview: real account coins and purchases are disabled. Use the test shop to try colors.');else if(user)void connect();$('#shop-home').focus()}
+function close(){panel.hidden=true;stopWallet();stopPerson();walletAttempt++;clearTimeout(walletTimer);loading=false;walletReady=false;document.querySelector('#shop-open')?.focus()}
 $('#shop-home').onclick=close;$('#shop-login').onclick=()=>{close();document.querySelector('#account-open')?.click()};
 document.querySelector('#shop-open')?.addEventListener('click',open);
 document.querySelector('#shop-home-open')?.addEventListener('click',open);
@@ -47,7 +47,7 @@ $('#daily-claim').onclick=()=>void perform('daily');
 async function perform(action,id,color,enabled=true){
   if(busy||!user)return;if(!walletReady)return status('Wait for your wallet to connect before saving.');busy=true;draw();status(action==='daily'?'Claiming your 100 coins…':action==='buy'?'Saving your unlock…':'Saving your color…');const version=epoch,uid=user.uid;
   const waiting=setTimeout(()=>{if(version===epoch&&busy)status('Firebase is still confirming this change. Please do not submit it again.')},12000);
-  try{const saved=await shopAction(uid,action,id,color,enabled);if(version===epoch){if(saved){wallet=saved;walletReady=true}status(action==='daily'?'Daily bonus claimed: +100 coins.':action==='buy'?'Unlocked. Choose a color below.':'Saved. No coins charged.')}}
+  try{const saved=await shopAction(uid,action,id,color,enabled);if(version===epoch){if(saved){wallet=saved;walletReady=true}if(action==='cosmetic')document.dispatchEvent(new CustomEvent('simplegames:cosmetics-changed',{detail:{uid}}));status(action==='daily'?'Daily bonus claimed: +100 coins.':action==='buy'?'Unlocked. Choose a color below.':'Saved. No coins charged.')}}
   catch(error){if(version===epoch){if(['permission-denied','resource-exhausted','unavailable'].includes(error.code)){walletReady=false;retry.hidden=false}status(friendly(error))}}
   finally{clearTimeout(waiting);if(version===epoch){busy=false;draw()}}
 }
@@ -96,11 +96,11 @@ onAuthStateChanged(auth,next=>{
   colorDrafts.clear();
   walletReady=false;
   epoch++;walletAttempt++;clearTimeout(walletTimer);retry.hidden=true;stopWallet();stopPerson();wallet=null;person={};user=next;loading=false;busy=false;pendingSeconds=0;lastAttempt=0;draw();
-  if(user){const version=epoch;stopPerson=onSnapshot(doc(db,'users',user.uid),snap=>{if(version!==epoch)return;person=snap.data()||{};if(!panel.hidden)draw()},()=>{});if(!panel.hidden)void connect()}
+  if(user&&!panel.hidden)void connect()
 });
 window.addEventListener('simplegames:playtime-saved',event=>{
   if(localShopPreview||!user||event.detail.uid!==user.uid||!Number.isFinite(event.detail.seconds)||event.detail.seconds<=0)return;
-  pendingSeconds+=event.detail.seconds;if(!wallet&&!loading)void connect();void earn();
+  pendingSeconds+=event.detail.seconds;if(pendingSeconds>=60&&!walletReady&&!loading)void connect();void earn();
 });
 async function earn(){
   if(localShopPreview||!user||!wallet||!walletReady||pendingSeconds<60||earnBusy||Date.now()-lastAttempt<15000)return;
@@ -124,4 +124,4 @@ setInterval(()=>void earn(),15000);
 window.addEventListener('online',()=>{if(user&&!panel.hidden&&!localShopPreview)void connect()});
 setInterval(()=>{if(!panel.hidden)updateDailyCountdown()},1000);
 draw();
-void import('./shop-gifts.js?v=2').catch(error=>{console.error('Owner coin tools could not load:',error);status('Owner coin controls could not load. Refresh the page to try again.')});
+void import('./shop-gifts.js?v=3').catch(error=>{console.error('Owner coin tools could not load:',error);status('Owner coin controls could not load. Refresh the page to try again.')});

@@ -9,7 +9,7 @@ import{findUser,normalizeUsername}from'./user-lookup.js?v=1';
 const notificationSessionStarted=Date.now();
 const friendPresence=createFriendPresenceDetector({since:notificationSessionStarted});
 import{bannerChanges,bannerSaved,profileBanner}from'./banner-editor.js?v=1';
-import{renderPodium}from'./leaderboard-podium.js?v=2';
+import{renderPodium}from'./leaderboard-podium.js?v=3';
 const app=initializeApp({apiKey:"AIzaSyDzJu7zyLTZWwffbS5wcxAGym5orePvNKg",authDomain:"simplegames-23c2c.firebaseapp.com",projectId:"simplegames-23c2c",storageBucket:"simplegames-23c2c.firebasestorage.app",messagingSenderId:"993873419513",appId:"1:993873419513:web:14e22dfff6d7f0c7051628",measurementId:"G-NC81W7MYG0"});
 const auth=getAuth(app),db=getFirestore(app),$=s=>document.querySelector(s),panel=$("#social-panel"),authView=$("#auth-view"),socialView=$("#social-view"),status=$("#social-status");
 let profile,activeFriend,activeGroup,friends=[],groups=new Map(),chats=new Map(),friendProfiles=new Map(),presenceTimer=0,typingTimer=0,chatsReady=false,groupsReady=false,friendFilter="",profileLinkUsername="",profileLinkOpened=false,replyTo=null,attachmentData=null,pendingAvatarImage=null;

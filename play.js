@@ -50,8 +50,6 @@ const games = {
   "/elastic-man/": "/elastic-man/player.html",
   "/stickman-golf/": "/stickman-golf/player.html",
   "/mountain-bike-racer/": "/mountain-bike-racer/player.html",
-  "/gorilla-tag/": "/gorilla-tag/player.html",
-  "/geometry-dash/": "https://brainworxedu.github.io/games/geometry-dash.html",
   "/five-nights-at-epsteins/": "/five-nights-at-epsteins/player.html",
   "/clash-of-vikings/": "/clash-of-vikings/player.html",
   "/snow-rider-3d/": "https://classroomlesson.github.io/basic-ruffle-player/html/snow_rider_3d/index.html",
@@ -108,7 +106,6 @@ const games = {
   "/retro-bowl-college/": "/retro-bowl-college/player.html",
   "/fruit-ninja/": "/fruit-ninja/player.html",
   "/soccer-random/": "/soccer-random/player.html",
-  "/roblox/": "/roblox/player.html?v=unavailable-1"
 };
 
 const overlay = document.querySelector("#game-overlay");
@@ -137,7 +134,7 @@ geometryNotice.hidden = true;
 geometryNotice.setAttribute('role','dialog');
 geometryNotice.setAttribute('aria-modal','true');
 geometryNotice.setAttribute('aria-labelledby','geometry-loading-message');
-geometryNotice.innerHTML = '<div><p id="geometry-loading-message">When you load in please click the loading button on the black screen, this is how the game loads idk why.</p><button type="button">OK</button></div>';
+geometryNotice.innerHTML = '<div><p id="geometry-loading-message">This game only works in Google Chrome browser</p><button type="button">OK</button></div>';
 overlay.append(geometryNotice);
 const geometryNoticeStyle=document.createElement('style');
 geometryNoticeStyle.textContent='#geometry-loading-notice{position:absolute;inset:0;z-index:20;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}#geometry-loading-notice[hidden]{display:none}#geometry-loading-notice>div{max-width:520px;text-align:center;font:inherit;line-height:1.7}#geometry-loading-notice button{margin-top:18px;background:#000;color:#fff;border:1px solid #343943;border-radius:8px;padding:12px 36px;font:inherit;cursor:pointer}#geometry-loading-notice button:hover{background:#151515}';
@@ -164,8 +161,8 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   const cardTitle = link.closest(".game-card")?.querySelector("h2")?.textContent?.trim() || "Game";
   title.textContent = cardTitle;
   player.title = cardTitle;
-  if((path==='/geometry-dash/'||path==='/skate-3/')&&!geometryAcknowledged){
-    geometryNotice.querySelector('p').textContent=path==='/skate-3/'?'This game only works in Google Chrome browser':'When you load in please click the loading button on the black screen, this is how the game loads idk why.';
+  if(path==='/skate-3/'&&!geometryAcknowledged){
+    geometryNotice.querySelector('p').textContent='This game only works in Google Chrome browser';
     clearTimeout(loadTimer);stopLoadingSound();player.src='about:blank';loader.hidden=true;
     overlay.hidden=false;document.body.classList.add('game-is-open');geometryNotice.hidden=false;
     geometryNotice.querySelector('button').onclick=()=>{geometryAcknowledged=true;geometryNotice.hidden=true;link.click()};

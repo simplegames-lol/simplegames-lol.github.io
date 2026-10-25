@@ -1,0 +1,17 @@
+/* Shared surfaces follow the user's theme, including overlay pages. */
+.info-content .update-entry,.info-content .announcement-card,.info-content .news-card,.announcements-list>li,.announcements-list>article{background:var(--background)!important;border:1px solid var(--border)!important;box-shadow:none!important;color:var(--text)!important;border-radius:12px}
+.info-content .update-entry{padding:18px!important}
+.info-content .update-highlights,.info-content .update-full p{color:var(--muted)!important;line-height:1.65}
+#account-open,#account-open .account-label{color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;background-image:none!important;text-shadow:none!important}
+.dashboard-hero .site-polls{background:var(--background);border:1px solid var(--border);border-radius:14px;padding:18px;width:min(440px,100%)}
+.dashboard-hero .site-polls header h2{font-size:12px;font-weight:600}.site-polls header>span{display:none}
+.dashboard-hero .site-polls h3{font-size:14px;line-height:1.55;margin:16px 0 12px;overflow-wrap:anywhere}
+.dashboard-hero .site-polls .poll-choice{padding:12px;min-height:42px;border-radius:8px;margin:5px 0;font-size:12px}
+.dashboard-hero .site-polls p{font-size:11px;line-height:1.5}.site-polls .poll-fill{background:var(--text);opacity:.08}
+.site-polls details{border-color:var(--border)}.site-polls details details{margin-top:10px}
+.real-shop .owner-coins{border:1px solid var(--border);border-radius:12px;padding:18px;margin:18px 0}
+.real-shop .owner-coins h2{margin:0 0 6px}.real-shop .owner-coins>p{font-size:12px;color:var(--muted)}
+.real-shop .owner-coins form{display:grid!important;grid-template-columns:minmax(150px,1fr) 110px minmax(150px,1fr) auto;gap:12px!important;align-items:end}
+.real-shop .owner-coins label{font-size:12px;color:var(--muted);min-width:0}.real-shop .owner-coins input{min-width:0;width:100%;box-sizing:border-box}.real-shop .owner-coins button{min-height:39px}
+#favorites-filter{color:var(--text)}#favorites-filter[aria-pressed=true]{border-color:var(--text)}
+@media(max-width:650px){.real-shop .owner-coins form{grid-template-columns:1fr!important}.dashboard-hero .site-polls{padding:15px}}

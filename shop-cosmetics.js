@@ -1,10 +1,10 @@
-import {watchCosmetics} from './economy-client.js?v=1';
 import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
-import {getFirestore,doc,onSnapshot} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import {getFirestore,doc,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {validColor} from './shop-model.js?v=1';
 let auth,db;const watchers=new Map(),bindings=new Map(),cache=new Map();
+document.addEventListener('simplegames:cosmetics-changed',event=>{const uid=event.detail?.uid;if(uid!==auth?.currentUser?.uid)return;cache.delete(uid);watch(uid)});
 function paint(uid){
   const data=cache.get(uid)||{},rows=bindings.get(uid)||[];
   // Rows may be bound just before their parent is attached to the page.
@@ -16,7 +16,8 @@ function paint(uid){
 }
 function watch(uid){
   if(watchers.has(uid)||!auth?.currentUser)return;
-  watchers.set(uid,watchCosmetics(uid,snapshot=>{cache.set(uid,snapshot.data()||{});paint(uid)},()=>{}));
+  const existing=cache.get(uid);if(existing?._loadedAt&&Date.now()-existing._loadedAt<300000){paint(uid);return}
+  watchers.set(uid,()=>{});getDoc(doc(db,'shopProfiles',uid)).then(snapshot=>{if(!auth.currentUser)return;cache.set(uid,{...(snapshot.data()||{}),_loadedAt:Date.now()});paint(uid)}).catch(()=>{}).finally(()=>watchers.delete(uid));
 }
 export function bindCosmetics(uid,avatar,name){
   if(!uid)return;

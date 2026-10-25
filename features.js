@@ -36,7 +36,8 @@ const displaySettings = {
 const loader = document.querySelector("#game-loader");
 const player = document.querySelector("#game-player");
 
-let favorites = new Set(storage.read("sg-favorites", []));
+const savedFavorites=storage.read("sg-favorites", []);
+let favorites = new Set(Array.isArray(savedFavorites)?savedFavorites.filter(value=>typeof value==='string'):[]);
 let favoritesOnly = false;
 let communityRatings = {};
 let communityPlays = {};
@@ -117,7 +118,7 @@ const categories = {
   "/bouncy-basketball/": "sports", "/basketball-stars/": "sports", "/basket-random/": "sports",
   "/polytrack/": "driving", "/drift-boss/": "driving", "/escape-road/": "driving", "/drift-hunters/": "driving",
   "/subway-surfers/": "action", "/slope/": "action",
-  "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports", "/clash-of-vikings/": "strategy", "/geometry-dash/": "platformer"
+  "/project-sand/": "simulation", "/monkey-mart/": "simulation", "/bitlife/": "simulation", "/retro-bowl/": "sports", "/clash-of-vikings/": "strategy", 
 };
 
 const newGames = new Set(window.simpleGamesRelease?.newGames || []);
@@ -128,7 +129,7 @@ cards.forEach((card) => {
   const name = card.querySelector("h2")?.textContent.trim() || "Game";
   card.dataset.path = path;
   card.dataset.name = name.toLowerCase();
-  card.dataset.category = categories[path] || "action";
+  card.dataset.category = window.simpleGamesSort.category(categories[path]);
 
   const favorite = document.createElement("button");
   favorite.className = "favorite-button";
@@ -162,12 +163,7 @@ function filterGames() {
 function sortGames() {
   const mode = gameSort.value;
   const sorted = [...cards].sort((a, b) => {
-    if (mode === "az") return a.dataset.name.localeCompare(b.dataset.name);
-    if (mode === "za") return b.dataset.name.localeCompare(a.dataset.name);
-    if (mode === "newest") return Number(newGames.has(b.dataset.path)) - Number(newGames.has(a.dataset.path)) || originalOrder.get(a) - originalOrder.get(b);
-    if (mode === "most-played") return (communityPlays[b.dataset.path] || 0) - (communityPlays[a.dataset.path] || 0) || a.dataset.name.localeCompare(b.dataset.name);
-    if (mode === "top-rated") return (communityRatings[b.dataset.path] || 0) - (communityRatings[a.dataset.path] || 0) || a.dataset.name.localeCompare(b.dataset.name);
-    return originalOrder.get(a) - originalOrder.get(b);
+    return window.simpleGamesSort.compare({name:a.dataset.name,path:a.dataset.path,order:originalOrder.get(a)},{name:b.dataset.name,path:b.dataset.path,order:originalOrder.get(b)},mode,communityPlays,communityRatings);
   });
   sorted.forEach((card) => gameGrid.append(card));
   filterGames();
@@ -183,7 +179,7 @@ window.addEventListener("simplegames:community-data", (event) => {
 favoritesFilter?.addEventListener("click", () => {
   favoritesOnly = !favoritesOnly;
   favoritesFilter.setAttribute("aria-pressed", String(favoritesOnly));
-  favoritesFilter.textContent = favoritesOnly ? "← Back to games" : "☆ Favorites";
+  favoritesFilter.textContent = favoritesOnly ? "★ Back to games" : "★ Favorites";
   libraryTitle.textContent = favoritesOnly ? "Favorites" : "Games";
   libraryIntro.classList.toggle("favorites-view", favoritesOnly);
   filterGames();
@@ -194,7 +190,7 @@ document.querySelector(".dashboard-shortcuts")?.addEventListener("click",(event)
   if(action==="games")openLibrary();
   if(action==="favorites"){if(!favoritesOnly)favoritesFilter.click();openLibrary()}
   if(action==="account"){document.querySelector("#account-open")?.click();document.querySelector('[data-social-view="friends"]')?.click()}
-  if(action==="ai")document.querySelector("#ai-panel").hidden=false;
+  
   if(action==="servers")document.querySelector("#servers-open")?.click();
   if(action==="leaderboard"){document.querySelector("#account-open")?.click();setTimeout(()=>document.querySelector('[data-social-view="leaderboard"]')?.click(),0)}
   if(action==="settings")document.querySelector("#settings-open")?.click();

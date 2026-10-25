@@ -20,7 +20,11 @@
     <link rel="stylesheet" href="dropdowns.css?v=1" />
     <link rel="stylesheet" href="support.css?v=4" />
     <link rel="stylesheet" href="server-editor.css?v=3" />
-  </head>
+  <link rel="stylesheet" href="shop.css?v=2" />
+<link rel="stylesheet" href="shop-fixes.css?v=2" />
+<link rel="stylesheet" href="cleanup.css?v=1" />
+<link rel="stylesheet" href="updates-theme.css?v=2" />
+</head>
   <body>
     <div class="startup-loader" id="startup-loader" role="dialog" aria-modal="true" aria-labelledby="startup-title">
       <div class="startup-card">
@@ -40,9 +44,9 @@
         <a class="rail-link" id="games-open" href="#game-library"><span class="rail-icon">🎮</span><span>Games</span></a>
         <button class="header-button" id="servers-open" type="button"><span class="rail-icon">🌐</span><span>Servers</span></button>
         <button class="header-button" id="movies-open" type="button"><span class="rail-icon">🎬</span><span>Movies</span></button>
-        <button class="header-button" id="sports-open" type="button"><span class="rail-icon">🏟️</span><span>Live Sports<small style="display:block;margin-top:3px;color:var(--muted,#a3a8b0);font-size:10px;font-weight:400;line-height:1.4">(Will be up soon!)</small></span></button>
         <button class="header-button account-button" id="account-open" type="button"><span class="rail-icon">👤</span><span class="account-label">Account</span><span class="notification-badge" id="account-unread" hidden>0</span></button>
         <button class="rail-link" id="support-open" type="button"><span class="rail-icon">🎫</span><span>Support</span></button>
+        <button class="rail-link" id="shop-open" type="button"><span class="rail-icon">🛒</span><span>Shop</span></button>
         <button class="rail-link" id="music-open" type="button"><span class="rail-icon">🎵</span><span>Music</span></button>
         <a class="rail-link updates-link" href="/" data-page="updates"><span class="rail-icon">🚀</span><span>Updates</span><span class="update-dot" id="update-dot" aria-label="New updates"></span></a>
         <a class="rail-link" href="/" data-page="announcements"><span class="rail-icon">📣</span><span>News</span></a>
@@ -61,10 +65,10 @@
           <label class="hero-search"><span class="sr-only">Search games</span><span aria-hidden="true">⌕</span><input id="hero-game-search" type="search" placeholder="Search games..." autocomplete="off" /></label>
         </div>
         <div class="dashboard-shortcuts" aria-label="Quick actions">
-          <button type="button" data-dashboard-action="ai"><span>🪄</span><strong>AI</strong><small>Ask Simple AI</small></button>
           <button type="button" data-dashboard-action="account"><span>💬</span><strong>Friends</strong><small>Chat and profiles</small></button>
           <button type="button" data-dashboard-action="games"><span>🎮</span><strong>Games</strong><small>Browse the library</small></button>
           <button type="button" data-dashboard-action="leaderboard"><span>🏆</span><strong>Leaderboard</strong><small>Top playtime</small></button>
+          <button type="button" id="shop-home-open"><span>🛒</span><strong>Shop</strong><small>Coins and cosmetics</small></button>
           <button type="button" id="music-home-open"><span>🎵</span><strong>Music</strong><small>Listen to music</small></button>
           <button type="button" id="movies-home-open"><span>🎬</span><strong>Movies</strong><small>Movies and shows</small></button>
           <button type="button" data-dashboard-action="servers"><span>🌐</span><strong>Servers</strong><small>Your communities</small></button>
@@ -121,15 +125,17 @@
           <option value="az">Name: A–Z</option>
           <option value="za">Name: Z–A</option>
           <option value="newest">Newest first</option>
-          <option value="most-played">Most played</option>
+          <option value="most-played">Most played by you</option>
           <option value="top-rated">Top rated</option>
           <option value="category:action">Category: Action</option>
           <option value="category:driving">Category: Driving</option>
           <option value="category:sports">Category: Sports</option>
           <option value="category:puzzle">Category: Puzzle</option>
           <option value="category:simulation">Category: Simulation</option>
+          <option value="category:strategy">Category: Strategy</option>
+          <option value="category:multiplayer">Category: Multiplayer</option>
         </select>
-        <button class="filter-button" id="favorites-filter" type="button" aria-pressed="false">☆ Favorites</button>
+        <button class="filter-button" id="favorites-filter" type="button" aria-pressed="false">★ Favorites</button>
         <span class="result-count" id="result-count"></span>
       </section>
 
@@ -190,8 +196,8 @@
         <article class="game-card"><a class="game-card__image-link" href="/elastic-man/" aria-label="Play Elastic Man"><img src="assets/cover-cache/elastic-man.png" alt="Elastic Man game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/elastic-man/">Elastic Man</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/stickman-golf/" aria-label="Play Stickman Golf"><img src="assets/cover-cache/stickman-golf.png" alt="Stickman Golf game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/stickman-golf/">Stickman Golf</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/mountain-bike-racer/" aria-label="Play Mountain Bike Racer"><img src="assets/cover-cache/mountain-bike-racer.png" alt="Mountain Bike Racer game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/mountain-bike-racer/">Mountain Bike Racer</a></h2></div></article>
-        <article class="game-card"><a class="game-card__image-link" href="/gorilla-tag/" aria-label="Play Gorilla Tag"><img src="assets/cover-cache/gorilla-tag.png" alt="Gorilla Tag game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/gorilla-tag/">Gorilla Tag</a></h2></div></article>
-        <article class="game-card"><a class="game-card__image-link" href="/geometry-dash/" aria-label="Play Geometry Dash"><img src="assets/cover-cache/geometry-dash.png" alt="Geometry Dash game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/geometry-dash/">Geometry Dash</a></h2></div></article>
+        
+        
         <article class="game-card"><a class="game-card__image-link" href="/five-nights-at-epsteins/" aria-label="Play Five Nights at Epstein's"><img src="assets/cover-cache/five-nights-at-epsteins.png" alt="Five Nights at Epstein's game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/five-nights-at-epsteins/">Five Nights at Epstein's</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/clash-of-vikings/" aria-label="Play Clash of Vikings"><img src="assets/cover-cache/clash-of-vikings.png" alt="Clash of Vikings game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/clash-of-vikings/">Clash of Vikings</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/granny/" aria-label="Play Granny"><img src="assets/cover-cache/granny.webp" alt="Granny game cover" loading="lazy" /></a><div class="game-card__body"><h2><a href="/granny/">Granny</a></h2></div></article>
@@ -324,27 +330,13 @@
         <article class="game-card"><a class="game-card__image-link" href="/retro-bowl-college/" aria-label="Play Retro Bowl College"><img src="assets/cover-cache/retro-bowl-college.png" alt="Retro Bowl College game cover" loading="lazy"></a><div class="game-card__body"><h2><a href="/retro-bowl-college/">Retro Bowl College</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/fruit-ninja/" aria-label="Play Fruit Ninja"><img src="assets/cover-cache/fruit-ninja.png" alt="Fruit Ninja game cover" loading="lazy"></a><div class="game-card__body"><h2><a href="/fruit-ninja/">Fruit Ninja</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/soccer-random/" aria-label="Play Soccer Random"><img src="assets/cover-cache/soccer-random.png" alt="Soccer Random game cover" loading="lazy"></a><div class="game-card__body"><h2><a href="/soccer-random/">Soccer Random</a></h2></div></article>
-        <article class="game-card"><a class="game-card__image-link" href="/roblox/" aria-label="Roblox (Unavailable)"><img src="roblox/cover.png" alt="Roblox" loading="lazy"></a><div class="game-card__body"><h2><a href="/roblox/">Roblox (Unavailable)</a></h2></div></article>
+        
         <article class="game-card"><a class="game-card__image-link" href="/tomb-of-the-mask/" aria-label="Play Tomb of the Mask"><img src="tomb-of-the-mask/cover.png" alt="Tomb of the Mask game cover" loading="lazy"></a><div class="game-card__body"><h2><a href="/tomb-of-the-mask/">Tomb of the Mask</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/tunnel-rush/" aria-label="Play Tunnel Rush"><img src="tunnel-rush/cover.png" alt="Tunnel Rush game cover" loading="lazy"></a><div class="game-card__body"><h2><a href="/tunnel-rush/">Tunnel Rush</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/trombone-champ/" aria-label="Play Trombone Champ"><img src="trombone-champ/cover.png" alt="Trombone Champ game cover" loading="lazy"></a><div class="game-card__body"><h2><a href="/trombone-champ/">Trombone Champ</a></h2></div></article>
         <article class="game-card"><a class="game-card__image-link" href="/rocket-soccer/" aria-label="Play Rocket Soccer"><img src="rocket-soccer/cover.png" alt="Rocket Soccer game cover" loading="lazy"></a><div class="game-card__body"><h2><a href="/rocket-soccer/">Rocket Soccer</a></h2></div></article>
       </section>
     </main>
-
-    <div class="info-overlay ai-panel" id="ai-panel" hidden>
-      <section class="ai-card" role="dialog" aria-modal="true" aria-labelledby="ai-title">
-        <aside class="ai-sidebar"><button class="secondary-button" id="ai-new" type="button">＋ New chat</button><nav id="ai-history" aria-label="AI conversations"></nav><small>Chats saved on this browser.</small></aside>
-        <div class="ai-workspace">
-          <header class="ai-topbar"><button id="ai-close" class="secondary-button" type="button">← Home</button><button id="ai-sidebar-toggle" class="secondary-button" type="button" aria-label="Toggle AI sidebar" aria-expanded="true">☰</button><span id="ai-title">Simple AI</span></header>
-          <div class="ai-stage"><div class="ai-welcome" id="ai-welcome"><span aria-hidden="true">✦</span><h2 id="ai-greeting">What’s on your mind?</h2></div>
-            <div class="ai-messages" id="ai-messages" aria-live="polite" hidden></div>
-            <form class="ai-form" id="ai-form"><textarea name="message" maxlength="12000" placeholder="Ask anything…" aria-label="Message Simple AI" rows="2" required></textarea><div class="ai-composer-tools"><button id="ai-attach" type="button" aria-label="Attach a text file" title="Attach a .txt or .md file">＋</button><span id="ai-attachment" role="status"></span><button id="ai-detach" type="button" aria-label="Remove attachment" hidden>×</button><button id="ai-send" type="submit" aria-label="Send message">↑</button></div><input id="ai-file" type="file" accept=".txt,.md,text/plain,text/markdown" hidden /></form>
-            <div class="ai-suggestions"><button type="button">Help me study</button><button type="button">Explain something</button><button type="button">Give me ideas</button></div><small class="ai-disclaimer">Simple AI can make mistakes. Check important answers.</small>
-          </div>
-        </div>
-      </section>
-    </div>
     <section class="server-panel" id="server-panel" hidden aria-label="Community servers">
       <header class="server-topbar"><div><span class="hero-kicker">COMMUNITIES</span><h2>Servers</h2></div><button id="servers-close" type="button" aria-label="Close servers">×</button></header>
       <div class="server-layout">
@@ -486,23 +478,21 @@
     <script src="site-stats-config.js?v=1"></script>
     <script src="site-stats.js?v=5"></script>
     <script src="movies.js?v=15"></script>
-    <script src="sports.js?v=8"></script>
     <script src="message-popups.js?v=4"></script>
     <script src="game-availability.js?v=4"></script>
     <script src="cover-fallback.js?v=1"></script>
-    <script src="release.js?v=83"></script>
-    <script src="features.js?v=83"></script>
-    <link rel="stylesheet" href="ai-layout.css?v=1" />
-    <script type="module" src="ai.js?v=7"></script>
-    <script src="play.js?v=122"></script>
-    <script type="module" src="social.js?v=45"></script>
+    <script src="release.js?v=84"></script>
+    <script src="game-sort-model.js?v=1"></script>
+    <script src="features.js?v=84"></script>
+    <script src="play.js?v=123"></script>
+    <script type="module" src="social.js?v=46"></script>
 <script type="module" src="support.js?v=6"></script>
-    <script type="module" src="community.js?v=20"></script>
-    <script type="module" src="servers.js?v=24"></script>
+    <script type="module" src="community.js?v=21"></script>
+    <script type="module" src="servers.js?v=25"></script>
     <script src="music.js?v=1"></script>
+<script type="module" src="shop.js?v=13"></script>
     <link rel="stylesheet" href="voice.css?v=2" />
 <link rel="stylesheet" href="theme-overrides.css?v=9" />
-<link rel="stylesheet" href="ai-theme.css?v=1" />
 <link rel="stylesheet" href="notification-fixes.css?v=1" />
     <script type="module" src="voice.js?v=6"></script>
   </body>
