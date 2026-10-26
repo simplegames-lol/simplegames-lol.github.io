@@ -155,7 +155,7 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
 
   const path = new URL(link.href, window.location.href).pathname;
   const baseURL=games[path];
-  const gameUrl=baseURL&&['/drive-mad/','/line-rider/','/blackjack-battle/'].includes(path)?baseURL+'?v=audio-1':baseURL;
+  const gameUrl=baseURL&&['/drive-mad/','/line-rider/','/blackjack-battle/'].includes(path)?baseURL+'?v=no-audio-2':baseURL;
   if (!gameUrl) return;
 
   event.preventDefault();
@@ -249,7 +249,7 @@ infoClose?.addEventListener("click", closeInfo);
 
 closeButton?.addEventListener("click", closeGame);
 document.addEventListener("keydown", (event) => {
-  if (event.key !== "Escape" || document.querySelector(".game-audio-panel[open]")) return;
+  if (event.key !== "Escape") return;
   if (!overlay.hidden) closeGame();
   if (!infoOverlay.hidden) closeInfo();
 });
