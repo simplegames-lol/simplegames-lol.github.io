@@ -357,7 +357,7 @@ document.querySelector("#settings-close")?.addEventListener("click", closeSettin
 settingsPanel?.addEventListener("click", (event) => { if (event.target === settingsPanel) closeSettings(); });
 document.querySelector("#reset-settings")?.addEventListener("click", () => {
   ["sg-theme", "sg-card-size", "sg-favorites", "sg-timezone", "sg-accent", "sg-background", "sg-background-image", "sg-background-style", "sg-show-menu-time", "sg-show-game-time","sg-update-popups"].forEach((key) => localStorage.removeItem(key));
-  const defaults={"sg-theme":"dark","sg-card-size":"normal","sg-timezone":"auto","sg-accent":"#153a63","sg-background":"#000000","sg-background-image":"","sg-background-style":"cover","sg-show-menu-time":true,"sg-show-game-time":true,"sg-click-sound":"soft","sg-message-popups":true,"sg-update-popups":true:1,"sg-friend-online-notifications":true,"sg-server-notifications":"pings","sg-sidebar-closed":false};
+  const defaults={"sg-theme":"dark","sg-card-size":"normal","sg-timezone":"auto","sg-accent":"#153a63","sg-background":"#000000","sg-background-image":"","sg-background-style":"cover","sg-show-menu-time":true,"sg-show-game-time":true,"sg-click-sound":"soft","sg-message-popups":true,"sg-update-popups":true,"sg-friend-online-notifications":true,"sg-server-notifications":"pings","sg-sidebar-closed":false};
   Object.entries(defaults).forEach(([key,value])=>storage.write(key,value));
   applyAppearance();applyTheme("dark");themeSelect.value="dark";cardSize.value="normal";root.dataset.cardSize="normal";timezoneSelect.value="auto";applyDisplaySettings();dispatchEvent(new Event("simplegames:timezone"));
   document.dispatchEvent(new Event("simplegames:settings-reset"));
