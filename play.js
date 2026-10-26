@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/geometry-dash/": "https://nubana.cfd/f/g/hs/truffled.lol/games/geo/index.html",
   "/paper-io/": "https://gaming-escape.github.io/public/assets/games/paper-io/",
   "/poor-eddie/": "https://gaming-escape.github.io/public/assets/games/poor-eddie/",
   "/driven-wild/": "https://killedbyapixel.github.io/Drive13K/",
