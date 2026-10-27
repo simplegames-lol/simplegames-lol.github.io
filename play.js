@@ -1,6 +1,6 @@
 (() => {
 const games = {
-  "/soflo-wheelie-life/": "https://scratch.mit.edu/projects/1231016758/embed",
+  "/soflo-wheelie-life/": "/soflo-wheelie-life/player.html?v=1",
   "/paper-io/": "https://gaming-escape.github.io/public/assets/games/paper-io/",
   "/poor-eddie/": "https://gaming-escape.github.io/public/assets/games/poor-eddie/",
   "/driven-wild/": "https://killedbyapixel.github.io/Drive13K/",

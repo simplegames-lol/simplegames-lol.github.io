@@ -1,4 +1,5 @@
 /* Shared surfaces follow the user's theme, including overlay pages. */
+.game-ratings-panel .rating-voter > button.secondary-button{font:inherit;font-size:12px;font-weight:500;line-height:1.4;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 9px;width:auto;min-height:0;justify-self:start;grid-column:1/-1;cursor:pointer}.game-ratings-panel .rating-voter > button.secondary-button:hover{color:var(--text);border-color:var(--text)}
 .info-content .update-entry,.info-content .announcement-card,.info-content .news-card,.announcements-list>li,.announcements-list>article{background:var(--background)!important;border:1px solid var(--border)!important;box-shadow:none!important;color:var(--text)!important;border-radius:12px}
 .info-content .update-entry{padding:18px!important}
 .info-content .update-highlights,.info-content .update-full p{color:var(--muted)!important;line-height:1.65}
