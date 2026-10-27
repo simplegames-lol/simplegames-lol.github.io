@@ -44,6 +44,7 @@ let communityPlays = {};
 const gameGrid = document.querySelector(".game-grid");
 const originalOrder = new Map(cards.map((card, index) => [card, index]));
 const categories = {
+  "/soflo-wheelie-life/": "racing",
   "/paper-io/": "arcade",
   "/poor-eddie/": "puzzle",
   "/drive-mad/": "racing",
