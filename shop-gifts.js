@@ -3,7 +3,7 @@ import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,doc,getDocFromServer} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {findUser} from './user-lookup.js?v=1';
-import {grantOwnerCoins} from './owner-grants.js?v=1';
+import {grantOwnerCoins} from './owner-grants.js?v=2';
 const auth=getAuth(getApp()),db=getFirestore(getApp());
 const section=document.createElement('section');section.hidden=true;section.className='daily-bonus owner-coins';section.style.display='none';
 section.innerHTML='<h2>Give coins</h2><p>Owner only · Give coins to yourself or a player.</p><form><label>Player @username<input name="username" required minlength="3" maxlength="20" autocomplete="off"></label><label>Coins (1–10,000)<input name="amount" type="number" min="1" max="10000" step="1" required></label><label>Reason<input name="reason" required minlength="3" maxlength="120"></label><button type="submit">Give coins</button></form><p role="status"></p>';
@@ -40,6 +40,6 @@ form.onsubmit=async event=>{
   if(!pending){pending={username:recipient.username,ownerUid:uid,fingerprint,id:crypto.randomUUID()};remember(pending)}
   stage='saving the transfer';message.textContent='Saving coins… Waiting for Firebase confirmation.';writing=true;const result=await grantOwnerCoins(uid,recipient.uid,amount,reason,pending.id);remember(null);pending=null;
   if(version===generation){message.textContent=result.replayed?`Confirmed: ${amount.toLocaleString()} coins were already given to ${recipientLabel}. Not sent twice.`:`Gave ${amount.toLocaleString()} coins to ${recipientLabel}. Saved successfully.`;form.reset();self.checked=false;syncRecipient()}
- }catch(error){if(version===generation)message.textContent=error.code==='permission-denied'?'Firebase blocked this transfer. Publish the owner wallet-update and shopCoinGifts rule blocks from the upload instructions, then retry. No coins were confirmed.':error.code==='resource-exhausted'?'Firebase daily usage limit reached. No transfer was confirmed. Wait for quota recovery, then retry the same details.':error.code==='unavailable'?'Firebase is offline. Check the recipient balance before retrying; use the same details to prevent a duplicate.':error.message||'Transfer could not be confirmed.';if(writing&&['permission-denied','failed-precondition','owner-grant-precondition'].includes(error.code)){remember(null);pending=null}}
+ }catch(error){if(version===generation)message.textContent=error.code==='permission-denied'?(error.message?.startsWith('Owner coin check:')?error.message:'Owner coin check: Firebase blocked '+stage+'. No coins were confirmed.'):error.code==='resource-exhausted'?'Firebase daily usage limit reached. No transfer was confirmed. Wait for quota recovery, then retry the same details.':error.code==='unavailable'?'Firebase is offline. Check the recipient balance before retrying; use the same details to prevent a duplicate.':error.message||'Transfer could not be confirmed.';if(writing&&['permission-denied','failed-precondition','owner-grant-precondition'].includes(error.code)){remember(null);pending=null}}
  finally{clearTimeout(waiting);busy=false;form.querySelector('button').disabled=false}
 };
