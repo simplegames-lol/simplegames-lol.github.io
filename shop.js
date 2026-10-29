@@ -124,4 +124,4 @@ setInterval(()=>void earn(),15000);
 window.addEventListener('online',()=>{if(user&&!panel.hidden&&!localShopPreview)void connect()});
 setInterval(()=>{if(!panel.hidden)updateDailyCountdown()},1000);
 draw();
-void import('./shop-gifts.js?v=5').catch(error=>{console.error('Owner coin tools could not load:',error);status('Owner coin controls could not load. Refresh the page to try again.')});
+void import('./shop-gifts.js?v=6').catch(error=>{console.error('Owner coin tools could not load:',error);status('Owner coin controls could not load. Refresh the page to try again.')});

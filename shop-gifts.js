@@ -13,14 +13,11 @@ section.querySelectorAll('input').forEach(input=>{input.style.cssText='backgroun
 const shop=document.querySelector('.real-shop');shop?.querySelector('.real-shop-layout')?.before(section);
 let owner=false,generation=0,stop=()=>{},busy=false;
 const message=section.querySelector('p'),form=section.querySelector('form');
-const selfLabel=document.createElement('label');selfLabel.style.cssText='display:flex;align-items:center;gap:8px;margin:12px 0;font-size:12px';const self=document.createElement('input');self.type='checkbox';self.id='owner-give-self';selfLabel.append(self,document.createTextNode('Give to my account'));form.before(selfLabel);
-function syncRecipient(){form.elements.username.disabled=self.checked;form.elements.username.required=!self.checked;form.elements.username.placeholder=self.checked?'Your signed-in account':'Exact @username'}
-self.onchange=syncRecipient;syncRecipient();
 const receiptKey='sg-owner-pending-grant';
 function remember(value){try{if(value)sessionStorage.setItem(receiptKey,JSON.stringify(value));else sessionStorage.removeItem(receiptKey)}catch{}}
 let pending=null;try{pending=JSON.parse(sessionStorage.getItem(receiptKey)||'null')}catch{}
 async function readWithDeadline(promise){let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Firebase did not finish the account lookup. No new transfer was submitted. Check your connection and retry.')),12000)})])}finally{clearTimeout(timer)}}
-async function checkOwner(){const user=auth.currentUser,version=++generation;owner=false;section.hidden=true;section.style.display='none';if(!user||shop?.hidden)return;try{const snap=await getDocFromServer(doc(db,'supportSettings','access'));if(version!==generation||shop.hidden)return;owner=snap.data()?.ownerUid===user.uid;section.hidden=!owner;section.style.display=owner?'block':'none';if(owner&&pending?.ownerUid===user.uid){const values=JSON.parse(pending.fingerprint);self.checked=values[1]===user.uid;syncRecipient();form.elements.username.value=self.checked?'':pending.username||'';form.elements.amount.value=values[2];form.elements.reason.value=values[3];message.textContent='A previous transfer needs confirmation. Retry the same details to avoid sending twice.'}}catch{owner=false}}
+async function checkOwner(){const user=auth.currentUser,version=++generation;owner=false;section.hidden=true;section.style.display='none';if(!user||shop?.hidden)return;try{const snap=await getDocFromServer(doc(db,'supportSettings','access'));if(version!==generation||shop.hidden)return;owner=snap.data()?.ownerUid===user.uid;section.hidden=!owner;section.style.display=owner?'block':'none';if(owner&&pending?.ownerUid===user.uid){const values=JSON.parse(pending.fingerprint);form.elements.username.value=pending.username==='your account'?'':pending.username||'';form.elements.amount.value=values[2];form.elements.reason.value=values[3];message.textContent='A previous transfer needs confirmation. Retry the same details to avoid sending twice.'}}catch{owner=false}}
 onAuthStateChanged(auth,()=>{generation++;owner=false;section.hidden=true;section.style.display='none';if(!shop?.hidden)void checkOwner()});
 if(shop)new MutationObserver(()=>{if(!shop.hidden)void checkOwner();else{generation++;owner=false;section.hidden=true;section.style.display='none'}}).observe(shop,{attributes:true,attributeFilter:['hidden']});
 form.onsubmit=async event=>{
@@ -31,15 +28,15 @@ form.onsubmit=async event=>{
  busy=true;form.querySelector('button').disabled=true;message.textContent='Checking owner access…';let stage='checking owner access',writing=false;const waiting=setTimeout(()=>{if(version===generation)message.textContent=`Still ${stage}. Please wait; do not submit this transfer again.`},8000);
  try{
   const access=await readWithDeadline(getDocFromServer(doc(db,'supportSettings','access')));if(access.data()?.ownerUid!==uid)throw Error('This account is not the configured site owner.');
-  stage='finding the recipient';message.textContent='Finding player…';const recipient=self.checked?{uid,username:'your account'}:await readWithDeadline(findUser(db,form.elements.username.value));if(!recipient)throw Error('Username not found. Use their exact @username, not their display name.');
+  stage='finding the recipient';message.textContent='Finding player…';const recipient=await readWithDeadline(findUser(db,form.elements.username.value));if(!recipient)throw Error('Username not found. Use their exact @username, not their display name.');
   if(version!==generation||!owner)return;
-  const recipientLabel=recipient.uid===uid?'your account':'@'+recipient.username;
+  const recipientLabel='@'+recipient.username;
   if(!confirm(`Give ${amount.toLocaleString()} coins to ${recipientLabel}?\nReason: ${reason}`))return;
   const fingerprint=JSON.stringify([uid,recipient.uid,amount,reason]);if(pending&&pending.ownerUid!==uid)pending=null;
   if(pending&&pending.fingerprint!==fingerprint)throw Error('A previous transfer may still need confirmation. Retry the same player, amount and reason first so it cannot be sent twice.');
   if(!pending){pending={username:recipient.username,ownerUid:uid,fingerprint,id:crypto.randomUUID()};remember(pending)}
   stage='saving the transfer';message.textContent='Saving coins… Waiting for Firebase confirmation.';writing=true;const result=await grantOwnerCoins(uid,recipient.uid,amount,reason,pending.id);remember(null);pending=null;
-  if(version===generation){message.textContent=result.replayed?`Confirmed: ${amount.toLocaleString()} coins were already given to ${recipientLabel}. Not sent twice.`:`Gave ${amount.toLocaleString()} coins to ${recipientLabel}. Saved successfully.`;form.reset();self.checked=false;syncRecipient()}
+  if(version===generation){message.textContent=result.replayed?`Confirmed: ${amount.toLocaleString()} coins were already given to ${recipientLabel}. Not sent twice.`:`Gave ${amount.toLocaleString()} coins to ${recipientLabel}. Saved successfully.`;form.reset()}
  }catch(error){if(version===generation)message.textContent=error.code==='permission-denied'?(error.message?.startsWith('Owner coin check:')?error.message:'Owner coin check: Firebase blocked '+stage+'. No coins were confirmed.'):error.code==='resource-exhausted'?'Firebase daily usage limit reached. No transfer was confirmed. Wait for quota recovery, then retry the same details.':error.code==='unavailable'?'Firebase is offline. Check the recipient balance before retrying; use the same details to prevent a duplicate.':error.message||'Transfer could not be confirmed.';if(writing&&['permission-denied','failed-precondition','owner-grant-precondition'].includes(error.code)){remember(null);pending=null}}
  finally{clearTimeout(waiting);busy=false;form.querySelector('button').disabled=false}
 };
