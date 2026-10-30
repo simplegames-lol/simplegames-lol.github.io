@@ -1,18 +1,14 @@
-/* Decoration stays inside the Home section and never receives clicks. */
-.halloween-menu{position:fixed;inset:0;z-index:3;pointer-events:none!important;overflow:hidden;contain:strict;user-select:none}
-.halloween-menu *{pointer-events:none!important}
-body.game-is-open .halloween-menu{display:none}
-.halloween-fog{position:absolute;left:-25%;bottom:-50px;width:150%;height:180px;background:radial-gradient(ellipse at 20% 80%,#9d715a28,transparent 55%),radial-gradient(ellipse at 70% 85%,#ae9c8a24,transparent 55%),radial-gradient(ellipse at 45% 100%,#c66b2424,transparent 65%);animation:halloween-fog-drift 24s ease-in-out infinite alternate;opacity:.7}
-.halloween-pumpkin{position:absolute;bottom:18px;font:38px/1.2 sans-serif;filter:drop-shadow(0 0 14px #ee782637);opacity:.8}
-.pumpkin-left{left:calc(180px + 22px);transform:rotate(-9deg)}.pumpkin-right{right:24px;transform:rotate(8deg) scale(.85)}
-.halloween-bat{position:absolute;left:0;top:15%;width:54px;height:28px;opacity:0;animation:halloween-bat-pass 29s linear infinite;filter:drop-shadow(0 1px 1px #e5995544);will-change:transform}
-.halloween-bat svg{width:100%;height:100%;fill:#211e27;overflow:visible}
-.bat-wing{transform-box:view-box;animation:halloween-wing .24s ease-in-out infinite alternate}
-.bat-left{transform-origin:50px 24px}.bat-right{transform-origin:50px 24px;animation-direction:alternate-reverse}
-.bat-1{top:22%;width:37px;animation-delay:1.2s}.bat-2{top:12%;width:43px;animation-delay:2.3s}
-.is-paused *{animation-play-state:paused!important}
-@keyframes halloween-bat-pass{0%{opacity:0;transform:translate(-80px,30px) rotate(-8deg)}2%{opacity:.85}10%{transform:translate(40vw,-15px) rotate(6deg)}20%{opacity:.85;transform:translate(85vw,45px) rotate(-5deg)}26%,100%{opacity:0;transform:translate(calc(100vw + 90px),-5px)}}
-@keyframes halloween-wing{from{transform:scaleY(.45)}to{transform:scaleY(1)}}
-@keyframes halloween-fog-drift{from{transform:translateX(-5%) scaleY(.85)}to{transform:translateX(5%) scaleY(1.1)}}
-@media(max-width:700px){.pumpkin-left{left:14px}.pumpkin-right{right:14px}.halloween-pumpkin{font-size:28px;bottom:12px}.halloween-fog{height:120px}.halloween-bat{width:38px}.bat-2{display:none}}
-@media(prefers-reduced-motion:reduce){.halloween-bat{display:none}.halloween-fog{animation:none}.halloween-pumpkin{filter:none}}
+/* Atmospheric layers never receive clicks or blur the menu text. */
+.halloween-menu{position:fixed;inset:0;z-index:3;pointer-events:none!important;overflow:hidden;contain:strict;user-select:none}.halloween-menu *{pointer-events:none!important}body.game-is-open .halloween-menu{display:none}
+.halloween-fog{position:absolute;inset:-15%;background-repeat:no-repeat;animation:halloween-fog-drift 32s ease-in-out infinite alternate;mask-image:radial-gradient(ellipse at 53% 42%,#0004 0%,#0009 45%,#000 85%)}
+.fog-back{background:radial-gradient(ellipse at 5% 25%,#a29cac29,transparent 48%),radial-gradient(ellipse at 90% 10%,#746c892c,transparent 45%),radial-gradient(ellipse at 70% 75%,#a9a4b424,transparent 55%);animation-duration:39s}
+.fog-middle{background:radial-gradient(ellipse at 15% 65%,#b6b1be30,transparent 38%),radial-gradient(ellipse at 80% 40%,#a4a1af29,transparent 42%),radial-gradient(ellipse at 50% 10%,#b4a5c218,transparent 35%);animation-direction:alternate-reverse;animation-delay:-14s}
+.fog-floor{inset:35% -20% -15%;background:radial-gradient(ellipse at 25% 95%,#bd9d823e,transparent 55%),radial-gradient(ellipse at 80% 90%,#b2a7bd38,transparent 55%),radial-gradient(ellipse at 50% 100%,#ce7c2c25,transparent 65%);animation-duration:26s;animation-delay:-9s}
+.halloween-pumpkin{position:absolute;bottom:17px;width:62px;height:58px;opacity:.88;filter:drop-shadow(0 5px 8px #0009);transition:filter .45s,opacity .45s}.halloween-pumpkin svg{width:100%;height:100%;overflow:visible}.pumpkin-face{fill:#5c301e;transition:fill .45s,filter .45s}
+.pumpkin-left{left:202px;transform:rotate(-7deg)}.pumpkin-right{right:24px;transform:rotate(7deg) scale(.83)}.halloween-pumpkin.is-near{opacity:1;filter:drop-shadow(0 0 19px #e87d3566)}.is-near .pumpkin-face{fill:#ffe79b;filter:drop-shadow(0 0 4px #ffe79b)}
+.halloween-bat{position:absolute;left:0;top:18%;width:58px;height:30px;opacity:0;animation:halloween-bat-pass 28s linear infinite;filter:drop-shadow(0 1px 1px #bb9a7244)}.bat-reaction{display:block;width:100%;height:100%;transform:translate(var(--scatter-x,0px),var(--scatter-y,0px));transition:transform .65s cubic-bezier(.15,.7,.25,1)}.halloween-bat svg{width:100%;height:100%;fill:#34303c;overflow:visible}
+.bat-wing{transform-box:view-box;transform-origin:50px 24px;animation:halloween-wing .25s ease-in-out infinite alternate}.bat-right{animation-direction:alternate-reverse}.bat-1{top:36%;width:40px;animation-delay:-10s;animation-duration:32s}.bat-2{top:10%;width:48px;animation-delay:-19s;animation-duration:35s}.halloween-menu.is-paused *{animation-play-state:paused!important}
+@keyframes halloween-bat-pass{0%{opacity:0;transform:translate(-100px,25px) rotate(-8deg)}5%{opacity:.85}32%{transform:translate(30vw,-22px) rotate(5deg)}65%{transform:translate(68vw,42px) rotate(-5deg)}94%{opacity:.85}100%{opacity:0;transform:translate(calc(100vw + 100px),-12px)}}
+@keyframes halloween-wing{from{transform:scaleY(.4)}to{transform:scaleY(1)}}@keyframes halloween-fog-drift{from{transform:translate(-4%,-2%) scale(1)}to{transform:translate(4%,3%) scale(1.07)}}
+@media(max-width:700px){.pumpkin-left{left:14px}.pumpkin-right{right:14px}.halloween-pumpkin{width:43px;height:40px;bottom:10px}.halloween-bat{width:38px}.bat-2{display:none}.halloween-fog{opacity:.8}}
+@media(prefers-reduced-motion:reduce){.halloween-bat{display:none}.halloween-fog{animation:none}.halloween-pumpkin,.pumpkin-face{transition:none}}
