@@ -154,11 +154,11 @@ function filterGames() {
   const category = gameSort.value.startsWith("category:") ? gameSort.value.split(":")[1] : "";
   let visible = 0;
   cards.forEach((card) => {
-    const show = card.dataset.name.includes(query) && (!favoritesOnly || favorites.has(card.dataset.path)) && (!category || card.dataset.category === category);
+    const show = (window.simpleGamesSearch?window.simpleGamesSearch.matches(card.dataset.name,query):card.dataset.name.includes(query)) && (!favoritesOnly || favorites.has(card.dataset.path)) && (!category || card.dataset.category === category);
     card.hidden = !show;
     if (show) visible += 1;
   });
-  resultCount.textContent = `${visible} game${visible === 1 ? "" : "s"}`;
+  resultCount.textContent = `${visible} game${visible === 1 ? "" : "s"}${visible===0&&query?" · Try a shorter name or different spelling.":""}`;
 }
 
 function sortGames() {

@@ -1,0 +1,7 @@
+(() => {
+ const normalize=value=>String(value||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').trim();
+ const aliases={'1v1 lol':['1v1lol','one v one'],'five nights at freddy s':['fnaf'],'five nights at epstein s':['fnae'],'retro bowl college':['college football'],'soflo wheelie life':['wheelie','soflo'],'paper io':['paperio'],'subway surfers':['subway surfer'],'minecraft':['mine craft'],'drive mad':['drivemad'],'grand theft auto':['gta']};
+ function near(a,b){if(a.length===b.length){const diff=[...a].map((c,i)=>c!==b[i]?i:-1).filter(i=>i>=0);if(diff.length===2&&diff[1]===diff[0]+1&&a[diff[0]]===b[diff[1]]&&a[diff[1]]===b[diff[0]])return true}if(a.length<4||b.length<4||Math.abs(a.length-b.length)>1)return false;let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const next=[i];for(let j=1;j<=b.length;j++)next[j]=Math.min(next[j-1]+1,prev[j]+1,prev[j-1]+(a[i-1]!==b[j-1]));prev=next}return prev[b.length]<=1}
+ function matches(title,query){const name=normalize(title),q=normalize(query).slice(0,100);if(!q)return true;const alternatives=[name,...Object.entries(aliases).filter(([key])=>name.includes(key)).flatMap(([,values])=>values.map(normalize))];return alternatives.some(value=>{if(value.includes(q)||value.replaceAll(' ','').includes(q.replaceAll(' ','')))return true;const words=value.split(' ');return q.split(' ').every(part=>words.some(word=>word===part||word.startsWith(part)||near(word,part)))})}
+ window.simpleGamesSearch={normalize,matches};
+})();
