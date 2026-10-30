@@ -43,7 +43,7 @@ function close(){previewItem=null;panel.hidden=true;stopWallet();stopPerson();wa
 $('#shop-home').onclick=close;$('#shop-login').onclick=()=>{close();document.querySelector('#account-open')?.click()};
 document.querySelector('#shop-open')?.addEventListener('click',open);
 document.querySelector('#shop-home-open')?.addEventListener('click',open);
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#real-shop-confirm').open)close()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden&&!$('#real-shop-confirm').open)close()});
 $('#daily-claim').onclick=()=>void perform('daily');
 async function perform(action,id,color,enabled=true){
   if(action==='cosmetic')previewItem=null;

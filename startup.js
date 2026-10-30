@@ -43,8 +43,11 @@
     } catch {}
   }
 
+  let entered=false;
   function enterSite() {
-    if (enter.disabled) return;
+    if (enter.disabled||entered) return;
+    entered=true;
+    document.removeEventListener('keydown',onEnterKey);
     tone(420, 0, .14);
     tone(630, .1, .18);
     loader.classList.add("leaving");
@@ -55,7 +58,8 @@
   }
 
   enter.addEventListener("click", enterSite);
-  document.addEventListener("keydown", event => {
+  function onEnterKey(event) {
     if (event.key === "Enter" && !enter.disabled) enterSite();
-  });
+  }
+  document.addEventListener("keydown",onEnterKey);
 })();

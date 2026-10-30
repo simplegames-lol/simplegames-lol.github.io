@@ -39,3 +39,4 @@ body:has(.halloween-menu) .header-right :is(.rail-link,.header-button){backgroun
 .halloween-still .halloween-menu *,.halloween-still .halloween-rail-fog,.halloween-still .halloween-ghost{animation-play-state:paused!important}.halloween-still .halloween-lightning,.halloween-still .halloween-ghost{display:none}
 
 .halloween-page-hidden .halloween-rail-fog,.halloween-page-hidden .halloween-ghost{animation-play-state:paused!important}
+.halloween-menu.is-paused *{animation-play-state:paused!important}
