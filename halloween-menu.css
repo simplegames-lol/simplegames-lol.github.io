@@ -1,0 +1,18 @@
+/* Decoration stays inside the Home section and never receives clicks. */
+.halloween-menu{position:fixed;inset:0;z-index:3;pointer-events:none!important;overflow:hidden;contain:strict;user-select:none}
+.halloween-menu *{pointer-events:none!important}
+body.game-is-open .halloween-menu{display:none}
+.halloween-fog{position:absolute;left:-25%;bottom:-50px;width:150%;height:180px;background:radial-gradient(ellipse at 20% 80%,#9d715a28,transparent 55%),radial-gradient(ellipse at 70% 85%,#ae9c8a24,transparent 55%),radial-gradient(ellipse at 45% 100%,#c66b2424,transparent 65%);animation:halloween-fog-drift 24s ease-in-out infinite alternate;opacity:.7}
+.halloween-pumpkin{position:absolute;bottom:18px;font:38px/1.2 sans-serif;filter:drop-shadow(0 0 14px #ee782637);opacity:.8}
+.pumpkin-left{left:calc(180px + 22px);transform:rotate(-9deg)}.pumpkin-right{right:24px;transform:rotate(8deg) scale(.85)}
+.halloween-bat{position:absolute;left:0;top:15%;width:54px;height:28px;opacity:0;animation:halloween-bat-pass 29s linear infinite;filter:drop-shadow(0 1px 1px #e5995544);will-change:transform}
+.halloween-bat svg{width:100%;height:100%;fill:#211e27;overflow:visible}
+.bat-wing{transform-box:view-box;animation:halloween-wing .24s ease-in-out infinite alternate}
+.bat-left{transform-origin:50px 24px}.bat-right{transform-origin:50px 24px;animation-direction:alternate-reverse}
+.bat-1{top:22%;width:37px;animation-delay:1.2s}.bat-2{top:12%;width:43px;animation-delay:2.3s}
+.is-paused *{animation-play-state:paused!important}
+@keyframes halloween-bat-pass{0%{opacity:0;transform:translate(-80px,30px) rotate(-8deg)}2%{opacity:.85}10%{transform:translate(40vw,-15px) rotate(6deg)}20%{opacity:.85;transform:translate(85vw,45px) rotate(-5deg)}26%,100%{opacity:0;transform:translate(calc(100vw + 90px),-5px)}}
+@keyframes halloween-wing{from{transform:scaleY(.45)}to{transform:scaleY(1)}}
+@keyframes halloween-fog-drift{from{transform:translateX(-5%) scaleY(.85)}to{transform:translateX(5%) scaleY(1.1)}}
+@media(max-width:700px){.pumpkin-left{left:14px}.pumpkin-right{right:14px}.halloween-pumpkin{font-size:28px;bottom:12px}.halloween-fog{height:120px}.halloween-bat{width:38px}.bat-2{display:none}}
+@media(prefers-reduced-motion:reduce){.halloween-bat{display:none}.halloween-fog{animation:none}.halloween-pumpkin{filter:none}}
