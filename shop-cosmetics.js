@@ -2,7 +2,7 @@ import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,doc,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import {validColor} from './shop-model.js?v=1';
+import {validColor} from './shop-model.js?v=4';
 let auth,db;const watchers=new Map(),bindings=new Map(),cache=new Map();
 document.addEventListener('simplegames:cosmetics-changed',event=>{const uid=event.detail?.uid;if(uid!==auth?.currentUser?.uid)return;cache.delete(uid);watch(uid)});
 function paint(uid){
@@ -10,7 +10,8 @@ function paint(uid){
   // Rows may be bound just before their parent is attached to the page.
   // Keep them until the next bind prunes older, detached render results.
   for(const row of rows){
-    if(row.avatar){if(validColor(data.outlineColor)){row.avatar.style.outline='2px solid '+data.outlineColor;row.avatar.style.outlineOffset='2px'}else{row.avatar.style.outline=row.outline;row.avatar.style.outlineOffset=row.offset}}
+    if(row.avatar){row.avatar.dataset.cosmetic=data.frameId||'';if(validColor(data.outlineColor)){row.avatar.style.outline='2px solid '+data.outlineColor;row.avatar.style.outlineOffset='2px'}else{row.avatar.style.outline=row.outline;row.avatar.style.outlineOffset=row.offset}}
+    if(row.name)row.name.dataset.cosmetic=data.nameId||'';
     if(row.name)row.name.style.color=validColor(data.nameColor)?data.nameColor:row.color;
   }
 }

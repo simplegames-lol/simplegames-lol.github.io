@@ -2,11 +2,11 @@ import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,doc,onSnapshot,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import {items,validColor,dailyAvailable,dailyRemaining} from './shop-model.js?v=3';
-import {initializeWallet,shopAction,localShopPreview} from './shop-api.js?v=4';
+import {items,validColor,dailyAvailable,dailyRemaining,availableItem} from './shop-model.js?v=4';
+import {initializeWallet,shopAction,localShopPreview} from './shop-api.js?v=5';
 const auth=getAuth(getApp()),db=getFirestore(getApp());
 const panel=document.createElement('section');panel.className='real-shop';panel.hidden=true;panel.setAttribute('aria-label','Shop');
-panel.innerHTML='<header><button id="shop-home" type="button">← Home</button><h1>Shop</h1><span class="real-shop-balance"><strong id="real-shop-coins">—</strong> coins</span></header><p class="real-shop-note">Start with 100 coins. Earn 10 per minute of active gameplay. Each unlock costs 500 coins; color changes are free.</p><div class="daily-bonus"><div><h2>Daily bonus</h2><p>100 coins, once every 24 hours.</p><p id="daily-countdown"></p></div><button id="daily-claim" type="button">Claim 100 coins</button></div><p id="real-shop-status" role="status" aria-live="polite"></p><button id="shop-login" type="button" hidden>Sign in</button><div class="real-shop-layout"><div id="real-shop-items"></div><aside><h2>Profile preview</h2><span id="real-shop-avatar" class="profile-avatar"></span><strong id="real-shop-name">Player</strong><p id="real-shop-username"></p></aside></div><dialog id="real-shop-confirm" aria-labelledby="real-shop-confirm-title"><form method="dialog"><h2 id="real-shop-confirm-title"></h2><p>500 coins, paid once. Future color changes are free.</p><div><button value="cancel">Cancel</button><button value="confirm">Unlock</button></div></form></dialog>';
+panel.innerHTML='<header><button id="shop-home" type="button">← Home</button><h1>Shop</h1><span class="real-shop-balance"><strong id="real-shop-coins">—</strong> coins</span></header><p class="real-shop-note">Start with 100 coins. Earn 10 per minute of active gameplay. Each unlock costs 500 coins. Halloween collection available through Nov 1.</p><div class="daily-bonus"><div><h2>Daily bonus</h2><p>100 coins, once every 24 hours.</p><p id="daily-countdown"></p></div><button id="daily-claim" type="button">Claim 100 coins</button></div><p id="real-shop-status" role="status" aria-live="polite"></p><button id="shop-login" type="button" hidden>Sign in</button><div class="real-shop-layout"><div id="real-shop-items"></div><aside><h2>Profile preview</h2><span id="real-shop-avatar" class="profile-avatar"></span><strong id="real-shop-name">Player</strong><p id="real-shop-username"></p></aside></div><dialog id="real-shop-confirm" aria-labelledby="real-shop-confirm-title"><form method="dialog"><h2 id="real-shop-confirm-title"></h2><p>500 coins, paid once. This item is yours to keep.</p><div><button value="cancel">Cancel</button><button value="confirm">Unlock</button></div></form></dialog>';
 document.body.append(panel);
 const $=selector=>panel.querySelector(selector);
 const colorDrafts=new Map();
@@ -47,7 +47,7 @@ $('#daily-claim').onclick=()=>void perform('daily');
 async function perform(action,id,color,enabled=true){
   if(busy||!user)return;if(!walletReady)return status('Wait for your wallet to connect before saving.');busy=true;draw();status(action==='daily'?'Claiming your 100 coins…':action==='buy'?'Saving your unlock…':'Saving your color…');const version=epoch,uid=user.uid;
   const waiting=setTimeout(()=>{if(version===epoch&&busy)status('Firebase is still confirming this change. Please do not submit it again.')},12000);
-  try{const saved=await shopAction(uid,action,id,color,enabled);if(version===epoch){if(saved){wallet=saved;walletReady=true}if(action==='cosmetic')document.dispatchEvent(new CustomEvent('simplegames:cosmetics-changed',{detail:{uid}}));status(action==='daily'?'Daily bonus claimed: +100 coins.':action==='buy'?'Unlocked. Choose a color below.':'Saved. No coins charged.')}}
+  try{const saved=await shopAction(uid,action,id,color,enabled);if(version===epoch){if(saved){wallet=saved;walletReady=true}if(action==='cosmetic')document.dispatchEvent(new CustomEvent('simplegames:cosmetics-changed',{detail:{uid}}));status(action==='daily'?'Daily bonus claimed: +100 coins.':action==='buy'?'Unlocked. Equip it whenever you like.':'Saved. No coins charged.')}}
   catch(error){if(version===epoch){if(['permission-denied','resource-exhausted','unavailable'].includes(error.code)){walletReady=false;retry.hidden=false}status(friendly(error))}}
   finally{clearTimeout(waiting);if(version===epoch){busy=false;draw()}}
 }
@@ -59,14 +59,16 @@ function draw(){
   host.replaceChildren();
   if(!user)status('Sign in to save coins and purchases to your account.');
   for(const item of items){
+    if(!availableItem(item)&&!wallet?.owned.includes(item.id))continue;
+    if(item.id==='halloween-pumpkin'){const title=document.createElement('h2');title.className='halloween-collection-title';title.textContent='Halloween collection · Limited release';host.append(title)}
     const owned=wallet?.owned.includes(item.id),equipped=wallet?.equipped[item.type]===item.id;
     const card=document.createElement('article'),visual=document.createElement('div'),heading=document.createElement('h2'),sample=document.createElement('span');
-    card.className='real-shop-item';visual.className='real-shop-item-visual';heading.textContent=item.name;
+    card.className='real-shop-item'+(item.seasonal?' halloween-item':'');visual.className='real-shop-item-visual';heading.textContent=item.name;
     sample.textContent=item.type==='frames'?(person.displayName||person.username||'P')[0].toUpperCase():person.displayName||person.username||'Player';
     sample.className=item.type==='frames'?'real-shop-avatar-sample':'real-shop-name-sample';
     const draft=colorDrafts.get(item.id),savedColor=wallet?.colors[item.type]||'#9dbbd9';
-    const color=validColor(draft)?draft:savedColor;if(item.type==='frames')sample.style.borderColor=color;else sample.style.color=color;
-    visual.append(sample);const note=document.createElement('p');note.textContent='Buy once. Change the color anytime.';
+    const color=item.color||(validColor(draft)?draft:savedColor);sample.dataset.cosmetic=item.id;if(item.type==='frames')sample.style.borderColor=color;else sample.style.color=color;
+    visual.append(sample);const note=document.createElement('p');note.textContent=item.seasonal?'Halloween 2026 · Unlock by Nov 1. Yours to keep.':'Buy once. Change the color anytime.';
     const row=document.createElement('div');row.className='real-shop-item-action';const price=document.createElement('span');price.textContent=owned?'Unlocked':'500 coins';
     const action=document.createElement('button');action.type='button';action.textContent=owned?(equipped?'Unequip':'Equip'):'Unlock';action.setAttribute('aria-label',action.textContent+' '+item.name);action.disabled=!wallet||!walletReady||busy||localShopPreview;
     action.onclick=()=>{
@@ -75,7 +77,7 @@ function draw(){
       const dialog=$('#real-shop-confirm');$('#real-shop-confirm-title').textContent='Unlock '+item.name+'?';dialog.returnValue='';dialog.showModal();
       dialog.addEventListener('close',()=>{if(dialog.returnValue==='confirm')void perform('buy',item.id)},{once:true});
     };row.append(price,action);card.append(visual,heading,note,row);
-    if(owned){
+    if(owned&&!item.seasonal){
       const controls=document.createElement('div');controls.className='real-shop-color-controls';
       const picker=document.createElement('input');picker.type='color';picker.value=color;picker.setAttribute('aria-label',item.name+' picker');
       const hex=document.createElement('input');hex.value=draft??color.toUpperCase();hex.maxLength=7;hex.spellcheck=false;hex.setAttribute('aria-label',item.name+' hex code');
@@ -88,6 +90,7 @@ function draw(){
   }
   const avatar=$('#real-shop-avatar');avatar.textContent='';avatar.style.setProperty('--avatar-fallback',JSON.stringify((person.displayName||person.username||'P')[0].toUpperCase()));avatar.classList.toggle('has-image',!!person.avatarImage);
   if(person.avatarImage)avatar.style.setProperty('--avatar-image','url("'+person.avatarImage.replaceAll('"','%22')+'")');else avatar.style.removeProperty('--avatar-image');
+  avatar.dataset.cosmetic=wallet?.equipped.frames||'';$('#real-shop-name').dataset.cosmetic=wallet?.equipped.names||'';
   avatar.style.outline=wallet?.equipped.frames?'2px solid '+wallet.colors.frames:'';
   $('#real-shop-name').textContent=person.displayName||person.username||'Player';$('#real-shop-name').style.color=wallet?.equipped.names?wallet.colors.names:'';
   $('#real-shop-username').textContent=person.username?'@'+person.username:'';

@@ -2,7 +2,7 @@ import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {doc,getFirestore,runTransaction,serverTimestamp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import {freshWallet,purchaseChanges,cosmeticChanges,publicCosmetics,earnedChanges,dailyChanges} from './shop-model.js?v=3';
+import {freshWallet,purchaseChanges,cosmeticChanges,publicCosmetics,earnedChanges,dailyChanges} from './shop-model.js?v=4';
 const db=getFirestore(getApp()),auth=getAuth(getApp());
 export const localShopPreview=['127.0.0.1','localhost',''].includes(location.hostname);
 function requireUser(uid){
