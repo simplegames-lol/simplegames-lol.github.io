@@ -3,7 +3,7 @@
  if(Date.now()>=end)return;
  const home=document.querySelector('.dashboard-hero'),reduced=matchMedia('(prefers-reduced-motion:reduce)');if(!home)return;
  const read=key=>{try{return JSON.parse(localStorage.getItem(key))!==false}catch{return true}};
- const box=document.querySelector('#update-popups')?.closest('label');
+ const box=document.querySelector('#message-popups')?.closest('label');
  for(const [id,text] of [['halloween-motion','Halloween animations'],['pumpkin-trail','Pumpkin cursor trail']]){
   const label=document.createElement('label');label.className='check-setting';const input=document.createElement('input');input.type='checkbox';input.id=id;input.checked=read('sg-'+id);label.append(input,document.createTextNode(' '+text));box?.before(label);
   input.addEventListener('change',()=>{try{localStorage.setItem('sg-'+id,JSON.stringify(input.checked))}catch{}sync()});

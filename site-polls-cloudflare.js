@@ -11,12 +11,15 @@ async function api(path,{body,account=null}={}){
  if(!response.ok)throw Error(data.error||'Polls are temporarily unavailable.');return data;
 }
 function render(){
- const list=$('poll-choices');list.replaceChildren();$('site-polls').hidden=!poll&&!staff;$('poll-tools').hidden=!staff;$('poll-staff-manager').hidden=!owner;$('poll-close').disabled=!poll||poll.closed||busy;$('poll-create').querySelector('button').disabled=busy;$('poll-hide').disabled=!poll||busy;$('poll-hide').textContent=poll?.hidden?'Show poll':'Hide poll';$('poll-timer').hidden=!poll;
+ const live=!!poll&&!poll.hidden&&!poll.closed,root=$('site-polls');
+ root.classList.toggle('poll-inactive',!live);root.querySelector('header h2').textContent=live?'Website Poll':'Poll controls';
+ $('poll-question').hidden=!live;root.querySelector('.vote-privacy').hidden=!live;$('poll-account').hidden=!user||!live;
+ const list=$('poll-choices');list.replaceChildren();root.hidden=!live&&!staff;$('poll-tools').hidden=!staff;$('poll-staff-manager').hidden=!owner;$('poll-close').disabled=!poll||poll.closed||busy;$('poll-create').querySelector('button').disabled=busy;$('poll-hide').disabled=!poll||busy;$('poll-hide').textContent=poll?.hidden?'Show poll':'Hide poll';$('poll-timer').hidden=!poll;
  $('poll-timer-note').textContent=poll?.endsAt?'Ends '+new Date(poll.endsAt).toLocaleString()+(poll.closed?' · Voting closed':''):poll?'No automatic end time.':'';
- if(!poll){$('poll-question').textContent='No poll is published.';say('Create a poll below when you’re ready.');return}
+ if(!poll){$('poll-question').textContent='No poll is published.';say('No active poll.');return}
  $('poll-question').textContent=poll.question;const total=keys.reduce((sum,k)=>sum+poll.counts[k],0);
- if(!poll.hidden)for(const k of keys){const button=document.createElement('button'),fill=document.createElement('span'),label=document.createElement('span'),result=document.createElement('span');button.type='button';button.className='poll-choice';button.disabled=!user||!readReady||(!!choice&&choice!==k)||poll.closed||busy;button.setAttribute('aria-pressed',String(choice===k));fill.className='poll-fill';const percent=total?Math.round(poll.counts[k]/total*100):0;fill.style.width=percent+'%';label.textContent=poll.options[k]+(choice===k?' ✓ · Undo':'');result.textContent=percent+'% · '+poll.counts[k];button.append(fill,label,result);button.onclick=()=>choice===k?unvote():vote(k);list.append(button)}
- say(poll.hidden?'Hidden from visitors · Only staff can see these controls.':`${total} vote${total===1?'':'s'} · ${poll.closed?'Voting closed':choice?'Thanks for voting!':user?readReady?'Choose one answer. One vote per account.':'Checking your vote…':'Sign in to vote.'}`);
+ if(live)for(const k of keys){const button=document.createElement('button'),fill=document.createElement('span'),label=document.createElement('span'),result=document.createElement('span');button.type='button';button.className='poll-choice';button.disabled=!user||!readReady||(!!choice&&choice!==k)||poll.closed||busy;button.setAttribute('aria-pressed',String(choice===k));fill.className='poll-fill';const percent=total?Math.round(poll.counts[k]/total*100):0;fill.style.width=percent+'%';label.textContent=poll.options[k]+(choice===k?' ✓ · Undo':'');result.textContent=percent+'% · '+poll.counts[k];button.append(fill,label,result);button.onclick=()=>choice===k?unvote():vote(k);list.append(button)}
+ say(!live?(poll.hidden?'Poll hidden.':'Voting finished.'): `${total} vote${total===1?'':'s'} · ${poll.closed?'Voting closed':choice?'Thanks for voting!':user?readReady?'Choose one answer. One vote per account.':'Checking your vote…':'Sign in to vote.'}`);
 }
 async function refresh(){
  if(loading||busy)return;loading=true;const version=generation,account=user,staffMode=staff;
