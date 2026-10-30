@@ -7,7 +7,7 @@
 
   if(Date.now()<Date.UTC(2026,10,2,5)){
     loader.classList.add('startup-halloween');
-    const greeting=document.createElement('div');greeting.className='startup-season-greeting';greeting.innerHTML='<h2>🎃 Halloween is here! 👻</h2><p>Step into the haunted menu.</p>';
+    const greeting=document.createElement('div');greeting.className='startup-season-greeting';greeting.innerHTML='<h2>🎃 Halloween is here! 👻</h2>';
     loader.querySelector('.startup-card').prepend(greeting);
     const scenery=document.createElement('div');scenery.className='startup-halloween-scenery';scenery.setAttribute('aria-hidden','true');
     scenery.innerHTML='<svg viewBox="0 0 1200 260" preserveAspectRatio="xMidYMax slice" focusable="false"><path fill="#17111d" d="M0 180 70 160 150 190 240 155 330 193 470 170 600 200 770 160 910 185 1060 158 1200 180V260H0Z"/><path fill="#0a090d" d="M0 217h75v-72l-15 10 40-49 40 49-15-10v72h42v-45l-9 5 23-34 24 34-9-5v45h30v-12h12v-49h-19v-12h19v-15h12v15h19v12h-19v49h12v12h690v-75l-16 9 41-49 41 49-16-9v75h48v-36l-11 7 29-40 28 40-11-7v36h105v43H0Z"/><g fill="#a9662b" opacity=".6"><path d="M91 164h9v15h-9zm16 0h9v15h-9zm867-1h9v15h-9zm18 0h9v15h-9z"/></g></svg>';

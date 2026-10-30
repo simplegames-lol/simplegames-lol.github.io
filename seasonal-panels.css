@@ -18,3 +18,6 @@
 .startup-halloween .startup-card>button{background:#a55e2c;color:#fff2de;border:1px solid #d4914b66}.startup-halloween .startup-card>button:not(:disabled):hover{background:#b76b33}.startup-halloween .startup-card>button:focus-visible{outline:2px solid #f8c987;outline-offset:3px}
 @media(max-width:500px){.startup-halloween::after{width:75px;height:75px;right:10%}.startup-halloween .startup-card{padding:23px 18px}.startup-season-greeting h2{font-size:18px}}
 @media(prefers-reduced-motion:reduce){.startup-halloween::before{animation:none}}
+
+.spotlight-player>div>small{display:block;margin:4px 0;color:var(--muted);font-size:10px}
+.whats-new-notes{box-sizing:border-box;width:min(760px,100%);margin:0 auto 24px;padding:18px 20px;border:1px solid var(--border);border-radius:12px;color:var(--text)}.whats-new-notes h3{font-size:14px;margin:0 0 12px}.whats-new-notes ul{padding-left:18px;margin:0;font-size:12px;line-height:1.8;color:var(--muted)}.whats-new-notes li+li{margin-top:7px}
