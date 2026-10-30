@@ -4,7 +4,7 @@
 .info-content .update-entry,.info-content .announcement-card,.info-content .news-card,.announcements-list>li,.announcements-list>article{background:var(--background)!important;border:1px solid var(--border)!important;box-shadow:none!important;color:var(--text)!important;border-radius:12px}
 .info-content .update-entry{padding:18px!important}
 .info-content .update-highlights,.info-content .update-full p{color:var(--muted)!important;line-height:1.65}
-#account-open,#account-open .account-label,#account-open .rail-icon{color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;background-image:none!important;background-clip:border-box!important;-webkit-background-clip:border-box!important;text-shadow:none!important;filter:none!important}
+#account-open .account-label{color:inherit!important;-webkit-text-fill-color:currentColor!important;background-image:none!important;background-clip:border-box!important;-webkit-background-clip:border-box!important;text-shadow:none!important;filter:none!important}
 .dashboard-hero .site-polls{background:var(--background);border:1px solid var(--border);border-radius:14px;padding:18px;width:min(440px,100%)}
 .dashboard-hero .site-polls header h2{font-size:12px;font-weight:600}.site-polls header>span{display:none}
 .dashboard-hero .site-polls h3{font-size:14px;line-height:1.55;margin:16px 0 12px;overflow-wrap:anywhere}

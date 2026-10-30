@@ -42,3 +42,8 @@
 @media(max-width:500px){.site-update-popup{right:16px;bottom:16px}}
 @media(prefers-reduced-motion:reduce){.game-card,.game-card:hover,.game-card[data-tilt-active],.dashboard-shortcuts>button[data-tilt-active]{transform:none!important;transition:none!important}.dashboard-hero .dashboard-shortcuts>button,.dashboard-hero .dashboard-shortcuts>button:hover{animation:none!important;translate:none!important;scale:1!important;transition:none!important}.game-card::after,.dashboard-shortcuts>button::after{display:none}}
 @media(prefers-reduced-motion:reduce){.site-update-popup{animation:none}.dashboard-shortcuts>button,.dashboard-shortcuts>button>span,.header-right>.rail-link,.header-right>.header-button{transition:none!important;transform:none!important}}
+
+.shop-new-tag{display:inline-block;flex:none;padding:3px 5px;border:1px solid #b46a2f77;border-radius:5px;background:#321d10;color:#ffbc77;font:700 8px/1 sans-serif;letter-spacing:.06em;pointer-events:none}
+#shop-open>.shop-new-tag{margin-left:auto}
+.dashboard-shortcuts #shop-home-open>.shop-new-tag{position:absolute;top:5px;right:5px;padding:2px 4px;font-size:7px}
+@media(min-width:701px) and (max-width:1000px){#shop-open>.shop-new-tag{position:absolute;top:0;right:0;margin:0;font-size:6px;padding:2px}}
