@@ -1,0 +1,43 @@
+/* Seasonal lighting is separate from saved accent, theme, and background choices. */
+.thanksgiving-menu{--harvest-gold:#d9a565;--harvest-rust:#a9573d;--harvest-berry:#803f51;--harvest-edge:color-mix(in srgb,var(--border) 72%,#b78045)}
+.harvest-scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;contain:strict;isolation:isolate}
+.harvest-symbols{position:absolute;width:0;height:0;overflow:hidden}
+.harvest-glow{position:absolute;width:75vw;height:80vh;max-width:1100px;border-radius:50%;filter:blur(45px);opacity:.65}
+.harvest-glow-amber{top:-35vh;right:-16vw;background:radial-gradient(ellipse,#c7843228,transparent 68%)}
+.harvest-glow-cranberry{bottom:-40vh;left:8vw;background:radial-gradient(ellipse,#8c384830,transparent 70%)}
+.harvest-ground{position:absolute;bottom:0;inset-inline:0;height:30vh;background:radial-gradient(ellipse at 50% 130%,#a56a2820,transparent 70%)}
+.harvest-sprig{position:absolute;bottom:-8px;width:clamp(100px,16vw,240px);color:#bc854b;opacity:.23}
+.harvest-sprig svg{display:block;width:100%;height:auto}.harvest-sprig-left{left:0}.harvest-sprig-right{right:0;transform:scaleX(-1);color:#9b5360}
+.harvest-leaf{position:absolute;left:var(--leaf-left);top:-10vh;width:var(--leaf-size);height:calc(var(--leaf-size)*1.13);opacity:0;animation:harvest-fall var(--leaf-duration) var(--leaf-delay) linear infinite;will-change:transform}
+.harvest-leaf svg{display:block;width:100%;height:100%;filter:drop-shadow(0 3px 5px #0002)}
+@keyframes harvest-fall{0%{opacity:0;transform:translate3d(0,-20px,0) rotate(-25deg)}12%{opacity:.36}45%{transform:translate3d(var(--leaf-sway),48vh,0) rotate(110deg)}82%{opacity:.26}100%{opacity:0;transform:translate3d(0,115vh,0) rotate(var(--leaf-turn))}}
+.thanksgiving-menu>.page-shell{position:relative;z-index:1}
+.thanksgiving-menu .site-header{border-right:1px solid var(--harvest-edge);background:linear-gradient(165deg,#a96c2a0d,transparent 45%,#8136470d),color-mix(in srgb,var(--background) 92%,transparent)!important;box-shadow:12px 0 45px #0002;backdrop-filter:blur(24px)}
+.thanksgiving-menu .brand-name{color:var(--text);text-shadow:0 1px 12px #d19b4d20}
+.thanksgiving-menu .brand-mark{box-shadow:0 0 0 1px #ca995343,0 3px 20px #9b5a2220}
+.thanksgiving-menu .header-right :is(.rail-link,.header-button){background-image:linear-gradient(120deg,#d0a36408,transparent 80%);text-align:left}
+.thanksgiving-menu .header-right :is(.active,[aria-current="page"]){border-color:var(--harvest-edge);background-image:linear-gradient(105deg,color-mix(in srgb,var(--accent) 22%,#ac693329),transparent);box-shadow:inset 2px 0 var(--harvest-gold),inset 0 1px #fff1}
+.harvest-season-label{display:flex;align-items:center;justify-content:center;gap:9px;margin:0 0 17px;padding:6px 12px;border:1px solid #c28b4938;border-radius:99px;background:linear-gradient(110deg,#b7742311,#843f4711);font-size:9px;font-weight:650;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);line-height:1.4}
+.harvest-season-label>span:first-child,.harvest-season-label>span:last-child{font-size:13px;letter-spacing:0}
+.thanksgiving-menu .hero-copy h1{text-shadow:0 4px 30px #a66b2c25}
+.thanksgiving-menu .hero-copy h1>span{color:var(--text);background:linear-gradient(120deg,var(--text) 15%,#d9a565 68%,#bb7b5e);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.thanksgiving-menu .hero-search{border-color:var(--harvest-edge);background-image:linear-gradient(120deg,#cb93450b,transparent);box-shadow:inset 0 1px #ffffff07,0 5px 24px #0001}
+.thanksgiving-menu .dashboard-shortcuts>button{border-color:var(--harvest-edge);background-image:linear-gradient(155deg,#e2b77b0b,transparent 60%,#943b4806);box-shadow:inset 0 1px #ffffff07,0 5px 22px #0002}
+.thanksgiving-menu .dashboard-shortcuts>button>span{filter:drop-shadow(0 2px 9px #cd8d4040)}
+.thanksgiving-menu :is(.site-stats,.site-polls,.community-spotlight,.home-whats-new){border-color:var(--harvest-edge);background-image:linear-gradient(130deg,#d4a56806,transparent 60%);box-shadow:inset 0 1px #ffffff05}
+.thanksgiving-menu :is(.site-stats,.site-polls,.community-spotlight,.home-whats-new) h2{color:var(--text)}
+.thanksgiving-menu #startup-loader{background:radial-gradient(ellipse at 22% 80%,#9c622027,transparent 55%),radial-gradient(ellipse at 85% 15%,#873a4a30,transparent 55%),var(--background)!important;color:var(--text)}
+.thanksgiving-menu #startup-loader::before{background:radial-gradient(ellipse,#ca9d5a20,transparent 65%);filter:blur(35px);opacity:.7}
+.thanksgiving-menu #startup-loader::after{background:radial-gradient(ellipse,#93495522,transparent 65%);filter:blur(30px)}
+.thanksgiving-menu #startup-loader .startup-card{width:min(320px,100%);box-sizing:border-box;padding:25px 23px;border:1px solid var(--harvest-edge);background:linear-gradient(145deg,#bc843412,transparent 55%,#853c4e0a),var(--background)!important;box-shadow:0 24px 90px #0004,inset 0 1px #ffffff09;gap:14px}
+.harvest-welcome{text-align:center;margin-bottom:2px}.harvest-welcome>span{display:block;font-size:32px;margin-bottom:12px;filter:drop-shadow(0 3px 10px #b97d2820)}.harvest-welcome h2{font-size:20px;line-height:1.35;letter-spacing:-.03em;margin:0;color:var(--text)}.harvest-welcome p{font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin:12px 0 3px;color:var(--muted)}
+.thanksgiving-menu #startup-loader .startup-progress{background:#b88a3e22}.thanksgiving-menu #startup-loader .startup-progress>span{background:linear-gradient(90deg,#995335,#d8aa61)!important}
+.thanksgiving-menu #startup-enter{background:linear-gradient(115deg,#80502e,#a76b39)!important;border:1px solid #d5a15b66;color:#fff5e7!important}.thanksgiving-menu #startup-enter:not(:disabled):hover{filter:brightness(1.12)}.thanksgiving-menu #startup-enter:focus-visible{outline:2px solid #dfb877;outline-offset:3px}
+.harvest-paused .harvest-leaf,.thanksgiving-menu.game-is-open .harvest-leaf{animation-play-state:paused}
+.thanksgiving-menu.game-is-open .harvest-scene,.thanksgiving-menu:has(:is(.social-panel,.real-shop,.server-panel,.settings-panel,.info-overlay,.music-panel,.movies-panel):not([hidden])) .harvest-scene{visibility:hidden}
+.thanksgiving-menu:has(:is(.social-panel,.real-shop,.server-panel,.settings-panel,.info-overlay,.music-panel,.movies-panel):not([hidden])) .harvest-leaf{animation-play-state:paused}
+html[data-theme="light"] .thanksgiving-menu{--harvest-edge:color-mix(in srgb,var(--border) 70%,#b48753)}
+html[data-theme="light"] .harvest-glow{opacity:.4}html[data-theme="light"] .harvest-leaf{filter:saturate(.85)}html[data-theme="light"] .thanksgiving-menu .hero-copy h1>span{background:linear-gradient(120deg,#6b4729,#a36b35);background-clip:text;-webkit-background-clip:text}
+@media(hover:hover) and (pointer:fine){.thanksgiving-menu .dashboard-shortcuts>button:hover{border-color:color-mix(in srgb,var(--accent) 35%,#ce995d);box-shadow:inset 0 1px #fff1,0 8px 26px #a468221c}.thanksgiving-menu .header-right :is(.rail-link,.header-button):hover{border-color:var(--harvest-edge);background-image:linear-gradient(110deg,#bc7b2920,transparent)}}
+@media(max-width:700px){.harvest-leaf:nth-of-type(n+7){display:none}.harvest-season-label{font-size:8px;gap:6px;margin-bottom:14px}.harvest-sprig{width:105px;opacity:.15}.harvest-glow{filter:blur(20px)}}
+@media(prefers-reduced-motion:reduce){.harvest-leaf{animation:none!important;display:none}.harvest-glow{filter:none}.thanksgiving-menu #startup-loader::before,.thanksgiving-menu #startup-loader::after{animation:none!important}.thanksgiving-menu .dashboard-shortcuts>button:hover{transform:none}}
