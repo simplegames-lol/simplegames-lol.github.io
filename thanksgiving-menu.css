@@ -62,3 +62,6 @@ html[data-theme="light"] .thanksgiving-menu .dashboard-shortcuts>button{backgrou
 html[data-theme="light"] .thanksgiving-menu .hero-search{background:linear-gradient(120deg,#eec99b55,#e6bfb533),var(--surface)}
 html[data-theme="light"] .thanksgiving-menu .header-right :is(.active,[aria-current="page"]){background-image:linear-gradient(110deg,#cb93445c,#c27d7329)}
 @media(max-width:700px){.harvest-canopy{height:65px}.harvest-canopy-leaf{width:calc(var(--canopy-size)*.68);height:calc(var(--canopy-size)*.77);opacity:.55}.harvest-canopy-leaf:nth-child(even){display:none}}
+
+.thanksgiving-menu #startup-loader .startup-card{width:min(470px,calc(100vw - 40px))}
+.harvest-welcome h2{white-space:nowrap;font-size:clamp(11px,3.4vw,20px);letter-spacing:-.035em}.harvest-welcome h2>span{display:inline;font-size:1.2em;vertical-align:-.05em;margin-right:3px}
