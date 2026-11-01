@@ -1,16 +1,22 @@
-/* Percentage sizing keeps hats readable on chat avatars and larger profile pictures. */
+/* Separate decoration layers preserve avatar images and fallback initials. */
 :is([data-cosmetic="autumn-turkey"],[data-cosmetic="autumn-leaves"],[data-cosmetic="autumn-pie"]){position:relative;overflow:visible!important;isolation:isolate;box-shadow:0 0 0 2px #8c623b,0 0 13px #d8a65c35;border-color:#d5a15b!important}
 :is([data-cosmetic="autumn-turkey"],[data-cosmetic="autumn-leaves"],[data-cosmetic="autumn-pie"])>img{border-radius:50%;object-fit:cover}
-:is([data-cosmetic="autumn-turkey"],[data-cosmetic="autumn-leaves"],[data-cosmetic="autumn-pie"])::after{content:"";position:absolute;display:block;pointer-events:none;z-index:2;background-repeat:no-repeat;background-size:contain;background-position:center;filter:drop-shadow(0 2px 2px #0005)}
-[data-cosmetic="autumn-turkey"]::after{width:112%;height:80%;top:-54%;left:0;transform:rotate(-9deg);background-image:url("assets/autumn-turkey-hat.svg")}
-[data-cosmetic="autumn-pie"]::after{width:102%;height:68%;top:-43%;left:20%;transform:rotate(10deg);background-image:url("assets/autumn-pie-hat.svg")}
-[data-cosmetic="autumn-leaves"]{box-shadow:0 0 0 2px #79552e,0 0 14px #c88c4133}
-[data-cosmetic="autumn-leaves"]::after{inset:-24%;background-image:url("assets/autumn-leaf-frame.svg");animation:autumn-leaf-orbit 26s linear infinite;transform-origin:center}
-[data-cosmetic="autumn-cranberry"]{color:#d56b83!important;text-shadow:0 0 8px #c6436655,0 1px 1px #572333;font-weight:650}
-@keyframes autumn-leaf-orbit{0%{transform:rotate(0deg) scale(.97)}50%{transform:rotate(180deg) scale(1.04)}100%{transform:rotate(360deg) scale(.97)}}
+.autumn-decoration{position:absolute;inset:0;pointer-events:none;display:block;z-index:2;border-radius:inherit}
+.autumn-decoration::after{content:"";position:absolute;display:block;pointer-events:none;background-repeat:no-repeat;background-size:contain;background-position:center;filter:drop-shadow(0 2px 2px #0005)}
+[data-style="autumn-turkey"].autumn-decoration::after{width:122%;height:88%;top:-58%;left:-5%;transform:rotate(-8deg);background-image:url("assets/autumn-turkey-hat.svg?v=2")}
+[data-style="autumn-pie"].autumn-decoration::after{width:113%;height:76%;top:-48%;left:15%;transform:rotate(8deg);background-image:url("assets/autumn-pie-hat.svg?v=2")}
+[data-cosmetic="autumn-leaves"]{box-shadow:0 0 0 2px #79552e,0 0 15px #c88c4133}
+[data-style="autumn-leaves"].autumn-decoration::after{inset:-22%;background-image:url("assets/autumn-leaf-frame.svg");opacity:.7}
+.autumn-leaf-particle{position:absolute;width:24%;height:30%;top:-20%;background:url("assets/autumn-drifting-leaf.svg") center/contain no-repeat;opacity:0;animation:autumn-leaf-drift 5.8s ease-in-out infinite;transform-origin:center;filter:drop-shadow(0 1px 1px #0003)}
+.autumn-leaf-0{left:-17%;--drift-x:20%;--drift-angle:25deg;animation-delay:-1.7s}
+.autumn-leaf-1{right:-17%;--drift-x:-35%;--drift-angle:-28deg;animation-duration:6.8s;animation-delay:-4.1s;filter:hue-rotate(-19deg) saturate(.9)}
+.autumn-leaf-2{right:10%;--drift-x:45%;--drift-angle:18deg;animation-duration:7.5s;animation-delay:-6.3s;width:19%;height:24%}
+@keyframes autumn-leaf-drift{0%{opacity:0;transform:translate(0,0) rotate(-12deg)}16%{opacity:.9}45%{transform:translate(var(--drift-x),190%) rotate(var(--drift-angle))}80%{opacity:.8}100%{opacity:0;transform:translate(0,390%) rotate(-8deg)}}
+[data-cosmetic="autumn-cranberry"]{position:relative;display:inline-block;box-sizing:border-box;width:fit-content;max-width:100%;padding-right:1.2em;overflow:visible!important;isolation:isolate;color:#d95a76!important;text-shadow:0 0 8px #c6436644,0 1px 1px #572333;font-weight:650}
+[data-cosmetic="autumn-cranberry"]::after{content:"";position:absolute;right:-.12em;top:-.4em;width:1.65em;height:1.35em;background:url("assets/autumn-cranberry-sprig.svg") center/contain no-repeat;pointer-events:none;filter:drop-shadow(0 1px 1px #0003)}
 .real-shop .autumn-collection-heading{grid-column:1/-1;margin:12px 0 0;padding:13px 0;border-top:1px solid var(--border);color:var(--text);font-size:16px}.autumn-collection-heading small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:6px}
 .real-shop-item.autumn-item{border-color:color-mix(in srgb,var(--border) 55%,#a37142);background-image:linear-gradient(145deg,#a7722c17,transparent 65%,#8b354710)}
 .real-shop-item.autumn-item .real-shop-item-visual{height:115px;padding-top:10px;box-sizing:border-box;overflow:visible}
 .inventory-item:has(.inventory-cosmetic-sample){gap:14px}.inventory-cosmetic-sample{display:grid;place-items:center;flex:0 0 32px!important;width:32px;height:32px;border-radius:50%;background:var(--surface);font-size:13px;margin:12px 3px}.inventory-cosmetic-sample[data-cosmetic="autumn-cranberry"]{flex-basis:42px!important;background:transparent}
 html[data-theme="light"] [data-cosmetic="autumn-cranberry"]{color:#9b294b!important;text-shadow:0 0 6px #c6436622}
-@media(prefers-reduced-motion:reduce){[data-cosmetic="autumn-leaves"]::after{animation:none}}
+@media(prefers-reduced-motion:reduce){.autumn-leaf-particle{animation:none;display:none}}
