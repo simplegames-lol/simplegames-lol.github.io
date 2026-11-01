@@ -2,15 +2,15 @@
 .thanksgiving-menu{--harvest-gold:#d9a565;--harvest-rust:#a9573d;--harvest-berry:#803f51;--harvest-edge:color-mix(in srgb,var(--border) 72%,#b78045)}
 .harvest-scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;contain:strict;isolation:isolate}
 .harvest-symbols{position:absolute;width:0;height:0;overflow:hidden}
-.harvest-glow{position:absolute;width:75vw;height:80vh;max-width:1100px;border-radius:50%;filter:blur(45px);opacity:.65}
-.harvest-glow-amber{top:-35vh;right:-16vw;background:radial-gradient(ellipse,#c7843228,transparent 68%)}
-.harvest-glow-cranberry{bottom:-40vh;left:8vw;background:radial-gradient(ellipse,#8c384830,transparent 70%)}
+.harvest-glow{position:absolute;width:90vw;height:100vh;max-width:1400px;border-radius:50%;filter:blur(25px);opacity:.95}
+.harvest-glow-amber{top:-38vh;right:-18vw;background:radial-gradient(ellipse,#b7753d6b,transparent 72%)}
+.harvest-glow-cranberry{bottom:-45vh;left:5vw;background:radial-gradient(ellipse,#963a4b6b,transparent 72%)}
 .harvest-ground{position:absolute;bottom:0;inset-inline:0;height:30vh;background:radial-gradient(ellipse at 50% 130%,#a56a2820,transparent 70%)}
-.harvest-sprig{position:absolute;bottom:-8px;width:clamp(100px,16vw,240px);color:#bc854b;opacity:.23}
+.harvest-sprig{position:absolute;bottom:-8px;width:clamp(140px,20vw,290px);color:#d8a462;opacity:.55}
 .harvest-sprig svg{display:block;width:100%;height:auto}.harvest-sprig-left{left:0}.harvest-sprig-right{right:0;transform:scaleX(-1);color:#9b5360}
 .harvest-leaf{position:absolute;left:var(--leaf-left);top:-10vh;width:var(--leaf-size);height:calc(var(--leaf-size)*1.13);opacity:0;animation:harvest-fall var(--leaf-duration) var(--leaf-delay) linear infinite;will-change:transform}
 .harvest-leaf svg{display:block;width:100%;height:100%;filter:drop-shadow(0 3px 5px #0002)}
-@keyframes harvest-fall{0%{opacity:0;transform:translate3d(0,-20px,0) rotate(-25deg)}12%{opacity:.36}45%{transform:translate3d(var(--leaf-sway),48vh,0) rotate(110deg)}82%{opacity:.26}100%{opacity:0;transform:translate3d(0,115vh,0) rotate(var(--leaf-turn))}}
+@keyframes harvest-fall{0%{opacity:0;transform:translate3d(0,-20px,0) rotate(-25deg)}12%{opacity:.72}45%{transform:translate3d(var(--leaf-sway),48vh,0) rotate(110deg)}82%{opacity:.55}100%{opacity:0;transform:translate3d(0,115vh,0) rotate(var(--leaf-turn))}}
 .thanksgiving-menu>.page-shell{position:relative;z-index:1}
 .thanksgiving-menu .site-header{border-right:1px solid var(--harvest-edge);background:linear-gradient(165deg,#a96c2a0d,transparent 45%,#8136470d),color-mix(in srgb,var(--background) 92%,transparent)!important;box-shadow:12px 0 45px #0002;backdrop-filter:blur(24px)}
 .thanksgiving-menu .brand-name{color:var(--text);text-shadow:0 1px 12px #d19b4d20}
@@ -41,3 +41,24 @@ html[data-theme="light"] .harvest-glow{opacity:.4}html[data-theme="light"] .harv
 @media(hover:hover) and (pointer:fine){.thanksgiving-menu .dashboard-shortcuts>button:hover{border-color:color-mix(in srgb,var(--accent) 35%,#ce995d);box-shadow:inset 0 1px #fff1,0 8px 26px #a468221c}.thanksgiving-menu .header-right :is(.rail-link,.header-button):hover{border-color:var(--harvest-edge);background-image:linear-gradient(110deg,#bc7b2920,transparent)}}
 @media(max-width:700px){.harvest-leaf:nth-of-type(n+7){display:none}.harvest-season-label{font-size:8px;gap:6px;margin-bottom:14px}.harvest-sprig{width:105px;opacity:.15}.harvest-glow{filter:blur(20px)}}
 @media(prefers-reduced-motion:reduce){.harvest-leaf{animation:none!important;display:none}.harvest-glow{filter:none}.thanksgiving-menu #startup-loader::before,.thanksgiving-menu #startup-loader::after{animation:none!important}.thanksgiving-menu .dashboard-shortcuts>button:hover{transform:none}}
+
+/* The legacy black surfaces must let the seasonal scene show through. */
+.thanksgiving-menu>.page-shell,.thanksgiving-menu .dashboard-hero,.thanksgiving-menu .site-header :is(.header-inner,.header-right){background-color:transparent!important}
+.harvest-scene{background:radial-gradient(ellipse at 85% 22%,#7b4a242e,transparent 52%),radial-gradient(ellipse at 20% 92%,#6f283438,transparent 65%)}
+.harvest-canopy{position:absolute;inset:0 0 auto;height:100px;background:linear-gradient(#6e3a2426,transparent)}
+.harvest-canopy-leaf{position:absolute;left:var(--canopy-left);top:var(--canopy-top);width:var(--canopy-size);height:calc(var(--canopy-size)*1.13);transform:rotate(var(--canopy-turn));opacity:.7;filter:drop-shadow(0 5px 6px #0005)}
+.harvest-canopy-leaf svg{width:100%;height:100%;display:block}
+.thanksgiving-menu .site-header{background:linear-gradient(155deg,#382317bb,#1a1012dd 65%,#38202abb),var(--background)!important;border-right-color:#c4955859;box-shadow:9px 0 55px #a66b1f14}
+.thanksgiving-menu .header-right :is(.rail-link,.header-button){border-color:#d7a05c14;background-image:linear-gradient(115deg,#c3894520,transparent 95%)}
+.thanksgiving-menu .header-right :is(.active,[aria-current="page"]){background-image:linear-gradient(110deg,#bb783e66,#713b2e22);border-color:#d6a36588;box-shadow:inset 3px 0 #e4b575,0 3px 17px #0002}
+.thanksgiving-menu .dashboard-shortcuts>button{background:linear-gradient(145deg,#5f3a2459,#2a1818a3 65%),var(--background);border-color:#c797535f;box-shadow:inset 0 1px #edc59215,0 7px 20px #0004}
+.thanksgiving-menu .dashboard-shortcuts>button:nth-child(3n+2){background-image:linear-gradient(145deg,#743b435c,#27171ba3 65%);border-color:#ad6d6759}
+.thanksgiving-menu .dashboard-shortcuts>button>span{filter:drop-shadow(0 0 12px #dda25177)}
+.thanksgiving-menu .hero-search{background:linear-gradient(120deg,#4c30215c,#29191c5c),var(--background);border-color:#c7965566;box-shadow:inset 0 1px #f6c98b12,0 7px 28px #0003}
+.harvest-season-label{background:linear-gradient(115deg,#80542866,#64323e44);border-color:#d5a66666;color:var(--text);box-shadow:0 0 22px #b97e2420}
+.thanksgiving-menu :is(.site-stats,.site-polls,.community-spotlight,.home-whats-new){background-image:linear-gradient(135deg,#b5782822,transparent 70%,#8d364919);border-color:#b98b4c55}
+html[data-theme="light"] .thanksgiving-menu .site-header{background:linear-gradient(155deg,#edc9915c,#e3b0ae33),var(--background)!important}
+html[data-theme="light"] .thanksgiving-menu .dashboard-shortcuts>button{background:linear-gradient(145deg,#eec99b66,#e6bfb544),var(--surface)!important}
+html[data-theme="light"] .thanksgiving-menu .hero-search{background:linear-gradient(120deg,#eec99b55,#e6bfb533),var(--surface)}
+html[data-theme="light"] .thanksgiving-menu .header-right :is(.active,[aria-current="page"]){background-image:linear-gradient(110deg,#cb93445c,#c27d7329)}
+@media(max-width:700px){.harvest-canopy{height:65px}.harvest-canopy-leaf{width:calc(var(--canopy-size)*.68);height:calc(var(--canopy-size)*.77);opacity:.55}.harvest-canopy-leaf:nth-child(even){display:none}}

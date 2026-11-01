@@ -6,6 +6,8 @@
   const scene=document.createElement('div');scene.className='harvest-scene';scene.setAttribute('aria-hidden','true');
   scene.innerHTML=symbols+'<div class="harvest-glow harvest-glow-amber"></div><div class="harvest-glow harvest-glow-cranberry"></div><div class="harvest-ground"></div>';
   const colors=['#c9863c','#a54c37','#d5a15b','#82643e','#914552'];
+  const canopy=document.createElement('div');canopy.className='harvest-canopy';
+  for(let i=0;i<14;i++){const leaf=document.createElement('span');leaf.className='harvest-canopy-leaf';leaf.style.cssText=`--canopy-left:${i*7.7-2}%;--canopy-top:${-28+i%4*10}px;--canopy-size:${52+i%4*13}px;--canopy-turn:${i%2?25:-35}deg;color:${colors[i%colors.length]}`;leaf.innerHTML='<svg viewBox="0 0 64 72" focusable="false"><use href="#harvest-'+(i%3?'maple':'oak')+'"/></svg>';canopy.append(leaf)}scene.append(canopy);
   for(let i=0;i<10;i++){
     const leaf=document.createElement('span');leaf.className='harvest-leaf';
     leaf.style.cssText=`--leaf-left:${5+i*10}%;--leaf-duration:${24+i%4*5}s;--leaf-delay:${-i*5.7}s;--leaf-size:${16+i%3*6}px;--leaf-sway:${i%2?-55:65}px;--leaf-turn:${i%2?260:-210}deg;color:${colors[i%colors.length]}`;
