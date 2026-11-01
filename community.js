@@ -100,6 +100,7 @@ async function flushPreferences(){
 }
 function savePreferences(){
  const values=localPreferences();for(const key of preferenceKeys){const value=values[key]??'null';if(value!==(knownPreferences[key]??'null'))pendingPreferences[key]=value}knownPreferences=values;
+ if(!Object.keys(pendingPreferences).length)return;
  preferenceStatus.textContent=currentUser?'Saving settings to your account…':'Saved on this device. Sign in to sync across devices.';
  if(currentUser){localStorage.setItem('sg-pending-preferences-'+currentUser.uid,JSON.stringify(pendingPreferences));queuePreferences()}
 }
@@ -118,6 +119,6 @@ function loadCloudPreferences(profile){
  if(changed)document.dispatchEvent(new Event('simplegames:preferences-loaded'));queuePreferences();
 }
 
-document.addEventListener("simplegames:profile",e=>{currentProfile=e.detail.profile;renderAchievements(currentProfile);sendCommunityData();loadCloudPreferences(currentProfile)});
+document.addEventListener("simplegames:profile",e=>{if(e.detail.user?.uid!==currentUser?.uid)return;currentProfile=e.detail.profile;renderAchievements(currentProfile);sendCommunityData();loadCloudPreferences(currentProfile)});
 onAuthStateChanged(auth,user=>{playtimeGate.dispose();tracker.setUser(user?.uid||null);currentUser=user;if(preferenceUid!==user?.uid){clearTimeout(syncTimer);preferenceUid=null;cloudReady=false;pendingPreferences={};knownPreferences=localPreferences()}updatePlaytimeGate();if(user){if(playtimeGate.supported)void tracker.flush();else syncStatus.textContent='Playtime paused: this browser does not support safe multi-tab counting. Please update your browser.'}else{currentProfile=null;syncStatus.textContent='Sign in to save playtime to the leaderboard.';renderAchievements({})}});
 renderRatings();renderAchievements({});
