@@ -17,7 +17,7 @@
   document.body.prepend(scene);
   const season=document.createElement('div');season.className='harvest-season-label';season.innerHTML='<span aria-hidden="true">🍂</span><span>Thanksgiving season</span><span aria-hidden="true">🍂</span>';home.querySelector('.hero-copy')?.prepend(season);
   const startup=document.querySelector('#startup-loader .startup-card');
-  if(startup){const greeting=document.createElement('div');greeting.className='harvest-welcome';greeting.innerHTML='<span aria-hidden="true">🦃</span><h2>A little more thankful.<br>A lot more games.</h2><p>The Thanksgiving update</p>';startup.prepend(greeting)}
+  if(startup){const greeting=document.createElement('div');greeting.className='harvest-welcome';greeting.innerHTML='<span aria-hidden="true">🦃</span><h2>Thanksgiving is coming soon....</h2><p>The Thanksgiving update</p>';startup.prepend(greeting)}
   function pause(){document.body.classList.toggle('harvest-paused',document.hidden)}
   document.addEventListener('visibilitychange',pause);pause();
 })();
