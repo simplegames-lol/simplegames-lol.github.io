@@ -5,9 +5,14 @@ export const items=[
   {id:'halloween-pumpkin',type:'frames',name:'Pumpkin frame',price:UNLOCK_PRICE,color:'#ff922b',seasonal:true},
   {id:'halloween-phantom',type:'frames',name:'Phantom frame',price:UNLOCK_PRICE,color:'#c4b5fd',seasonal:true},
   {id:'halloween-ember',type:'names',name:'Ember name',price:UNLOCK_PRICE,color:'#ff922b',seasonal:true},
-  {id:'halloween-slime',type:'names',name:'Slime name',price:UNLOCK_PRICE,color:'#b5ef63',seasonal:true}
+  {id:'halloween-slime',type:'names',name:'Slime name',price:UNLOCK_PRICE,color:'#b5ef63',seasonal:true},
+  {id:'autumn-turkey',type:'frames',name:'Turkey hat',price:UNLOCK_PRICE,color:'#d5a15b',seasonal:true,collection:'autumn',description:'A little turkey perched on your PFP, with a warm gold outline.'},
+  {id:'autumn-leaves',type:'frames',name:'Falling-leaf frame',price:UNLOCK_PRICE,color:'#c89656',seasonal:true,collection:'autumn',description:'Autumn leaves drift around your profile picture.'},
+  {id:'autumn-cranberry',type:'names',name:'Cranberry name',price:UNLOCK_PRICE,color:'#d56b83',seasonal:true,collection:'autumn',description:'A cranberry-red name with a soft glow.'},
+  {id:'autumn-pie',type:'frames',name:'Pie hat',price:UNLOCK_PRICE,color:'#cc965f',seasonal:true,collection:'autumn',description:'A slice of pie with whipped cream, perched above your PFP.'}
 ];
-export const availableItem=(item,now=Date.now())=>!item.seasonal;
+export const AUTUMN_END=Date.UTC(2026,11,1,5);
+export const availableItem=(item,now=Date.now())=>!item.seasonal||item.collection==='autumn'&&now<AUTUMN_END;
 export const validColor=value=>typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value);
 export const freshWallet=()=>({coins:START_COINS,earnedMinutes:0,owned:[],equipped:{frames:null,names:null},colors:{frames:'#9dbbd9',names:'#9dbbd9'}});
 export function walletView(data){if(!data||!Number.isInteger(data.coins))throw Error('Your wallet could not be read.');return data}

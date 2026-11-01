@@ -1,0 +1,16 @@
+/* Percentage sizing keeps hats readable on chat avatars and larger profile pictures. */
+:is([data-cosmetic="autumn-turkey"],[data-cosmetic="autumn-leaves"],[data-cosmetic="autumn-pie"]){position:relative;overflow:visible!important;isolation:isolate;box-shadow:0 0 0 2px #8c623b,0 0 13px #d8a65c35;border-color:#d5a15b!important}
+:is([data-cosmetic="autumn-turkey"],[data-cosmetic="autumn-leaves"],[data-cosmetic="autumn-pie"])>img{border-radius:50%;object-fit:cover}
+:is([data-cosmetic="autumn-turkey"],[data-cosmetic="autumn-leaves"],[data-cosmetic="autumn-pie"])::after{content:"";position:absolute;display:block;pointer-events:none;z-index:2;background-repeat:no-repeat;background-size:contain;background-position:center;filter:drop-shadow(0 2px 2px #0005)}
+[data-cosmetic="autumn-turkey"]::after{width:112%;height:80%;top:-54%;left:0;transform:rotate(-9deg);background-image:url("assets/autumn-turkey-hat.svg")}
+[data-cosmetic="autumn-pie"]::after{width:102%;height:68%;top:-43%;left:20%;transform:rotate(10deg);background-image:url("assets/autumn-pie-hat.svg")}
+[data-cosmetic="autumn-leaves"]{box-shadow:0 0 0 2px #79552e,0 0 14px #c88c4133}
+[data-cosmetic="autumn-leaves"]::after{inset:-24%;background-image:url("assets/autumn-leaf-frame.svg");animation:autumn-leaf-orbit 26s linear infinite;transform-origin:center}
+[data-cosmetic="autumn-cranberry"]{color:#d56b83!important;text-shadow:0 0 8px #c6436655,0 1px 1px #572333;font-weight:650}
+@keyframes autumn-leaf-orbit{0%{transform:rotate(0deg) scale(.97)}50%{transform:rotate(180deg) scale(1.04)}100%{transform:rotate(360deg) scale(.97)}}
+.real-shop .autumn-collection-heading{grid-column:1/-1;margin:12px 0 0;padding:13px 0;border-top:1px solid var(--border);color:var(--text);font-size:16px}.autumn-collection-heading small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:6px}
+.real-shop-item.autumn-item{border-color:color-mix(in srgb,var(--border) 55%,#a37142);background-image:linear-gradient(145deg,#a7722c17,transparent 65%,#8b354710)}
+.real-shop-item.autumn-item .real-shop-item-visual{height:115px;padding-top:10px;box-sizing:border-box;overflow:visible}
+.inventory-item:has(.inventory-cosmetic-sample){gap:14px}.inventory-cosmetic-sample{display:grid;place-items:center;flex:0 0 32px!important;width:32px;height:32px;border-radius:50%;background:var(--surface);font-size:13px;margin:12px 3px}.inventory-cosmetic-sample[data-cosmetic="autumn-cranberry"]{flex-basis:42px!important;background:transparent}
+html[data-theme="light"] [data-cosmetic="autumn-cranberry"]{color:#9b294b!important;text-shadow:0 0 6px #c6436622}
+@media(prefers-reduced-motion:reduce){[data-cosmetic="autumn-leaves"]::after{animation:none}}

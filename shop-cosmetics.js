@@ -2,7 +2,7 @@ import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,doc,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import {validColor} from './shop-model.js?v=20261101b';
+import {validColor} from './shop-model.js?v=autumn1';
 let auth,db;const watchers=new Map(),bindings=new Map(),cache=new Map();
 document.addEventListener('simplegames:cosmetics-changed',event=>{const uid=event.detail?.uid;if(uid!==auth?.currentUser?.uid)return;cache.delete(uid);watch(uid)});
 function paint(uid){
