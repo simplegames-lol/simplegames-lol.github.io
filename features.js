@@ -314,7 +314,7 @@ accentColor.addEventListener("input", () => { storage.write("sg-accent", accentC
 accentColor.addEventListener("change", () => { storage.write("sg-accent", accentColor.value); applyAppearance(); });
 backgroundColor.addEventListener("input", () => { storage.write("sg-background", backgroundColor.value); applyAppearance(); });
 backgroundColor.addEventListener("change", () => { storage.write("sg-background", backgroundColor.value); applyAppearance(); });
-document.addEventListener('simplegames:preferences-loaded',()=>{themeSelect.value=storage.read('sg-theme','dark');applyTheme(themeSelect.value);applyAppearance();cardSize.value=storage.read('sg-card-size','normal');root.dataset.cardSize=cardSize.value;timezoneSelect.value=storage.read('sg-timezone','auto');applyDisplaySettings();dispatchEvent(new Event('simplegames:timezone'))});
+document.addEventListener('simplegames:preferences-loaded',()=>{if(backgroundStyle)backgroundStyle.value=storage.read('sg-background-style','cover');themeSelect.value=storage.read('sg-theme','dark');applyTheme(themeSelect.value);applyAppearance();cardSize.value=storage.read('sg-card-size','normal');root.dataset.cardSize=cardSize.value;timezoneSelect.value=storage.read('sg-timezone','auto');applyDisplaySettings();dispatchEvent(new Event('simplegames:timezone'))});
 backgroundImageFile?.addEventListener("change", () => {
   const file = backgroundImageFile.files?.[0];
   if (!file) return;
@@ -332,6 +332,7 @@ backgroundImageFile?.addEventListener("change", () => {
       try {
         localStorage.setItem("sg-background-image", JSON.stringify(canvas.toDataURL("image/webp", 0.82)));
         applyAppearance();
+        document.dispatchEvent(new Event("simplegames:preferences-changed"));
       } catch {
         backgroundImageStatus.textContent = "That image is too large. Try a smaller one.";
       }
@@ -344,6 +345,7 @@ document.querySelector("#remove-background")?.addEventListener("click", () => {
   localStorage.removeItem("sg-background-image");
   backgroundImageFile.value = "";
   applyAppearance();
+  document.dispatchEvent(new Event("simplegames:preferences-changed"));
 });
 backgroundStyle?.addEventListener("change", () => { storage.write("sg-background-style", backgroundStyle.value); applyAppearance(); });
 applyAppearance();

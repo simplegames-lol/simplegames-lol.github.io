@@ -87,24 +87,37 @@ window.addEventListener('online',()=>void tracker.flush());
 
 function localPreferences(){return Object.fromEntries(preferenceKeys.map(k=>[k,localStorage.getItem(k)]).filter(([,v])=>v!==null&&v.length<650000))}
 const preferenceStatus=document.createElement('p');preferenceStatus.className='result-count';preferenceStatus.setAttribute('aria-live','polite');$("#settings-panel .settings-card")?.append(preferenceStatus);
+let preferenceUid=null,cloudReady=false,knownPreferences=localPreferences(),pendingPreferences={},preferenceSaving=false;
+function queuePreferences(){clearTimeout(syncTimer);if(currentUser&&cloudReady&&Object.keys(pendingPreferences).length)syncTimer=setTimeout(()=>void flushPreferences(),400)}
+async function flushPreferences(){
+ if(!currentUser||!cloudReady||preferenceSaving||!Object.keys(pendingPreferences).length)return;
+ const uid=currentUser.uid,changes={...pendingPreferences};preferenceSaving=true;
+ try{await updateDoc(doc(db,'users',uid),Object.fromEntries(Object.entries(changes).map(([key,value])=>['preferences.'+key,value])));
+  if(preferenceUid!==uid)return;for(const [key,value]of Object.entries(changes))if(pendingPreferences[key]===value)delete pendingPreferences[key];
+  localStorage.setItem('sg-pending-preferences-'+uid,JSON.stringify(pendingPreferences));preferenceStatus.textContent=Object.keys(pendingPreferences).length?'Syncing settings…':'Settings saved to your account.';
+ }catch(error){if(preferenceUid===uid)preferenceStatus.textContent='Saved on this device. Reconnect to sync your settings.';console.error('Settings sync:',error)}
+ finally{preferenceSaving=false;if(preferenceUid!==uid||Object.keys(pendingPreferences).some(key=>pendingPreferences[key]!==changes[key]))queuePreferences()}
+}
 function savePreferences(){
-  preferenceStatus.textContent='Saved on this browser.';if(!currentUser)return;
-  const uid=currentUser.uid,snapshot=localPreferences();localStorage.setItem(`sg-local-preferences-${uid}`,JSON.stringify(snapshot));
-  preferenceStatus.textContent='Saved locally · syncing account…';clearTimeout(syncTimer);
-  syncTimer=setTimeout(async()=>{try{await updateDoc(doc(db,'users',uid),{preferences:snapshot});preferenceStatus.textContent='Settings saved to your account.'}catch(error){preferenceStatus.textContent='Saved on this browser. Account sync failed—check your connection or Firebase rules.';console.error('Settings sync:',error)}},300);
+ const values=localPreferences();for(const key of preferenceKeys){const value=values[key]??'null';if(value!==(knownPreferences[key]??'null'))pendingPreferences[key]=value}knownPreferences=values;
+ preferenceStatus.textContent=currentUser?'Saving settings to your account…':'Saved on this device. Sign in to sync across devices.';
+ if(currentUser){localStorage.setItem('sg-pending-preferences-'+currentUser.uid,JSON.stringify(pendingPreferences));queuePreferences()}
 }
-$("#settings-panel")?.addEventListener("change",savePreferences);$("#settings-panel")?.addEventListener("input",savePreferences);$("#background-image-file")?.addEventListener("change",()=>setTimeout(savePreferences,2000));$("#theme-toggle")?.addEventListener("click",savePreferences);
-document.addEventListener('simplegames:settings-reset',savePreferences);
+$("#settings-panel")?.addEventListener("change",savePreferences);$("#settings-panel")?.addEventListener("input",savePreferences);$("#theme-toggle")?.addEventListener("click",savePreferences);
+document.addEventListener('simplegames:preferences-changed',savePreferences);document.addEventListener('simplegames:settings-reset',savePreferences);
+window.addEventListener('online',queuePreferences);
 function loadCloudPreferences(profile){
-  if(!currentUser)return;const uid=currentUser.uid,marker=`sg-cloud-loaded-${uid}`;if(sessionStorage.getItem(marker))return;
-  let local;try{local=JSON.parse(localStorage.getItem(`sg-local-preferences-${uid}`))}catch{}
-  const hasLocal=preferenceKeys.some(key=>localStorage.getItem(key)!==null);
-  const source=hasLocal?localPreferences():(local||profile.preferences);sessionStorage.setItem(marker,'1');
-  if(!source){savePreferences();return}
-  let changed=false;for(const[key,value]of Object.entries(source)){if(preferenceKeys.includes(key)&&typeof value==='string'&&localStorage.getItem(key)!==value){localStorage.setItem(key,value);changed=true}}
-  if(local||hasLocal){updateDoc(doc(db,'users',uid),{preferences:localPreferences()}).catch(error=>console.error('Settings sync:',error))}
-  if(changed)document.dispatchEvent(new Event('simplegames:preferences-loaded'));
+ if(!currentUser)return;const uid=currentUser.uid;
+ if(preferenceUid!==uid){clearTimeout(syncTimer);preferenceUid=uid;cloudReady=false;pendingPreferences={};try{const saved=JSON.parse(localStorage.getItem('sg-pending-preferences-'+uid)||'{}');for(const key of preferenceKeys)if(typeof saved[key]==='string'&&saved[key].length<650000)pendingPreferences[key]=saved[key]}catch{}}
+ const cloud=profile.preferences,hasCloud=cloud&&typeof cloud==='object'&&!Array.isArray(cloud);
+ // Migrate browser choices only once, when the account has no preferences yet.
+ if(!cloudReady&&!hasCloud)pendingPreferences={...localPreferences(),...pendingPreferences};
+ const source={...(hasCloud?cloud:{}),...pendingPreferences};let changed=false;
+ for(const key of preferenceKeys){const value=source[key];if(typeof value==='string'&&value.length<650000){if(localStorage.getItem(key)!==value){localStorage.setItem(key,value);changed=true}}else if(hasCloud&&localStorage.getItem(key)!==null){localStorage.removeItem(key);changed=true}}
+ cloudReady=true;knownPreferences=localPreferences();localStorage.setItem('sg-pending-preferences-'+uid,JSON.stringify(pendingPreferences));
+ if(changed)document.dispatchEvent(new Event('simplegames:preferences-loaded'));queuePreferences();
 }
+
 document.addEventListener("simplegames:profile",e=>{currentProfile=e.detail.profile;renderAchievements(currentProfile);sendCommunityData();loadCloudPreferences(currentProfile)});
-onAuthStateChanged(auth,user=>{playtimeGate.dispose();tracker.setUser(user?.uid||null);currentUser=user;updatePlaytimeGate();if(user){if(playtimeGate.supported)void tracker.flush();else syncStatus.textContent='Playtime paused: this browser does not support safe multi-tab counting. Please update your browser.'}else{currentProfile=null;syncStatus.textContent='Sign in to save playtime to the leaderboard.';renderAchievements({})}});
+onAuthStateChanged(auth,user=>{playtimeGate.dispose();tracker.setUser(user?.uid||null);currentUser=user;if(preferenceUid!==user?.uid){clearTimeout(syncTimer);preferenceUid=null;cloudReady=false;pendingPreferences={};knownPreferences=localPreferences()}updatePlaytimeGate();if(user){if(playtimeGate.supported)void tracker.flush();else syncStatus.textContent='Playtime paused: this browser does not support safe multi-tab counting. Please update your browser.'}else{currentProfile=null;syncStatus.textContent='Sign in to save playtime to the leaderboard.';renderAchievements({})}});
 renderRatings();renderAchievements({});
