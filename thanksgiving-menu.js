@@ -17,7 +17,7 @@
   const left=document.createElement('div');left.className='harvest-sprig harvest-sprig-left';left.innerHTML=sprig;scene.append(left);
   const right=left.cloneNode(true);right.className='harvest-sprig harvest-sprig-right';scene.append(right);
   document.body.prepend(scene);
-  const season=document.createElement('div');season.className='harvest-season-label';season.innerHTML='<span aria-hidden="true">🍂</span><span>Thanksgiving season</span><span aria-hidden="true">🍂</span>';home.querySelector('.hero-copy')?.prepend(season);
+  const season=document.createElement('div');season.className='harvest-season-label';season.innerHTML='<span aria-hidden="true">🍂</span><span>Autumn season</span><span aria-hidden="true">🍂</span>';home.querySelector('.hero-copy')?.prepend(season);
   const startup=document.querySelector('#startup-loader .startup-card');
   if(startup){const greeting=document.createElement('div');greeting.className='harvest-welcome';greeting.innerHTML='<h2><span aria-hidden="true">🦃</span> Thanksgiving is coming soon....</h2>';startup.prepend(greeting)}
   function pause(){document.body.classList.toggle('harvest-paused',document.hidden)}
