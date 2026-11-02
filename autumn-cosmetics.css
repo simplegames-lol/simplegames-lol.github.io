@@ -12,15 +12,11 @@
 .autumn-leaf-1{right:-17%;--drift-x:-35%;--drift-angle:-28deg;animation-duration:6.8s;animation-delay:-4.1s;filter:hue-rotate(-19deg) saturate(.9)}
 .autumn-leaf-2{right:10%;--drift-x:45%;--drift-angle:18deg;animation-duration:7.5s;animation-delay:-6.3s;width:19%;height:24%}
 @keyframes autumn-leaf-drift{0%{opacity:0;transform:translate(0,0) rotate(-12deg)}16%{opacity:.9}45%{transform:translate(var(--drift-x),190%) rotate(var(--drift-angle))}80%{opacity:.8}100%{opacity:0;transform:translate(0,390%) rotate(-8deg)}}
-[data-cosmetic="autumn-cranberry"]{position:relative;display:inline-block;box-sizing:border-box;width:fit-content;max-width:100%;padding-right:1.8em;overflow:visible!important;isolation:isolate;color:#d95a76!important;text-shadow:0 0 8px #c6436644,0 1px 1px #572333;font-weight:650}
-[data-cosmetic="autumn-cranberry"]::after{content:"";position:absolute;right:0;top:-.15em;width:1.5em;height:1.25em;background:url("assets/autumn-cranberry-sprig.svg") center/contain no-repeat;pointer-events:none;filter:drop-shadow(0 1px 1px #0003)}
-.real-shop #real-shop-name[data-cosmetic="autumn-cranberry"]{margin-inline:auto}
 .real-shop #real-shop-avatar:is([data-cosmetic="autumn-turkey"],[data-cosmetic="autumn-pie"]){margin-top:42px}
 .friend-avatar [data-style="autumn-turkey"].autumn-decoration::after,.mutual-friend [data-style="autumn-turkey"].autumn-decoration::after{top:-48%;height:62%}
 .friend-avatar [data-style="autumn-pie"].autumn-decoration::after,.mutual-friend [data-style="autumn-pie"].autumn-decoration::after{top:-42%;height:55%}
 .real-shop .autumn-collection-heading{grid-column:1/-1;margin:12px 0 0;padding:13px 0;border-top:1px solid var(--border);color:var(--text);font-size:16px}.autumn-collection-heading small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:6px}
 .real-shop-item.autumn-item{border-color:color-mix(in srgb,var(--border) 55%,#a37142);background-image:linear-gradient(145deg,#a7722c17,transparent 65%,#8b354710)}
 .real-shop-item.autumn-item .real-shop-item-visual{height:115px;padding-top:10px;box-sizing:border-box;overflow:visible}
-.inventory-item:has(.inventory-cosmetic-sample){gap:14px}.inventory-cosmetic-sample{display:grid;place-items:center;flex:0 0 32px!important;width:32px;height:32px;border-radius:50%;background:var(--surface);font-size:13px;margin:12px 3px}.inventory-cosmetic-sample[data-cosmetic="autumn-cranberry"]{flex-basis:42px!important;background:transparent}
-html[data-theme="light"] [data-cosmetic="autumn-cranberry"]{color:#9b294b!important;text-shadow:0 0 6px #c6436622}
+.inventory-item:has(.inventory-cosmetic-sample){gap:14px}.inventory-cosmetic-sample{display:grid;place-items:center;flex:0 0 32px!important;width:32px;height:32px;border-radius:50%;background:var(--surface);font-size:13px;margin:12px 3px}
 @media(prefers-reduced-motion:reduce){.autumn-leaf-particle{animation:none;display:none}}

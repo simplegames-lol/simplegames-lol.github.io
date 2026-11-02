@@ -8,7 +8,6 @@ export const items=[
   {id:'halloween-slime',type:'names',name:'Slime name',price:UNLOCK_PRICE,color:'#b5ef63',seasonal:true},
   {id:'autumn-turkey',type:'frames',name:'Turkey hat',price:UNLOCK_PRICE,color:'#d5a15b',seasonal:true,collection:'autumn',description:'A little turkey perched on your PFP, with a warm gold outline.'},
   {id:'autumn-leaves',type:'frames',name:'Falling-leaf frame',price:UNLOCK_PRICE,color:'#c89656',seasonal:true,collection:'autumn',description:'Autumn leaves drift around your profile picture.'},
-  {id:'autumn-cranberry',type:'names',name:'Cranberry name',price:UNLOCK_PRICE,color:'#d56b83',seasonal:true,collection:'autumn',description:'A cranberry-red name with a soft glow.'},
   {id:'autumn-pie',type:'frames',name:'Pie hat',price:UNLOCK_PRICE,color:'#cc965f',seasonal:true,collection:'autumn',description:'A slice of pie with whipped cream, perched above your PFP.'}
 ];
 export const AUTUMN_END=Date.UTC(2026,11,1,5);
