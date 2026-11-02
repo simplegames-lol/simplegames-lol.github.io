@@ -36,7 +36,9 @@ export function profileBanner(data) {
   return banner;
 }
 document.addEventListener('simplegames:profile',event => {
-  const summary=document.querySelector('.profile-summary');
+  const header=document.querySelector('#social-view .profile-row');
   document.querySelector('#own-profile-banner')?.remove();
-  if(summary && event.detail.profile.bannerImage) { const banner=profileBanner(event.detail.profile); banner.id='own-profile-banner'; summary.before(banner); }
+  if(header && event.detail.profile.bannerImage) { const banner=profileBanner(event.detail.profile); banner.id='own-profile-banner'; banner.style.height='112px';banner.style.aspectRatio='auto';banner.style.margin='0 0 20px';header.before(banner); }
 });
+
+document.addEventListener('simplegames:auth',()=>document.querySelector('#own-profile-banner')?.remove());

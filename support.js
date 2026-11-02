@@ -42,7 +42,7 @@ function updateSupportBadge(){const count=[...badgeTickets.entries()].filter(([i
 function refreshTicketReplies(version){for(const[id,data]of badgeTickets){if(data.status!=='open'){ticketReplyState.delete(id);continue}const stamp=data.updatedAt?.toMillis?.()||data.createdAt?.toMillis?.()||0;if(ticketReplyState.get(id)?.stamp===stamp)continue;ticketReplyState.set(id,{stamp,last:null});getDocs(query(collection(db,'supportTickets',id,'messages'),orderBy('createdAt','desc'),limit(1))).then(snap=>{if(version!==notificationVersion||ticketReplyState.get(id)?.stamp!==stamp)return;ticketReplyState.set(id,{stamp,last:snap.empty?{staff:false}:snap.docs[0].data()});updateSupportBadge()}).catch(()=>{if(version===notificationVersion&&ticketReplyState.get(id)?.stamp===stamp)ticketReplyState.delete(id)})}}
 function readTicketNotification(id,data){if(!user)return;readTickets[id]=data.updatedAt?.toMillis?.()||data.createdAt?.toMillis?.()||Date.now();try{localStorage.setItem('sg-support-read-'+user.uid,JSON.stringify(readTickets))}catch{}updateSupportBadge()}
 function beginStaffNotifications(next){
- notificationVersion++;const version=notificationVersion;
+ notificationVersion++;const version=notificationVersion;window.simpleGamesStaffAccess={...window.simpleGamesStaffAccess,support:{uid:next?.uid||null,owner:false,staff:false}};document.dispatchEvent(new Event('simplegames:staff-access'));
  notificationStops.forEach(stop=>stop());notificationStops=[];stopTicketNotifications();stopTicketNotifications=()=>{};
  document.querySelectorAll('.support-ticket-toast').forEach(el=>el.remove());badgeTickets.clear();ticketReplyState.clear();readTickets={};updateSupportBadge();
  if(!next)return;
@@ -50,7 +50,7 @@ function beginStaffNotifications(next){
  let configReady=false,roleReady=false,isOwner=false,isStaff=false,mode=null;
  const refresh=()=>{
   if(version!==notificationVersion||!configReady||!roleReady)return;
-  owner=isOwner;staff=isOwner||isStaff;
+  owner=isOwner;staff=isOwner||isStaff;window.simpleGamesStaffAccess={...window.simpleGamesStaffAccess,support:{uid:next.uid,owner,staff}};document.dispatchEvent(new Event('simplegames:staff-access'));
   panel.querySelector('[data-support-view="staff"]').hidden=!staff;panel.querySelector('[data-support-view="team"]').hidden=!owner;
   const nextMode=staff?'staff':'member';if(mode===nextMode)return;mode=nextMode;stopTicketNotifications();
   let baseline=false;const seen=new Set(),started=Date.now();
@@ -88,3 +88,5 @@ $('#support-ticket-state').onclick=async()=>{if(!staff||!active)return;const id=
 $('#support-reply-form').onsubmit=async event=>{event.preventDefault();if(!user||!active||active.status==='closed')return;const form=event.currentTarget,text=form.elements.message.value.trim(),submit=form.querySelector('button');if(!text)return;submit.disabled=true;const uid=user.uid,id=active.id;try{const profile=await getDoc(doc(db,'users',uid));if(user?.uid!==uid)return;const batch=writeBatch(db);batch.set(doc(collection(db,'supportTickets',id,'messages')),{senderUid:uid,senderName:profile.data()?.username||'Member',staff,text,createdAt:serverTimestamp()});batch.update(doc(db,'supportTickets',id),{updatedAt:serverTimestamp()});await batch.commit();form.reset();say('Reply sent.')}catch(e){say(errorText(e))}finally{submit.disabled=false}};
 $('#support-staff-form').onsubmit=async event=>{event.preventDefault();if(!owner)return;const form=event.currentTarget,submit=form.querySelector('button');submit.disabled=true;try{const found=await findUser(db,form.elements.username.value);if(!found)throw Error('missing');const config=await getDoc(doc(db,'supportSettings','access'));if(found.uid===config.data()?.ownerUid){say('That account is already the owner.');return}await setDoc(doc(db,'supportStaff',found.uid),{role:form.elements.role.value,username:found.username,grantedBy:user.uid,grantedAt:serverTimestamp()});form.reset();await show('team');say('Staff access granted.')}catch(e){say(e.message==='missing'?'Username not found.':errorText(e))}finally{submit.disabled=false}};
 new MutationObserver(()=>{if(panel.hidden)stop()}).observe(panel,{attributes:true,attributeFilter:['hidden']});
+
+document.addEventListener('simplegames:open-support',async event=>{const view=event.detail?.view,uid=user?.uid;if(!['staff','closed','team'].includes(view)||!uid)return;await open();if(user?.uid!==uid||panel.hidden)return;if(view==='team'?!owner:!staff)return;await show(view)});

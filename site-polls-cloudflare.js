@@ -43,9 +43,9 @@ async function vote(k){
  finally{busy=false;if(version===generation){render();if(failure)say(failure.message);else refresh()}}
 }
 onAuthStateChanged(auth,async next=>{
- user=next;const version=++generation;staff=owner=false;choice=null;readReady=false;$('poll-staff-status').textContent='';$('poll-team-status').textContent='';$('poll-staff-list').replaceChildren();$('poll-account').hidden=!next;$('poll-account-id').value=next?.uid||'';render();refresh();
+ user=next;const version=++generation;staff=owner=false;window.simpleGamesStaffAccess={...window.simpleGamesStaffAccess,polls:{uid:next?.uid||null,owner:false,staff:false}};document.dispatchEvent(new Event('simplegames:staff-access'));choice=null;readReady=false;$('poll-staff-status').textContent='';$('poll-team-status').textContent='';$('poll-staff-list').replaceChildren();$('poll-account').hidden=!next;$('poll-account-id').value=next?.uid||'';render();refresh();
  if(!next)return;
- try{const result=await api('/polls/staff',{body:{},account:next});if(version!==generation)return;staff=result.staff;owner=result.owner;render();refresh();if(!result.configured)$('poll-staff-status').textContent='Poll owner setup is pending in Cloudflare. Voting is available.'}catch(e){if(version===generation){$('poll-tools').hidden=true;$('poll-staff-status').textContent='Staff controls unavailable: '+e.message}}
+ try{const result=await api('/polls/staff',{body:{},account:next});if(version!==generation)return;staff=result.staff;owner=result.owner;window.simpleGamesStaffAccess={...window.simpleGamesStaffAccess,polls:{uid:next.uid,owner,staff}};document.dispatchEvent(new Event('simplegames:staff-access'));render();refresh();if(!result.configured)$('poll-staff-status').textContent='Poll owner setup is pending in Cloudflare. Voting is available.'}catch(e){if(version===generation){$('poll-tools').hidden=true;$('poll-staff-status').textContent='Staff controls unavailable: '+e.message}}
 });
 async function teamList(){
  if(!owner||!user)return;const account=user,version=generation;
