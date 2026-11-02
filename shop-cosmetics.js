@@ -3,8 +3,8 @@ import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,doc,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {validColor} from './shop-model.js?v=autumn1';
-let auth,db;const watchers=new Map(),bindings=new Map(),cache=new Map();
-document.addEventListener('simplegames:cosmetics-changed',event=>{const uid=event.detail?.uid;if(uid!==auth?.currentUser?.uid)return;cache.delete(uid);watch(uid)});
+let auth,db,session=0,requestSerial=0;const watchers=new Map(),bindings=new Map(),cache=new Map();
+document.addEventListener('simplegames:cosmetics-changed',event=>{const uid=event.detail?.uid;if(uid!==auth?.currentUser?.uid)return;watchers.delete(uid);if(event.detail.cosmetics){cache.set(uid,{...event.detail.cosmetics,_loadedAt:Date.now()});paint(uid)}else{cache.delete(uid);watch(uid)}});
 function paint(uid){
   const data=cache.get(uid)||{},rows=bindings.get(uid)||[];
   // Rows may be bound just before their parent is attached to the page.
@@ -18,11 +18,11 @@ function paint(uid){
 function watch(uid){
   if(watchers.has(uid)||!auth?.currentUser)return;
   const existing=cache.get(uid);if(existing?._loadedAt&&Date.now()-existing._loadedAt<300000){paint(uid);return}
-  watchers.set(uid,()=>{});getDoc(doc(db,'shopProfiles',uid)).then(snapshot=>{if(!auth.currentUser)return;cache.set(uid,{...(snapshot.data()||{}),_loadedAt:Date.now()});paint(uid)}).catch(()=>{}).finally(()=>watchers.delete(uid));
+  const version=session,viewer=auth.currentUser.uid,request=++requestSerial;watchers.set(uid,request);getDoc(doc(db,'shopProfiles',uid)).then(snapshot=>{if(session!==version||auth.currentUser?.uid!==viewer||watchers.get(uid)!==request)return;cache.set(uid,{...(snapshot.data()||{}),_loadedAt:Date.now()});paint(uid)}).catch(()=>{}).finally(()=>{if(watchers.get(uid)===request)watchers.delete(uid)});
 }
 export function bindCosmetics(uid,avatar,name){
   if(!uid)return;
-  if(!auth){auth=getAuth(getApp());db=getFirestore(getApp());onAuthStateChanged(auth,user=>{watchers.forEach(stop=>stop());watchers.clear();cache.clear();for(const [key,rows] of bindings){const connected=rows.filter(row=>row.avatar?.isConnected||row.name?.isConnected);if(!connected.length){bindings.delete(key);continue}bindings.set(key,connected);paint(key);if(user)watch(key)}})}
+  if(!auth){auth=getAuth(getApp());db=getFirestore(getApp());onAuthStateChanged(auth,user=>{session++;watchers.clear();cache.clear();for(const [key,rows] of bindings){const connected=rows.filter(row=>row.avatar?.isConnected||row.name?.isConnected);if(!connected.length){bindings.delete(key);continue}bindings.set(key,connected);paint(key);if(user)watch(key)}})}
   const rows=(bindings.get(uid)||[]).filter(row=>row.avatar?.isConnected||row.name?.isConnected);
   if(!rows.some(row=>row.avatar===avatar&&row.name===name))rows.push({avatar,name,color:name?.style.color||'',outline:avatar?.style.outline||'',offset:avatar?.style.outlineOffset||''});
   bindings.set(uid,rows);watch(uid);paint(uid);

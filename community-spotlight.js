@@ -3,7 +3,7 @@ import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,collection,query,orderBy,limit,getDocs,doc,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {completedSpotlightWeek,spotlightPeriodLabel} from './spotlight-period.js?v=2';
-import {bindCosmetics} from './shop-cosmetics.js?v=autumn1';
+import {bindCosmetics} from './shop-cosmetics.js?v=cosmeticfix1';
 const host=document.createElement('section');host.id='community-spotlight';host.className='community-spotlight';host.setAttribute('aria-label','Community spotlight');document.querySelector('#site-polls')?.after(host);
 const auth=getAuth(getApp()),db=getFirestore(getApp());
 let visible=false,loaded='',generation=0,pending=false,retryAt=0,timer;const cache=new Map();

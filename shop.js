@@ -2,7 +2,7 @@ import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,doc,onSnapshot,getDoc} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import {items,validColor,dailyAvailable,dailyRemaining,availableItem} from './shop-model.js?v=autumn1';
+import {items,validColor,dailyAvailable,dailyRemaining,availableItem,publicCosmetics} from './shop-model.js?v=autumn1';
 import {initializeWallet,shopAction,localShopPreview} from './shop-api.js?v=autumn1';
 const auth=getAuth(getApp()),db=getFirestore(getApp());
 const panel=document.createElement('section');panel.className='real-shop';panel.hidden=true;panel.setAttribute('aria-label','Shop');
@@ -53,7 +53,7 @@ async function perform(action,id,color,enabled=true){
   if(action==='cosmetic')previewItem=null;
   if(busy||!user)return;if(!walletReady)return status('Wait for your wallet to connect before saving.');busy=true;draw();status(action==='daily'?'Claiming your 100 coins…':action==='buy'?'Saving your unlock…':'Saving your color…');const version=epoch,uid=user.uid;
   const waiting=setTimeout(()=>{if(version===epoch&&busy)status('Firebase is still confirming this change. Please do not submit it again.')},12000);
-  try{const saved=await shopAction(uid,action,id,color,enabled);if(version===epoch){if(saved){wallet=saved;walletReady=true}if(action==='cosmetic')document.dispatchEvent(new CustomEvent('simplegames:cosmetics-changed',{detail:{uid}}));status(action==='daily'?'Daily bonus claimed: +100 coins.':action==='buy'?'Unlocked. Equip it whenever you like.':'Saved. No coins charged.')}}
+  try{const saved=await shopAction(uid,action,id,color,enabled);if(version===epoch){if(saved){wallet=saved;walletReady=true}if(action==='cosmetic')document.dispatchEvent(new CustomEvent('simplegames:cosmetics-changed',{detail:{uid,cosmetics:publicCosmetics(wallet)}}));status(action==='daily'?'Daily bonus claimed: +100 coins.':action==='buy'?'Unlocked. Equip it whenever you like.':'Saved. No coins charged.')}}
   catch(error){if(version===epoch){if(['permission-denied','resource-exhausted','unavailable'].includes(error.code)){walletReady=false;retry.hidden=false}status(friendly(error))}}
   finally{clearTimeout(waiting);if(version===epoch){busy=false;draw()}}
 }
