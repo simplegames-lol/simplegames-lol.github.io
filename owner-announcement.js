@@ -16,3 +16,5 @@ form.onsubmit=e=>{e.preventDefault();void publish(true)};editor.querySelector('[
 document.querySelector('#settings-open')?.addEventListener('click',()=>void checkOwner());onAuthStateChanged(auth,()=>{version++;owner=false;editor.hidden=true;feedback.textContent='';if(!document.querySelector('#settings-panel')?.hidden)void checkOwner()});document.addEventListener('visibilitychange',()=>void refresh());window.addEventListener('storage',e=>{if(e.key==='sg-dismissed-banner')render()});void refresh();
 
 document.addEventListener('simplegames:open-announcement-editor',async()=>{const settings=document.querySelector('#settings-panel');settings.hidden=false;await checkOwner();if(!owner)return;editor.open=true;editor.scrollIntoView({block:'center'});form.elements.title.focus()});
+
+export async function prepareAnnouncementForStaff(){await checkOwner();if(!owner)throw Error('Only the owner can publish announcements.');editor.open=true;return {element:editor,close:()=>{editor.open=false}}}

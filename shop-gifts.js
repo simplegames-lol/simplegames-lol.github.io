@@ -11,15 +11,15 @@ section.querySelector('form').style.cssText='display:flex;flex-wrap:wrap;gap:12p
 section.querySelectorAll('label').forEach(label=>{label.style.cssText='display:grid;gap:6px'});
 section.querySelectorAll('input').forEach(input=>{input.style.cssText='background:var(--background);color:inherit;border:1px solid var(--border);border-radius:8px;padding:10px'});
 const shop=document.querySelector('.real-shop');shop?.querySelector('.real-shop-layout')?.before(section);
-let owner=false,generation=0,stop=()=>{},busy=false;
+let owner=false,generation=0,stop=()=>{},busy=false,embedded=false;
 const message=section.querySelector('p'),form=section.querySelector('form');
 const receiptKey='sg-owner-pending-grant';
 function remember(value){try{if(value)sessionStorage.setItem(receiptKey,JSON.stringify(value));else sessionStorage.removeItem(receiptKey)}catch{}}
 let pending=null;try{pending=JSON.parse(sessionStorage.getItem(receiptKey)||'null')}catch{}
 async function readWithDeadline(promise){let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Firebase did not finish the account lookup. No new transfer was submitted. Check your connection and retry.')),12000)})])}finally{clearTimeout(timer)}}
-async function checkOwner(){const user=auth.currentUser,version=++generation;owner=false;section.hidden=true;section.style.display='none';if(!user||shop?.hidden)return;try{const snap=await getDocFromServer(doc(db,'supportSettings','access'));if(version!==generation||shop.hidden)return;owner=snap.data()?.ownerUid===user.uid;section.hidden=!owner;section.style.display=owner?'block':'none';if(owner&&pending?.ownerUid===user.uid){const values=JSON.parse(pending.fingerprint);form.elements.username.value=pending.username==='your account'?'':pending.username||'';form.elements.amount.value=values[2];form.elements.reason.value=values[3];message.textContent='A previous transfer needs confirmation. Retry the same details to avoid sending twice.'}}catch{owner=false}}
+async function checkOwner(){const user=auth.currentUser,version=++generation;owner=false;section.hidden=true;section.style.display='none';if(!user||(!embedded&&shop?.hidden))return;try{const snap=await getDocFromServer(doc(db,'supportSettings','access'));if(version!==generation||(!embedded&&shop.hidden))return;owner=snap.data()?.ownerUid===user.uid;section.hidden=!owner;section.style.display=owner?'block':'none';if(owner&&pending?.ownerUid===user.uid){const values=JSON.parse(pending.fingerprint);form.elements.username.value=pending.username==='your account'?'':pending.username||'';form.elements.amount.value=values[2];form.elements.reason.value=values[3];message.textContent='A previous transfer needs confirmation. Retry the same details to avoid sending twice.'}}catch{owner=false}}
 onAuthStateChanged(auth,()=>{generation++;owner=false;section.hidden=true;section.style.display='none';if(!shop?.hidden)void checkOwner()});
-if(shop)new MutationObserver(()=>{if(!shop.hidden)void checkOwner();else{generation++;owner=false;section.hidden=true;section.style.display='none'}}).observe(shop,{attributes:true,attributeFilter:['hidden']});
+if(shop)new MutationObserver(()=>{if(embedded)return;if(!shop.hidden)void checkOwner();else{generation++;owner=false;section.hidden=true;section.style.display='none'}}).observe(shop,{attributes:true,attributeFilter:['hidden']});
 form.onsubmit=async event=>{
  event.preventDefault();if(!owner||!auth.currentUser||busy)return;
  if(['localhost','127.0.0.1'].includes(location.hostname)){message.textContent='Coin gifts are disabled in local preview.';return}
@@ -40,3 +40,5 @@ form.onsubmit=async event=>{
  }catch(error){if(version===generation)message.textContent=error.code==='permission-denied'?(error.message?.startsWith('Owner coin check:')?error.message:'Owner coin check: Firebase blocked '+stage+'. No coins were confirmed.'):error.code==='resource-exhausted'?'Firebase daily usage limit reached. No transfer was confirmed. Wait for quota recovery, then retry the same details.':error.code==='unavailable'?'Firebase is offline. Check the recipient balance before retrying; use the same details to prevent a duplicate.':error.message||'Transfer could not be confirmed.';if(writing&&['permission-denied','failed-precondition','owner-grant-precondition'].includes(error.code)){remember(null);pending=null}}
  finally{clearTimeout(waiting);busy=false;form.querySelector('button').disabled=false}
 };
+
+export async function prepareOwnerCoinsForStaff(){embedded=true;await checkOwner();if(!owner){embedded=false;throw Error('Only the owner can give coins.')}return {element:section,close:()=>{embedded=false;generation++;owner=false;section.hidden=true;section.style.display='none'}}}

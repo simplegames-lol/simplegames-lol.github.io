@@ -90,3 +90,9 @@ $('#support-staff-form').onsubmit=async event=>{event.preventDefault();if(!owner
 new MutationObserver(()=>{if(panel.hidden)stop()}).observe(panel,{attributes:true,attributeFilter:['hidden']});
 
 document.addEventListener('simplegames:open-support',async event=>{const view=event.detail?.view,uid=user?.uid;if(!['staff','closed','team'].includes(view)||!uid)return;await open();if(user?.uid!==uid||panel.hidden)return;if(view==='team'?!owner:!staff)return;await show(view)});
+
+export async function prepareSupportForStaff(view){
+ if(!['staff','closed','team'].includes(view))throw Error('Unknown support tool.');
+ const uid=user?.uid;if(!uid)throw Error('Sign in to open support tools.');const loading=open();panel.hidden=true;await loading;
+ if(user?.uid!==uid||(view==='team'?!owner:!staff)){close();throw Error('You do not have access to this support tool.')}await show(view);return {element:panel,mount:()=>{panel.hidden=false},close};
+}
