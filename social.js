@@ -11,7 +11,7 @@ import{incomingSummary,groupNotificationText}from'./notification-logic.js?v=3';
 import{findUser,normalizeUsername}from'./user-lookup.js?v=1';
 const notificationSessionStarted=Date.now();
 const friendPresence=createFriendPresenceDetector({since:notificationSessionStarted});
-import{bannerChanges,bannerSaved,profileBanner}from'./banner-editor.js?v=staffnav1';
+import{bannerChanges,bannerSaved,profileBanner}from'./banner-editor.js?v=bannerfit2';
 import{renderPodium}from'./leaderboard-podium.js?v=nocranberry1';
 const app=initializeApp({apiKey:"AIzaSyDzJu7zyLTZWwffbS5wcxAGym5orePvNKg",authDomain:"simplegames-23c2c.firebaseapp.com",projectId:"simplegames-23c2c",storageBucket:"simplegames-23c2c.firebasestorage.app",messagingSenderId:"993873419513",appId:"1:993873419513:web:14e22dfff6d7f0c7051628",measurementId:"G-NC81W7MYG0"});
 const auth=getAuth(app),db=getFirestore(app),$=s=>document.querySelector(s),panel=$("#social-panel"),authView=$("#auth-view"),socialView=$("#social-view"),status=$("#social-status");

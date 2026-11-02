@@ -38,7 +38,7 @@ export function profileBanner(data) {
 document.addEventListener('simplegames:profile',event => {
   const header=document.querySelector('#social-view .profile-row');
   document.querySelector('#own-profile-banner')?.remove();
-  if(header && event.detail.profile.bannerImage) { const banner=profileBanner(event.detail.profile); banner.id='own-profile-banner'; banner.style.height='112px';banner.style.aspectRatio='auto';banner.style.margin='0 0 20px';header.before(banner); }
+  if(header && event.detail.profile.bannerImage) { const banner=profileBanner(event.detail.profile); banner.id='own-profile-banner'; banner.style.height='auto';banner.style.aspectRatio='3 / 1';banner.style.margin='0 0 20px';header.before(banner); }
 });
 
 document.addEventListener('simplegames:auth',()=>document.querySelector('#own-profile-banner')?.remove());
