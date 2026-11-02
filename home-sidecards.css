@@ -1,14 +1,20 @@
 /* Keep the existing compact menu in the center; use desktop space for side cards. */
 @media(min-width:1180px){
- .dashboard-hero{grid-template-columns:minmax(170px,220px) minmax(330px,440px) minmax(170px,220px);grid-template-areas:"spotlight intro updates" "spotlight shortcuts updates" ". stats ." ". poll .";gap:16px 22px;justify-content:center;align-content:start;align-items:start;padding-top:clamp(34px,7vh,76px);overflow:visible}
- .dashboard-hero:has(>.owner-announcement:not([hidden])){grid-template-areas:"banner banner banner" "spotlight intro updates" "spotlight shortcuts updates" ". stats ." ". poll ."}
+ .dashboard-hero{grid-template-columns:minmax(200px,270px) minmax(330px,440px) minmax(200px,270px);grid-template-areas:". intro ." "spotlight shortcuts updates" "spotlight stats updates" ". poll .";gap:16px 22px;justify-content:center;align-content:start;align-items:start;padding-top:clamp(34px,7vh,76px);overflow:visible}
+ .dashboard-hero:has(>.owner-announcement:not([hidden])){grid-template-areas:"banner banner banner" ". intro ." "spotlight shortcuts updates" "spotlight stats updates" ". poll ."}
  .dashboard-hero>.hero-copy{grid-area:intro;width:100%;max-width:440px}
  .dashboard-hero>.dashboard-shortcuts{grid-area:shortcuts;width:100%;max-width:440px;margin:4px 0 0!important}
  .dashboard-hero>.site-stats{grid-area:stats;width:100%;margin:0!important}
  .dashboard-hero>.site-polls{grid-area:poll;width:100%;margin:0!important}
- .dashboard-hero>.community-spotlight{grid-area:spotlight;width:100%;margin:8px 0 0!important;align-self:start}
- .dashboard-hero>.home-whats-new{grid-area:updates;width:100%;margin:8px 0 0!important;align-self:start;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+ .dashboard-hero>.community-spotlight{grid-area:spotlight;width:100%;margin:4px 0 0!important;align-self:start}
+ .dashboard-hero>.home-whats-new{grid-area:updates;width:100%;margin:4px 0 0!important;align-self:start;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
  .dashboard-hero>.owner-announcement{grid-area:banner;width:min(100%,880px);justify-self:center;margin:0 0 6px}
+ .dashboard-hero>:is(.community-spotlight,.home-whats-new){padding:21px;min-height:230px}
+ .dashboard-hero>.community-spotlight h2{font-size:15px}
+ .dashboard-hero>.community-spotlight .spotlight-avatar{width:48px;height:48px;flex-basis:48px}
+ .dashboard-hero>.community-spotlight .spotlight-player strong{font-size:16px}
+ .dashboard-hero>:is(.community-spotlight,.home-whats-new) p{font-size:12px!important}
+ .dashboard-hero>:is(.community-spotlight,.home-whats-new) button{font-size:12px;padding:9px 12px}
  .dashboard-hero>.home-whats-new .home-new-art{width:100%;max-width:150px;align-self:center}
  .dashboard-hero>.home-whats-new h2{font-size:15px;margin:6px 0 8px}
  .dashboard-hero>.home-whats-new button{margin-top:9px}
