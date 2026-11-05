@@ -24,7 +24,7 @@ async function prepareTool(key){
  if(key==='support'||key==='closed'||key==='team'){const tool=await import('./support.js?v=panel2');return tool.prepareSupportForStaff(key==='support'?'staff':key)}
  if(key==='announcement'){const tool=await import('./owner-announcement.js?v=panel1');return tool.prepareAnnouncementForStaff()}
  if(key==='coins'){await import('./shop.js?v=panel1');const tool=await import('./shop-gifts.js?v=panel1');return tool.prepareOwnerCoinsForStaff()}
- if(key==='ratings'){const tool=await import('./community.js?v=panel1');return tool.prepareRatingsForStaff()}
+ if(key==='ratings'){const tool=await import('./community.js?v=season1');return tool.prepareRatingsForStaff()}
  const element=document.querySelector(key==='pollteam'?'#poll-staff-manager':'#poll-tools');if(!element||element.hidden)throw Error('Poll tools are not available for this account.');const open=element.open;element.open=true;return {element,close:()=>{element.open=open}};
 }
 async function openTool(key,title){

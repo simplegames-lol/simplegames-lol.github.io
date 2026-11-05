@@ -3,7 +3,9 @@
  const color=value=>typeof value==='string'&&/^#[a-f0-9]{6}$/i.test(value);
  const media=matchMedia('(prefers-color-scheme: light)');
  function apply(){
-  const root=document.documentElement,choice=read('sg-theme','dark'),light=choice==='light'||choice==='system'&&media.matches;
+  const root=document.documentElement,fall=read('sg-season','fall')!=='normal',choice=read('sg-theme','dark'),light=!fall&&(choice==='light'||choice==='system'&&media.matches);
+  root.dataset.season=fall?'fall':'normal';
+  document.body?.classList.toggle('thanksgiving-menu',fall);
   root.dataset.theme=light?'light':'dark';root.style.colorScheme=light?'light':'dark';
   const accent=read('sg-accent','#153a63');root.style.setProperty('--accent',color(accent)?accent:'#153a63');
   const background=read('sg-background',null);
@@ -13,7 +15,8 @@
   root.style.setProperty('--custom-background-size',['cover','contain','repeat'].includes(size)?size==='repeat'?'auto':size:'cover');
   root.style.setProperty('--custom-background-repeat',size==='repeat'?'repeat':'no-repeat');
   const toggle=document.querySelector('#theme-toggle .rail-icon');if(toggle)toggle.textContent=light?'☾':'☀';
+  document.dispatchEvent(new Event('simplegames:appearance-applied'));
  }
- window.SimpleGamesAppearance={apply};apply();media.addEventListener('change',apply);
+ window.SimpleGamesAppearance={apply};apply();document.addEventListener('DOMContentLoaded',apply,{once:true});media.addEventListener('change',apply);
  window.addEventListener('storage',apply);document.addEventListener('simplegames:preferences-loaded',apply);
 })();
