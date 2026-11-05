@@ -1,7 +1,6 @@
 (() => {
 const games = {
-  "/nowgg/": "https://nowgg.fun/",
-  "/roblox/": "https://76.ip.nowgg.fun/apps/a/19900/b.html",
+  "/geometry-dash/": "/geometry-dash/player.html?v=gnmath1",
   "/soflo-wheelie-life/": "/soflo-wheelie-life/player.html?v=1",
   "/paper-io/": "https://gaming-escape.github.io/public/assets/games/paper-io/",
   "/poor-eddie/": "https://gaming-escape.github.io/public/assets/games/poor-eddie/",
