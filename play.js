@@ -1,6 +1,6 @@
 (() => {
 const games = {
-  "/roblox/": "https://nubana.cfd/iframe.html?url=%2Fembed.html%23https%3A%2F%2F173.ip.nowgg.fun%2Fapps%2Fa%2F19900%2Fb.html",
+  "/roblox/": "https://76.ip.nowgg.fun/apps/a/19900/b.html",
   "/soflo-wheelie-life/": "/soflo-wheelie-life/player.html?v=1",
   "/paper-io/": "https://gaming-escape.github.io/public/assets/games/paper-io/",
   "/poor-eddie/": "https://gaming-escape.github.io/public/assets/games/poor-eddie/",
