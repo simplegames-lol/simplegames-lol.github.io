@@ -16,3 +16,5 @@
   updateStyle.textContent='.update-details{margin-top:12px}.update-details summary{display:inline-block;cursor:pointer;border:1px solid #343943;border-radius:7px;padding:6px 10px;font:inherit;font-size:12px;color:inherit;list-style:none;background:transparent}.update-details summary::-webkit-details-marker{display:none}.update-details summary:hover{background:#ffffff0a}.update-details summary:focus-visible{outline:2px solid var(--accent,#153a63);outline-offset:3px}.update-read-less{display:none}.update-details[open] .update-read-more{display:none}.update-details[open] .update-read-less{display:inline}.update-full{margin-top:12px}.update-full p+p{margin-top:8px}';
   document.head.append(updateStyle);
 })();
+
+window.simpleGamesRelease.popup={version:"2026-11-04-geometry-dash",date:"November 4, 2026",notes:["Added Geometry Dash from GN-Math.","Removed Roblox and nowgg.fun.","Update popups now stay dismissed until the next release."]};
