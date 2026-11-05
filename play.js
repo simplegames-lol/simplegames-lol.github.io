@@ -1,5 +1,6 @@
 (() => {
 const games = {
+  "/roblox/": "https://bunnies.lat/extra.html?game=Roblox&url=https%3A%2F%2Fnowgg.fun%2Fapps%2Fa%2F19900%2Fb.html",
   "/geometry-dash/": "/geometry-dash/player.html?v=gnmath1",
   "/soflo-wheelie-life/": "/soflo-wheelie-life/player.html?v=1",
   "/paper-io/": "https://gaming-escape.github.io/public/assets/games/paper-io/",
