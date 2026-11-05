@@ -21,7 +21,7 @@ function render(){const access=available(),allowed=access.owner||access.support|
  for(const [title,description,action]of cards){const button=document.createElement('button'),name=document.createElement('strong'),text=document.createElement('span');button.type='button';button.className='staff-tool-card';name.textContent=title;text.textContent=description;button.append(name,text);button.onclick=action;button.disabled=preparing;grid.append(button)}
 }
 async function prepareTool(key){
- if(key==='support'||key==='closed'||key==='team'){const tool=await import('./support.js?v=panel1');return tool.prepareSupportForStaff(key==='support'?'staff':key)}
+ if(key==='support'||key==='closed'||key==='team'){const tool=await import('./support.js?v=panel2');return tool.prepareSupportForStaff(key==='support'?'staff':key)}
  if(key==='announcement'){const tool=await import('./owner-announcement.js?v=panel1');return tool.prepareAnnouncementForStaff()}
  if(key==='coins'){await import('./shop.js?v=panel1');const tool=await import('./shop-gifts.js?v=panel1');return tool.prepareOwnerCoinsForStaff()}
  if(key==='ratings'){const tool=await import('./community.js?v=panel1');return tool.prepareRatingsForStaff()}
