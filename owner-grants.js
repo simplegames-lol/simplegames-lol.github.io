@@ -22,7 +22,7 @@ export async function grantOwnerCoins(ownerUid,recipientUid,amount,reason,operat
  let stage='owner access read',lastWallet=null;
  try{return await runTransaction(db,async tx=>{
   if(auth.currentUser?.uid!==ownerUid)precondition('Your sign-in changed. No new transfer was submitted.');
-  stage='owner access read';const access=await tx.get(doc(db,'supportSettings','access'));if(access.data()?.ownerUid!==ownerUid)precondition('Only the configured Firebase site owner can give coins.');
+  stage='owner access read';const access=await tx.get(doc(db,'supportSettings','access'));if(access.data()?.ownerUid!==ownerUid){const role=await tx.get(doc(db,'supportStaff',ownerUid));if(role.data()?.role!=='panel')precondition('Staff panel access is required to give coins.');}
   stage='transfer receipt read';const receiptRef=doc(db,'shopCoinGifts',operationId),receipt=await tx.get(receiptRef);
   if(receipt.exists()){const saved=receipt.data();if(saved.ownerUid!==ownerUid||saved.recipientUid!==recipientUid||saved.amount!==amount||saved.reason!==reason.trim())throw Error('This transfer ID belongs to a different operation.');return {replayed:true}}
   stage='recipient wallet read';const walletRef=doc(db,'shopWallets',recipientUid),snapshot=await tx.get(walletRef);if(!snapshot.exists())precondition('Ask this player to open Shop once before giving them coins.');const wallet=snapshot.data();lastWallet=wallet;

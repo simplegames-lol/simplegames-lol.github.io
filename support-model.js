@@ -7,4 +7,4 @@ export const ticketHints={
  'Other':{subject:'What can we help you with?',description:'Tell us what you need help with and any details that would help us understand.'}
 };
 export function validTicket(data){return categories.includes(data.category)&&typeof data.subject==='string'&&data.subject.trim().length>=3&&data.subject.length<=100&&typeof data.description==='string'&&data.description.trim().length>=10&&data.description.length<=3000}
-export function staffRole(role){return ['admin','support'].includes(role)}
+export function staffRole(role){return ['admin','support','panel'].includes(role)}

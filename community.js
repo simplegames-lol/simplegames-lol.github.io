@@ -1,3 +1,4 @@
+import {panelAccess} from './staff-access.js?v=1';
 import './firebase-client.js?v=1';
 import{leaderboardWeek,splitLeaderboardWeeks}from'./leaderboard-week.js?v=1';
 import{getApp}from"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
@@ -23,7 +24,7 @@ async function openVoters(path,title,allowed=()=>true){
   const request=++voterRequest;$("#rating-title").textContent=title+' ratings';$("#rating-picker").replaceChildren();const list=document.createElement('div');list.className='rating-voters';$("#rating-picker").append(list);ratingPanel.hidden=false;
   if(!currentUser){$("#rating-status").textContent='Log in to see who rated this game.';return}
   $("#rating-status").textContent='Loading voters…';const uid=currentUser.uid;
-  let canModerate=false;try{const access=await getDoc(doc(db,'supportSettings','access'));canModerate=access.data()?.ownerUid===uid}catch{}
+  let canModerate=false;try{const access=await getDoc(doc(db,'supportSettings','access'));canModerate=access.data()?.ownerUid===uid||await panelAccess(uid)}catch{}
   const votes=ratings.filter(vote=>vote.gamePath===path);
 await Promise.all(votes.map(async vote=>{let person;try{const snap=await getDoc(doc(db,'users',vote.userId));person=snap.exists()?snap.data():null}catch{}if(request!==voterRequest||currentUser?.uid!==uid)return;const row=document.createElement('div');row.className='rating-voter';const name=document.createElement('strong'),stars=document.createElement('span');name.className='rating-author';stars.className='rating-stars';name.textContent=person?.displayName||person?.username||'Unavailable profile';stars.textContent='★'.repeat(vote.rating)+'☆'.repeat(5-vote.rating);stars.setAttribute('aria-label',vote.rating+' out of 5 stars');row.append(name,stars);if(typeof vote.comment==='string'&&vote.comment.trim()){const comment=document.createElement('p');comment.textContent=vote.comment;comment.className='rating-comment';row.append(comment)}if(canModerate||vote.userId===uid){const remove=document.createElement('button');remove.type='button';remove.className='secondary-button';remove.textContent='Remove rating';remove.onclick=async()=>{if(!confirm('Remove this rating and its comment?'))return;remove.disabled=true;try{await deleteDoc(doc(db,'ratings',vote.id));await refreshRatings(true);await openVoters(path,title,allowed)}catch(error){remove.disabled=false;$('#rating-status').textContent=error.code==='permission-denied'?'Removal blocked. Publish the updated ratings rule first.':error.message}};row.append(remove)}list.append(row)}));
   if(request===voterRequest)$("#rating-status").textContent=votes.length?votes.length+' ratings':'No ratings yet.';
@@ -124,7 +125,7 @@ onAuthStateChanged(auth,user=>{playtimeGate.dispose();tracker.setUser(user?.uid|
 renderRatings();renderAchievements({});
 
 export async function prepareRatingsForStaff(){
- const uid=auth.currentUser?.uid;if(!uid)throw Error('Sign in to moderate ratings.');const access=await getDoc(doc(db,'supportSettings','access'));if(auth.currentUser?.uid!==uid||access.data()?.ownerUid!==uid)throw Error('Only the owner can moderate ratings.');
+ const uid=auth.currentUser?.uid;if(!uid)throw Error('Sign in to moderate ratings.');const access=await getDoc(doc(db,'supportSettings','access'));const allowed=access.data()?.ownerUid===uid||await panelAccess(uid);if(auth.currentUser?.uid!==uid||!allowed)throw Error('Staff panel access is required to moderate ratings.');
  let closed=false;const root=document.createElement('section'),label=document.createElement('label'),select=document.createElement('select'),load=document.createElement('button'),status=document.createElement('p');root.className='staff-ratings-tool';label.textContent='Choose a game';load.type='button';load.textContent='Show ratings';status.setAttribute('role','status');
  const games=gameCards.map(card=>({path:card.dataset.path||new URL(card.querySelector('a[href]').href,location.href).pathname,title:card.querySelector('h2').textContent.trim()})).sort((a,b)=>a.title.localeCompare(b.title));
  for(const game of games){const option=document.createElement('option');option.value=game.path;option.textContent=game.title;select.append(option)}label.append(select);root.append(label,load,status);

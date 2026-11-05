@@ -3,7 +3,7 @@ import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {collection,doc,getDoc,getDocs,getFirestore,limit,onSnapshot,orderBy,query,serverTimestamp,setDoc,deleteDoc,updateDoc,where,writeBatch} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {findUser} from './user-lookup.js?v=1';
-import {categories,ticketHints,validTicket,staffRole} from './support-model.js?v=3';
+import {categories,ticketHints,validTicket,staffRole} from './support-model.js?v=panel1';
 const auth=getAuth(getApp()),db=getFirestore(getApp()),$=s=>document.querySelector(s);
 const panel=document.createElement('section');panel.id='support-panel';panel.className='support-panel';panel.hidden=true;panel.setAttribute('aria-label','Support');
 panel.innerHTML=`<header class="support-heading"><button id="support-home" type="button">← Home</button><h1>Support</h1><button id="support-close" type="button" aria-label="Close support">×</button></header>
@@ -12,7 +12,7 @@ panel.innerHTML=`<header class="support-heading"><button id="support-home" type=
 <form id="support-new" class="support-box"><h2>What do you need help with?</h2><p class="support-muted">Open a ticket and staff will reply here. Screenshots are optional, but helps us understand better.</p><div class="support-categories" id="support-categories"></div><label>Subject<input name="subject" placeholder="A quick summary…" minlength="3" maxlength="100" required /></label><label>Description<textarea name="description" minlength="10" maxlength="3000" placeholder="Tell us what happened, or which game you would like added…" required></textarea></label><label>Screenshot · Optional<input id="support-image" type="file" accept="image/png,image/jpeg,image/webp" /><small class="support-muted">PNG, JPG or WebP · up to 8 MB. Resized before sending. Please hide private information.</small></label><img id="support-image-preview" class="support-screenshot" alt="Screenshot preview" hidden /><button id="support-image-remove" type="button" hidden>Remove screenshot</button><button class="support-primary" type="submit">Open Ticket</button></form>
 <section id="support-list" class="support-box" hidden><h2 id="support-list-title">My Tickets</h2><label>Search tickets<input id="support-search" type="search" placeholder="Search subject or category…" /></label><div id="support-ticket-list"></div></section>
 <section id="support-detail" class="support-box" hidden><button id="support-back" type="button">← Back to Tickets</button><div class="support-ticket-heading"><h2 id="support-ticket-title"></h2><button id="support-ticket-state" type="button" hidden></button></div><p id="support-ticket-meta" class="support-muted"></p><div id="support-ticket-description" class="support-ticket-body"></div><img id="support-ticket-image" class="support-screenshot" alt="Attached screenshot" hidden /><h3>Replies</h3><div id="support-replies"></div><form id="support-reply-form"><label>Your reply<textarea name="message" minlength="1" maxlength="2000" required></textarea></label><button type="submit" class="support-primary">Send Reply</button></form></section>
-<section id="support-team" class="support-box" hidden><h2>Manage Staff</h2><p class="support-muted">All staff can read, reply to, and close every ticket. Only the owner can grant or remove access.</p><form id="support-staff-form"><label>Exact username<input name="username" required placeholder="username" /></label><label>Role<select name="role"><option value="support">Support</option><option value="admin">Admin</option></select></label><button type="submit">Give Staff Access</button></form><div id="support-staff-list"></div></section>`;
+<section id="support-team" class="support-box" hidden><h2>Manage Staff</h2><p class="support-muted">Full staff panel includes polls, support, announcements, coins, and rating moderation. Only the owner can grant or remove access.</p><form id="support-staff-form"><label>Exact username<input name="username" required placeholder="username" /></label><label>Role<select name="role"><option value="panel">Full staff panel</option><option value="support">Support only</option><option value="admin">Admin</option></select></label><button type="submit">Give Staff Access</button></form><div id="support-staff-list"></div></section>`;
 document.body.append(panel);
 let user=auth.currentUser,owner=false,staff=false,category=categories[0],screen='',imageBusy=false,view='new',tickets=[],active=null,stops=[],generation=0;
 const say=text=>$('#support-status').textContent=text;
@@ -47,10 +47,10 @@ function beginStaffNotifications(next){
  document.querySelectorAll('.support-ticket-toast').forEach(el=>el.remove());badgeTickets.clear();ticketReplyState.clear();readTickets={};updateSupportBadge();
  if(!next)return;
  try{readTickets=JSON.parse(localStorage.getItem('sg-support-read-'+next.uid)||'{}')}catch{}
- let configReady=false,roleReady=false,isOwner=false,isStaff=false,mode=null;
+ let configReady=false,roleReady=false,isOwner=false,isStaff=false,isPanel=false,mode=null;
  const refresh=()=>{
   if(version!==notificationVersion||!configReady||!roleReady)return;
-  owner=isOwner;staff=isOwner||isStaff;window.simpleGamesStaffAccess={...window.simpleGamesStaffAccess,support:{uid:next.uid,owner,staff}};document.dispatchEvent(new Event('simplegames:staff-access'));
+  owner=isOwner;staff=isOwner||isStaff;window.simpleGamesStaffAccess={...window.simpleGamesStaffAccess,support:{uid:next.uid,owner,staff,panel:isPanel}};document.dispatchEvent(new Event('simplegames:staff-access'));
   panel.querySelector('[data-support-view="staff"]').hidden=!staff;panel.querySelector('[data-support-view="team"]').hidden=!owner;
   const nextMode=staff?'staff':'member';if(mode===nextMode)return;mode=nextMode;stopTicketNotifications();
   let baseline=false;const seen=new Set(),started=Date.now();
@@ -64,7 +64,7 @@ function beginStaffNotifications(next){
   },()=>{mode=null});
  };
  notificationStops.push(onSnapshot(doc(db,'supportSettings','access'),snap=>{configReady=true;isOwner=snap.exists()&&snap.data().ownerUid===next.uid;refresh()},()=>{configReady=true;isOwner=false;refresh()}));
- notificationStops.push(onSnapshot(doc(db,'supportStaff',next.uid),snap=>{roleReady=true;isStaff=snap.exists()&&staffRole(snap.data().role);refresh()},()=>{roleReady=true;isStaff=false;refresh()}));
+ notificationStops.push(onSnapshot(doc(db,'supportStaff',next.uid),snap=>{roleReady=true;isStaff=snap.exists()&&staffRole(snap.data().role);isPanel=snap.data()?.role==='panel';refresh()},()=>{roleReady=true;isStaff=false;isPanel=false;refresh()}));
 }
 function ticketNotification(id,data){
   if(document.querySelectorAll('.support-ticket-toast').length>=3)document.querySelector('.support-ticket-toast')?.remove();

@@ -15,4 +15,13 @@ pollPanel.addEventListener('toggle',()=>{if(pollPanel.open&&staff)run(loadPoll,p
 edit.onsubmit=event=>{event.preventDefault();if(!currentPoll||!confirm('Save these poll changes?'))return;run(async()=>{await api('/polls/admin',{action:'edit',id:currentPoll.id,question:edit.elements.question.value,options:Object.fromEntries(['a','b','c'].map(k=>[k,edit.elements[k].value]))});await loadPoll()},pollNote)};
 document.querySelector('#poll-reopen').onclick=()=>{if(!confirm('Reopen voting and remove the end timer? Hidden polls stay hidden.'))return;run(async()=>{await loadPoll();if(!currentPoll)throw Error('No current poll.');await api('/polls/admin',{id:currentPoll.id,action:'reopen'});await loadPoll()},pollNote)};
 document.querySelector('#poll-view-voters').onclick=()=>run(async()=>{await loadPoll();if(currentPoll)await showPollVoters({...currentPoll},epoch,0)},pollNote);
-onAuthStateChanged(getAuth(app),async next=>{user=next;const version=++epoch;staff=owner=false;pollPanel.hidden=true;voters.replaceChildren();currentPoll=null;pollNote.textContent='';if(!next)return;try{const role=await api('/polls/staff',{});if(version!==epoch)return;staff=role.staff;owner=role.owner;pollPanel.hidden=!staff;document.querySelector('#poll-view-voters').hidden=!owner}catch{}});
+async function refreshModeration(next){user=next;const version=++epoch;staff=owner=false;pollPanel.hidden=true;voters.replaceChildren();currentPoll=null;pollNote.textContent='';if(!next)return;try{const role=await api('/polls/staff',{});if(version!==epoch)return;staff=role.staff;owner=role.owner||role.panel;pollPanel.hidden=!staff;document.querySelector('#poll-view-voters').hidden=!owner}catch{}}
+onAuthStateChanged(getAuth(app),refreshModeration);
+let panelRoleSignature='';
+document.addEventListener('simplegames:staff-access',()=>{
+ const next=getAuth(app).currentUser,access=window.simpleGamesStaffAccess?.support;
+ if(!next||access?.uid!==next.uid)return;
+ const signature=next.uid+':'+Boolean(access.owner||access.panel);
+ if(signature===panelRoleSignature)return;
+ panelRoleSignature=signature;void refreshModeration(next);
+});

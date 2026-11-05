@@ -14,7 +14,7 @@ function render(){
  const live=!!poll&&!poll.hidden&&!poll.closed,root=$('site-polls');
  root.classList.toggle('poll-inactive',!live);root.querySelector('header h2').textContent=live?'Website Poll':'Poll controls';
  $('poll-question').hidden=!live;root.querySelector('.vote-privacy').hidden=!live;$('poll-account').hidden=!user||!live;
- const list=$('poll-choices');list.replaceChildren();root.hidden=!live&&!staff;$('poll-tools').hidden=!staff;$('poll-staff-manager').hidden=!owner;$('poll-close').disabled=!poll||poll.closed||busy;$('poll-create').querySelector('button').disabled=busy;$('poll-hide').disabled=!poll||busy;$('poll-hide').textContent=poll?.hidden?'Show poll':'Hide poll';$('poll-timer').hidden=!poll;
+ const list=$('poll-choices');list.replaceChildren();root.hidden=!live;$('poll-tools').hidden=!staff;$('poll-staff-manager').hidden=!owner;$('poll-close').disabled=!poll||poll.closed||busy;$('poll-create').querySelector('button').disabled=busy;$('poll-hide').disabled=!poll||busy;$('poll-hide').textContent=poll?.hidden?'Show poll':'Hide poll';$('poll-timer').hidden=!poll;
  $('poll-timer-note').textContent=poll?.endsAt?'Ends '+new Date(poll.endsAt).toLocaleString()+(poll.closed?' · Voting closed':''):poll?'No automatic end time.':'';
  if(!poll){$('poll-question').textContent='No poll is published.';say('No active poll.');return}
  $('poll-question').textContent=poll.question;const total=keys.reduce((sum,k)=>sum+poll.counts[k],0);
@@ -84,3 +84,14 @@ function visible(){return !document.hidden&&document.querySelector('.dashboard-h
 setInterval(()=>{if(visible())refresh()},30000);
 document.addEventListener('visibilitychange',()=>{if(visible())refresh()});
 document.addEventListener('simplegames:moderation-changed',()=>{if(visible())refresh()});
+
+let panelRoleSignature='';
+document.addEventListener('simplegames:staff-access',async()=>{
+ const access=window.simpleGamesStaffAccess?.support;
+ if(!user||access?.uid!==user.uid)return;
+ const signature=user.uid+':'+Boolean(access.owner||access.panel);
+ if(signature===panelRoleSignature)return;
+ panelRoleSignature=signature;
+ const account=user,version=generation;
+ try{const result=await api('/polls/staff',{body:{},account});if(version!==generation)return;staff=result.staff;owner=result.owner;window.simpleGamesStaffAccess={...window.simpleGamesStaffAccess,polls:{uid:account.uid,owner,staff}};document.dispatchEvent(new Event('simplegames:staff-access'));render();refresh()}catch(e){if(version===generation){staff=false;render();$('poll-staff-status').textContent=e.message}}
+});
