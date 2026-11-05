@@ -2,7 +2,7 @@ import './firebase-client.js?v=1';
 import{getApp}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import{getAuth}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import{getFirestore,doc,getDoc,updateDoc,arrayUnion,arrayRemove}from'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import{canReadChannel}from'./channel-permissions.js?v=2';
+import{canReadChannel}from'./channel-permissions.js?v=5';
 let auth,db;const root=document.createElement('div');root.className='voice-hangouts';document.querySelector('#channel-pane').append(root);
 let editSelected=null,selected=null,revision=0,inFlight=false;const cache=new Map();
 async function request(path,body){const response=await fetch('https://simple-games-voice.maylarpp.workers.dev/'+path,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+await auth.currentUser.getIdToken()},body:JSON.stringify(body),signal:AbortSignal.timeout(15000)});const data=await response.json();if(!response.ok)throw Error(data.error||'Voice unavailable');return data;}

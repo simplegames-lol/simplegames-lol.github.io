@@ -4,7 +4,7 @@ import{bindCosmetics}from'./shop-cosmetics.js?v=nocranberry1';
 import { getApp, getApps, initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocFromServer, getDocs, getFirestore, limit, onSnapshot, orderBy, query, runTransaction, Timestamp, serverTimestamp, setDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import{serverNotificationAllowed,freshNotification}from'./notification-logic.js?v=2';
+import{serverNotificationAllowed,freshNotification}from'./notification-logic.js?v=3';
 import{findUser}from'./user-lookup.js?v=1';
 const notificationSessionStarted=Date.now();
 const profileStops=new Map();
@@ -12,7 +12,7 @@ import{canReadChannel,canSendChannel,channelEditor}from'./channel-permissions.js
 import{COMMANDS,canUseCommand,commandChanges,timedOut,roleRank,canTarget}from'./server-commands.js?v=2';
 import{sendServerInvite,listenServerInvites}from'./server-invites.js?v=1';
 import{showServerProfile,serverIcon}from'./server-branding.js?v=2';
-import{showHangouts}from'./voice-hangouts.js?v=2';
+import{showHangouts}from'./voice-hangouts.js?v=3';
 const config={apiKey:"AIzaSyDzJu7zyLTZWwffbS5wcxAGym5orePvNKg",authDomain:"simplegames-23c2c.firebaseapp.com",projectId:"simplegames-23c2c",storageBucket:"simplegames-23c2c.firebasestorage.app",messagingSenderId:"993873419513",appId:"1:993873419513:web:14e22dfff6d7f0c7051628",measurementId:"G-NC81W7MYG0"};
 const app=getApps().length?getApp():initializeApp(config),auth=getAuth(app),db=getFirestore(app),$=selector=>document.querySelector(selector);
 const panel=$("#server-panel"),layout=panel.querySelector(".server-layout"),list=$("#server-list"),channels=$("#channel-list"),messages=$("#server-messages"),members=$("#server-members"),status=$("#server-status"),discoverList=$("#server-discover-list");

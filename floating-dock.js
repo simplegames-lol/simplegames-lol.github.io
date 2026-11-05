@@ -20,7 +20,7 @@
  function refresh(){
   scheduled=false;active=null;frame=null;closeButton=null;
   for(const [selector,title,close,player]of definitions){const element=document.querySelector(selector);if(!visible(element))continue;active=element;frame=player?element.querySelector(player):null;if(frame&&!visible(frame))frame=null;closeButton=element.querySelector(close);dock.querySelector('.dock-title').textContent=element.querySelector(title)?.textContent.trim()||element.getAttribute('aria-label')||'Shop';break}
-  if(!active)dock.querySelector('.dock-title').textContent=visible(document.querySelector('.dashboard-hero'))?'Simple Games':'Games';
+  if(!active)dock.querySelector('.dock-title').textContent=visible(document.querySelector('#game-library'))&&document.querySelector('#game-library').getBoundingClientRect().top<innerHeight*.5?'Games':'Simple Games';
   currentTarget=frame||active||document.querySelector('body>.page-shell');
   dock.querySelector('[data-dock="reset"]').textContent=Math.round((scales.get(currentTarget)||1)*100)+'%';
   dock.hidden=visible(document.querySelector('#startup-loader'));
@@ -36,14 +36,14 @@
  dock.addEventListener('click',async event=>{
   const action=event.target.closest('[data-dock]')?.dataset.dock;if(!action)return;
   refresh();
-  if(dock.classList.contains('dock-collapsed')){dock.classList.remove('dock-collapsed');return}
+  if(dock.classList.contains('dock-collapsed')){dock.classList.remove('dock-collapsed');dock.querySelector('[data-dock="collapse"]').setAttribute('aria-label','Collapse toolbar');return}
   if(action==='home')home();
   if(action==='back'){if(closeButton)closeButton.click();else home()}
   if(action==='reload'){if(frame){if(confirm('Reload this player? Unsaved progress may be lost.')){const reload=active.querySelector('.music-bar>button:last-child,.movies-bar>button:nth-of-type(3)');if(reload&&!reload.hidden)reload.click();else frame.src=frame.src}}else if(confirm('Reload the website? Unsaved changes may be lost.'))location.reload()}
   if(action==='in')zoom(.1);if(action==='out')zoom(-.1);if(action==='reset')zoom(0);
-  if(action==='collapse')dock.classList.add('dock-collapsed');
+  if(action==='collapse'){dock.classList.add('dock-collapsed');dock.querySelector('[data-dock="collapse"]').setAttribute('aria-label','Expand toolbar');}
   if(action==='full'){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{dock.querySelector('.dock-status').textContent='Fullscreen is unavailable in this browser.'}}
   schedule();
  });
- document.addEventListener('fullscreenchange',schedule);window.addEventListener('resize',schedule);refresh();
+ document.addEventListener('fullscreenchange',schedule);window.addEventListener('resize',schedule);window.addEventListener('scroll',schedule,{passive:true});refresh();
 })();
