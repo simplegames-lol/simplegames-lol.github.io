@@ -1,0 +1,61 @@
+/* Home redesign. Existing navigation and saved appearance remain the source of truth. */
+body .dashboard-hero{box-sizing:border-box;min-height:calc(100vh - 30px);padding:52px 28px 64px;gap:24px;align-content:start}
+body .dashboard-hero>.hero-copy{width:100%;max-width:720px;text-align:center}
+body .dashboard-hero .hero-copy h1{font-size:clamp(32px,3.2vw,48px);line-height:1.15;letter-spacing:-.045em;margin:0 0 14px}
+body .dashboard-hero .hero-copy h1>span{padding:0;background:none;color:inherit;-webkit-text-fill-color:currentColor}
+body .dashboard-hero .hero-copy>p{min-height:20px;margin:0 0 28px;font-size:13px;line-height:1.5;color:var(--muted)}
+body .dashboard-hero .hero-search{box-sizing:border-box;width:100%;max-width:720px;height:52px;border-radius:28px;padding:0 20px;background:color-mix(in srgb,var(--background) 92%,transparent);box-shadow:inset 0 1px #ffffff07;font-size:14px}
+body .dashboard-hero .hero-search input{font-size:14px;font-weight:500!important}
+body .dashboard-hero>.dashboard-shortcuts{width:100%;max-width:640px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0!important}
+body .dashboard-hero .dashboard-shortcuts>button{grid-column:auto!important;box-sizing:border-box;min-height:132px;padding:19px 8px;border-radius:17px;background:linear-gradient(145deg,#bc986311,transparent 80%),color-mix(in srgb,var(--background) 93%,transparent);border:1px solid color-mix(in srgb,var(--border) 75%,#a6886030);box-shadow:inset 0 1px #ffffff09,0 5px 16px #0002;gap:8px}
+body .dashboard-hero .dashboard-shortcuts>button>span:not(.home-unread-badge){width:42px;height:42px;font-size:32px;margin:0 0 5px;display:grid;place-items:center;filter:drop-shadow(0 0 14px #bba0ff45)}
+body .dashboard-hero .dashboard-shortcuts strong{font-size:14px;line-height:1.35}
+body .dashboard-hero>.site-stats{box-sizing:border-box;width:100%;max-width:640px;padding:14px 18px;border-radius:16px;margin:0!important;background:color-mix(in srgb,var(--background) 93%,transparent)}
+body .dashboard-hero .site-stats-heading{margin-bottom:12px}
+body .dashboard-hero .site-stats-grid strong{font-size:29px;margin-top:5px}
+body .dashboard-hero .site-stats h3{font-size:12px}
+body .dashboard-hero>:is(.community-spotlight,.home-whats-new){box-sizing:border-box;width:100%;padding:25px;border-radius:19px;border-color:color-mix(in srgb,var(--border) 65%,#b48b4b55);background:linear-gradient(135deg,#b98b5210,transparent 65%),color-mix(in srgb,var(--background) 94%,transparent);box-shadow:inset 0 1px #ffffff07;min-height:290px}
+body .dashboard-hero>.community-spotlight h2,body .dashboard-hero>.home-whats-new h2{font-size:20px;line-height:1.3;margin:0 0 16px}
+body .dashboard-hero>:is(.community-spotlight,.home-whats-new) p{font-size:13px!important;line-height:1.7;min-height:0}
+body .dashboard-hero>:is(.community-spotlight,.home-whats-new) button{padding:11px 15px;border-radius:10px;font-size:13px}
+body .dashboard-hero .spotlight-avatar{width:58px;height:58px;flex-basis:58px}
+body .dashboard-hero .spotlight-player{margin:22px 0;gap:14px;flex-wrap:wrap}
+body .dashboard-hero .spotlight-player>div{min-width:0;overflow-wrap:anywhere}
+body .dashboard-hero .spotlight-player strong{font-size:17px}
+body .dashboard-hero>.home-whats-new{display:flex;flex-direction:column;align-items:stretch;gap:6px}
+body .dashboard-hero .home-new-art{width:160px;max-width:100%;align-self:center;margin:0 auto}
+body .dashboard-hero .home-whats-new h2{margin:10px 0}
+body .dashboard-hero .home-whats-new button{margin-top:6px}
+body .dashboard-hero>.site-polls{box-sizing:border-box;width:100%;max-width:640px;margin:0!important;border-radius:16px}
+body.thanksgiving-menu .harvest-canopy,body.thanksgiving-menu .harvest-sprig{display:none}
+body.thanksgiving-menu .harvest-glow{opacity:.32}
+body.thanksgiving-menu .harvest-scene{background:radial-gradient(ellipse at 80% 10%,#82502118,transparent 50%),radial-gradient(ellipse at 15% 95%,#67332f18,transparent 55%)}
+body.thanksgiving-menu .harvest-leaf:nth-of-type(n+5){display:none}
+body.thanksgiving-menu .harvest-leaf{max-width:22px;max-height:25px;filter:opacity(.4)}
+body .site-header .header-right :is(.rail-link,.header-button){background:transparent!important;background-image:none!important;border:1px solid transparent;border-radius:12px;min-height:40px;font-size:13px;padding:9px 12px;box-shadow:none;gap:12px;text-align:left}
+body .site-header .header-right :is(.active,[aria-current="page"]){background:color-mix(in srgb,var(--accent) 18%,transparent)!important;border-color:color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:inset 0 1px #ffffff0b}
+body .site-header .rail-icon{font-size:19px;flex:0 0 23px;width:23px}
+body .site-header .brand-name{font-size:14px}
+@media(min-width:1180px){
+ body .dashboard-hero{grid-template-columns:minmax(210px,290px) minmax(430px,640px) minmax(210px,290px);grid-template-areas:'. intro .' 'spotlight shortcuts updates' '. stats .' '. poll .';gap:24px 22px;justify-content:center;align-items:start;padding-top:clamp(42px,6vh,72px)}
+ body .dashboard-hero:has(>.owner-announcement:not([hidden])){grid-template-areas:'banner banner banner' '. intro .' 'spotlight shortcuts updates' '. stats .' '. poll .'}
+ body .dashboard-hero>.hero-copy{grid-area:intro;max-width:none;margin-bottom:12px}
+ body .dashboard-hero>.dashboard-shortcuts{grid-area:shortcuts;max-width:none}
+ body .dashboard-hero>.community-spotlight{grid-area:spotlight;margin:0!important}
+ body .dashboard-hero>.home-whats-new{grid-area:updates;margin:0!important}
+ body .dashboard-hero>.site-stats{grid-area:stats}
+ body .dashboard-hero>.site-polls{grid-area:poll}
+ body .dashboard-hero>.owner-announcement{grid-area:banner}
+}
+@media(min-width:768px) and (max-width:1179px){
+ body .dashboard-hero{grid-template-columns:repeat(2,minmax(0,320px));justify-content:center;grid-template-areas:'intro intro' 'shortcuts shortcuts' 'stats stats' 'spotlight updates' 'poll poll'}
+ body .dashboard-hero:has(>.owner-announcement:not([hidden])){grid-template-areas:'banner banner' 'intro intro' 'shortcuts shortcuts' 'stats stats' 'spotlight updates' 'poll poll'}
+ body .dashboard-hero>.hero-copy{grid-area:intro}body .dashboard-hero>.dashboard-shortcuts{grid-area:shortcuts}body .dashboard-hero>.site-stats{grid-area:stats}body .dashboard-hero>.site-polls{grid-area:poll}body .dashboard-hero>.community-spotlight{grid-area:spotlight;margin:0!important}body .dashboard-hero>.home-whats-new{grid-area:updates;margin:0!important}body .dashboard-hero>.owner-announcement{grid-area:banner}
+}
+@media(max-width:767px){
+ body .dashboard-hero{display:flex;flex-direction:column;align-items:center;padding:32px 18px 50px;gap:18px}
+ body .dashboard-hero .hero-copy h1{font-size:34px}body .dashboard-hero .hero-copy>p{margin-bottom:20px}
+ body .dashboard-hero .dashboard-shortcuts>button{min-height:100px;padding:12px 5px;border-radius:13px}body .dashboard-hero .dashboard-shortcuts strong{font-size:11px}body .dashboard-hero .dashboard-shortcuts>button>span:not(.home-unread-badge){font-size:25px;width:32px;height:32px}
+ body .dashboard-hero>.dashboard-shortcuts{gap:8px}body .dashboard-hero>:is(.community-spotlight,.home-whats-new){max-width:640px;min-height:0;margin:0!important;padding:22px}
+}
+@media(hover:hover) and (pointer:fine){body .dashboard-hero .dashboard-shortcuts>button:hover{border-color:var(--accent);box-shadow:0 0 22px color-mix(in srgb,var(--accent) 18%,transparent),inset 0 1px #fff2}body .site-header .header-right :is(.rail-link,.header-button):hover{background:color-mix(in srgb,var(--accent) 10%,transparent)!important}}
