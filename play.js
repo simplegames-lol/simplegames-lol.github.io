@@ -190,6 +190,9 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   }, 15000);
   overlay.hidden = false;
   document.body.classList.add("game-is-open");
+  if(path==='/roblox/'&&!document.fullscreenElement){
+    overlay.requestFullscreen?.().catch(()=>{loaderStatus.textContent='Use the fullscreen button to expand Roblox.'});
+  }
   window.dispatchEvent(new CustomEvent("simplegames:play", { detail: { path, title: cardTitle } }));
   closeButton.focus();
 });
