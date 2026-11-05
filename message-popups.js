@@ -1,18 +1,17 @@
 (() => {
- const setting=document.querySelector('#message-popups'),mode=document.querySelector('#server-notifications');
+ const setting=document.querySelector('#message-popups');
  const friendSetting=document.querySelector('#friend-online-notifications');let doNotDisturb=false;
  document.addEventListener('simplegames:profile',event=>doNotDisturb=!!event.detail.profile?.doNotDisturb);
  const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
  setting.checked=read('sg-message-popups',true)!==false;
  friendSetting.checked=read('sg-friend-online-notifications',true)!==false;
- mode.value=['pings','all','off'].includes(read('sg-server-notifications','pings'))?read('sg-server-notifications','pings'):'pings';
  const save=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
- setting.onchange=()=>save('sg-message-popups',setting.checked);mode.onchange=()=>save('sg-server-notifications',mode.value);
+ setting.onchange=()=>save('sg-message-popups',setting.checked);
  friendSetting.onchange=()=>{save('sg-friend-online-notifications',friendSetting.checked);if(!friendSetting.checked)stack.querySelectorAll('[data-kind="friend-online"]').forEach(card=>card.remove())};
  const stack=document.createElement('div');stack.className='message-popup-stack';stack.setAttribute('aria-live','polite');document.body.append(stack);
  const feedback=document.querySelector('#notification-preview-status');
  document.addEventListener('fullscreenchange',()=>{(document.fullscreenElement||document.body).append(stack)});
- document.addEventListener('simplegames:settings-reset',()=>{setting.checked=true;friendSetting.checked=true;mode.value='pings';stack.replaceChildren()});
+ document.addEventListener('simplegames:settings-reset',()=>{setting.checked=true;friendSetting.checked=true;stack.replaceChildren()});
  document.querySelector('#friend-online-preview').onclick=()=>{
   if(!friendSetting.checked){feedback.textContent='Enable friend online notifications first.';return}
   if(doNotDisturb){feedback.textContent='Turn off Do Not Disturb to preview this popup.';return}
