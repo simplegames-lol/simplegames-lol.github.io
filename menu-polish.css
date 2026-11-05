@@ -1,1 +1,32 @@
 body.thanksgiving-menu .site-header{background:linear-gradient(155deg,#241a1499,#100d10b8)!important;backdrop-filter:blur(28px);border-right:1px solid #b4996a20;box-shadow:12px 0 50px #0002}body .site-header .header-right :is(.rail-link,.header-button){transition:background .18s,border-color .18s,transform .18s}body .dashboard-hero .dashboard-shortcuts>button{background:radial-gradient(ellipse at 50% 0,#b2a4d21a,transparent 65%),color-mix(in srgb,var(--background) 84%,transparent);backdrop-filter:blur(16px);border-color:color-mix(in srgb,var(--border) 80%,#b7a4d62b);box-shadow:inset 0 1px #ffffff0c,0 8px 26px #0002}body .dashboard-hero .dashboard-shortcuts>button:nth-child(3n){background-image:radial-gradient(ellipse at 50% 0,#b5965820,transparent 65%)}body .dashboard-hero .hero-search{backdrop-filter:blur(18px);border-color:color-mix(in srgb,var(--accent) 30%,var(--border))}body .dashboard-hero>:is(.community-spotlight,.home-whats-new,.site-stats){backdrop-filter:blur(20px);background-color:color-mix(in srgb,var(--background) 85%,transparent)}body .dashboard-hero .hero-copy h1{filter:drop-shadow(0 4px 24px #b27f3620)}@media(min-width:1000px){body:not(.sidebar-collapsed) .site-header{inset:14px auto 14px 12px;width:168px;height:calc(100vh - 28px);border-radius:20px;overflow:hidden}body .site-header .brand{padding-top:7px}body .site-header .header-right{gap:5px}}@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){body .dashboard-hero .dashboard-shortcuts>button{transition:transform .2s,box-shadow .2s,border-color .2s}body .dashboard-hero .dashboard-shortcuts>button:hover{transform:translateY(-5px);box-shadow:0 14px 35px #0004,0 0 26px color-mix(in srgb,var(--accent) 15%,transparent)}body .site-header .header-right :is(.rail-link,.header-button):hover{transform:translateX(2px)}}html[data-theme="light"] body.thanksgiving-menu .site-header{background:color-mix(in srgb,var(--surface) 90%,transparent)!important}
+
+/* Compact home menu. */
+body .dashboard-hero{padding-top:38px;gap:16px}
+body .dashboard-hero .hero-copy h1{font-size:32px;margin-bottom:10px;filter:none;text-shadow:none}
+body .dashboard-hero .hero-copy>p{font-size:11px;margin-bottom:20px}
+body .dashboard-hero .hero-search{height:42px;max-width:480px;font-size:12px;padding-inline:16px;box-shadow:none}
+body .dashboard-hero .hero-search input{font-size:12px}
+body .dashboard-hero>.dashboard-shortcuts{max-width:480px;gap:9px}
+body .dashboard-hero .dashboard-shortcuts>button{min-height:88px;padding:12px 6px;border-radius:12px;gap:4px;background:color-mix(in srgb,var(--background) 95%,var(--surface));box-shadow:inset 0 1px #ffffff06;backdrop-filter:none}
+body .dashboard-hero .dashboard-shortcuts>button:nth-child(3n){background-image:none}
+body .dashboard-hero .dashboard-shortcuts>button>span:not(.home-unread-badge){width:30px;height:30px;font-size:24px;margin-bottom:3px;filter:none}
+body .dashboard-hero .dashboard-shortcuts strong{font-size:11px}
+body .dashboard-hero>:is(.community-spotlight,.home-whats-new){min-height:0;padding:18px;border-radius:13px;box-shadow:none;background-image:none}
+body .dashboard-hero>.community-spotlight h2,body .dashboard-hero>.home-whats-new h2{font-size:14px;margin-bottom:12px}
+body .dashboard-hero>:is(.community-spotlight,.home-whats-new) p{font-size:11px!important;line-height:1.6}
+body .dashboard-hero>:is(.community-spotlight,.home-whats-new) button{font-size:11px;padding:8px 11px;border-radius:8px}
+body .dashboard-hero .spotlight-avatar{width:44px;height:44px;flex-basis:44px}
+body .dashboard-hero .spotlight-player{margin:16px 0;gap:10px}
+body .dashboard-hero .spotlight-player strong{font-size:14px}
+body .dashboard-hero .home-new-art{width:90px}
+body .dashboard-hero>.site-stats{max-width:480px;padding:12px 15px;border-radius:12px}
+body .dashboard-hero .site-stats-grid strong{font-size:23px}
+body .dashboard-hero .site-stats h3{font-size:10px}
+body .dashboard-hero>.site-polls{max-width:480px}
+body .site-header .header-right :is(.rail-link,.header-button){min-height:35px;font-size:12px;padding:7px 10px;border-radius:9px}
+body .site-header .rail-icon{font-size:16px}
+body .site-header .brand-name{font-size:12px}
+@media(min-width:1180px){body .dashboard-hero{grid-template-columns:minmax(175px,220px) minmax(360px,480px) minmax(175px,220px);gap:16px 20px}body .dashboard-hero>.hero-copy{margin-bottom:4px}}
+@media(min-width:768px) and (max-width:1179px){body .dashboard-hero{grid-template-columns:repeat(2,minmax(0,240px))}}
+@media(max-width:767px){body .dashboard-hero{padding:28px 16px 80px;gap:15px}body .dashboard-hero .hero-copy h1{font-size:29px}body .dashboard-hero .dashboard-shortcuts>button{min-height:80px}body .dashboard-hero>:is(.community-spotlight,.home-whats-new){max-width:480px}}
+@media(hover:hover) and (pointer:fine){body .dashboard-hero .dashboard-shortcuts>button:hover{transform:translateY(-2px);box-shadow:0 5px 14px #0002}}
