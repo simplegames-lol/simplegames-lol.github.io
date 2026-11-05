@@ -224,7 +224,23 @@ $("#profile-form").elements.statusText.addEventListener('input',()=>{statusDraft
 $("#profile-form").addEventListener('reset',()=>{statusDraftDirty=false});
 document.addEventListener('simplegames:auth',()=>{statusDraftUid=null;statusDraftDirty=false});
 document.addEventListener("simplegames:profile",e=>{const d=e.detail.profile;syncStatusDraft($("#profile-form").elements.statusText,e.detail.user.uid,d.statusText||"");$("#profile-avatar").textContent="";applyAvatar($("#profile-avatar"),d);bindCosmetics(e.detail.user.uid,$("#profile-avatar"),$("#profile-display-name"));$("#account-open .account-label").style.color="";openLinkedProfile()});
-for(const [id,key]of[["#message-sound-setting","messageSound"],["#dnd-setting","doNotDisturb"],["#hide-online-setting","hideOnline"],["#private-activity-setting","privateActivity"]])$(id).onchange=e=>updateDoc(doc(db,"users",auth.currentUser.uid),{[key]:e.target.checked}).then(()=>showStatus("Account setting saved.")).catch(err=>showStatus(friendlyError(err),true));
+const accountPreferenceFields=[["#message-sound-setting","messageSound"],["#dnd-setting","doNotDisturb"],["#hide-online-setting","hideOnline"],["#private-activity-setting","privateActivity"]];
+for(const [id,key]of accountPreferenceFields){
+ const field=$(id);field.disabled=!auth.currentUser;
+ field.onchange=async()=>{
+  const uid=auth.currentUser?.uid,status=$('#account-preference-status');
+  if(!uid){status.textContent='Sign in to change these settings.';return}
+  field.disabled=true;status.textContent='Saving…';
+  try{await updateDoc(doc(db,'users',uid),{[key]:field.checked});if(auth.currentUser?.uid===uid)status.textContent='Account setting saved.'}
+  catch(error){if(auth.currentUser?.uid===uid){field.checked=key==='messageSound'?profile?.messageSound!==false:!!profile?.[key];status.textContent=friendlyError(error)}}
+  finally{field.disabled=!auth.currentUser}
+ };
+}
+document.addEventListener('simplegames:auth',event=>{
+ const signedIn=!!event.detail.user;
+ for(const [id]of accountPreferenceFields)$(id).disabled=!signedIn;
+ $('#account-preference-status').textContent=signedIn?'Privacy and message sounds save to your account.':'Sign in to change account privacy settings.';
+});
 $("#username-form").onsubmit=async e=>{e.preventDefault();const f=e.currentTarget,username=String(new FormData(f).get("username")).trim(),lower=username.toLowerCase(),oldLower=(profile.usernameLower||profile.username||"").toLowerCase();if(!/^[A-Za-z0-9_]{3,20}$/.test(username))return showStatus("Username must be 3–20 letters, numbers, or underscores.",true);if(lower===oldLower)return showStatus("Choose a different username.",true);const changed=ms(profile?.usernameChangedAt),wait=30*24*60*60*1000;if(changed&&Date.now()-changed<wait)return showStatus(`You can change it again in ${Math.ceil((wait-(Date.now()-changed))/86400000)} days.`,true);try{await runTransaction(db,async t=>{const next=doc(db,"usernames",lower),taken=await t.get(next);if(taken.exists()&&taken.data().uid!==auth.currentUser.uid)throw Error("That username is already taken.");if(oldLower)t.delete(doc(db,"usernames",oldLower));t.set(next,{uid:auth.currentUser.uid,username});t.update(doc(db,"users",auth.currentUser.uid),{username,usernameLower:lower,usernameChangedAt:serverTimestamp()})});f.reset();showStatus("Username changed.")}catch(err){showStatus(friendlyError(err),true)}};
 function listenBlocks(uid){stopBlocks();stopBlocks=onSnapshot(query(collection(db,"blocks"),where("blockerUid","==",uid)),async snap=>{const list=$("#blocked-list");list.replaceChildren();if(snap.empty)return list.append(Object.assign(document.createElement("p"),{textContent:"No blocked users"}));for(const block of snap.docs){const u=await getDoc(doc(db,"users",block.data().blockedUid)),name=u.data()?.username||"Unknown user";list.append(row(name,[button("Unblock",async()=>{await deleteDoc(block.ref);showStatus(`${name} was unblocked.`)})]))}})}
 function listLeaderboardError(error){console.error('Leaderboard:',error);document.querySelector('#leaderboard-podium')?.replaceChildren();const list=$('#leaderboard-list');list.replaceChildren(Object.assign(document.createElement('li'),{textContent:'Leaderboard could not refresh. Check your connection and sign-in.'}));showStatus(friendlyError(error),true)}

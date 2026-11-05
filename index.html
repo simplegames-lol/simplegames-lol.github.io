@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="friends-page.css?v=1" />
     <link rel="stylesheet" href="dropdowns.css?v=1" />
     <link rel="stylesheet" href="support.css?v=4" />
-    <link rel="stylesheet" href="server-editor.css?v=4" />
+    <link rel="stylesheet" href="server-editor.css?v=5" />
   <link rel="stylesheet" href="shop.css?v=20261101b" />
 <link rel="stylesheet" href="shop-fixes.css?v=2" />
 <link rel="stylesheet" href="cleanup.css?v=5" />
@@ -399,6 +399,14 @@
         <label class="check-setting"><input id="friend-online-notifications" type="checkbox" checked /> Friend online notifications</label>
         <button id="friend-online-preview" class="secondary-button" type="button">Preview friend online popup</button>
         <button id="notification-preview" class="secondary-button" type="button">Preview message notification</button><p id="notification-preview-status" class="result-count" aria-live="polite">Choose notification settings for each server inside Servers. Do Not Disturb mutes pop-ups and notification sounds.</p>
+        <div class="settings-divider"><strong>Calls</strong></div>
+        <div id="call-settings" class="call-settings"></div>
+        <div class="settings-divider"><strong>Privacy & message sounds</strong></div>
+        <label class="check-setting"><input id="message-sound-setting" type="checkbox" checked /> Message notification sounds</label>
+<label class="check-setting"><input id="dnd-setting" type="checkbox" /> Do Not Disturb</label>
+<label class="check-setting"><input id="hide-online-setting" type="checkbox" /> Hide online and last-active status</label>
+<label class="check-setting"><input id="private-activity-setting" type="checkbox" /> Hide the game I’m playing</label>
+        <p id="account-preference-status" class="result-count" role="status">Sign in to change account privacy settings.</p>
         <div class="settings-divider"><strong>Reset</strong></div>
         <button class="secondary-button" id="reset-settings" type="button">Reset saved settings</button>
       </div>
@@ -470,12 +478,6 @@
               <label>New password<input name="password" type="password" minlength="6" autocomplete="new-password" required /><small>At least 6 characters</small></label>
               <button class="submit-button" type="submit">Change password</button>
             </form>
-            <h3>Privacy and notifications</h3>
-            <label class="check-setting"><input id="message-sound-setting" type="checkbox" checked /> Message notification sounds</label>
-            <label class="check-setting"><input id="dnd-setting" type="checkbox" /> Do Not Disturb</label>
-            <label class="check-setting"><input id="hide-online-setting" type="checkbox" /> Hide online and last-active status</label>
-            <label class="check-setting"><input id="private-activity-setting" type="checkbox" /> Hide the game I’m playing</label>
-            <p class="result-count">Your theme, colors, layout, timezone, and supported background images sync automatically while logged in.</p>
             <h3>Change username</h3>
             <form class="social-form" id="username-form"><label>New username<input name="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" required /><small>Usernames can be changed once every 30 days.</small></label><button class="submit-button" type="submit">Change username</button></form>
             <h3>Blocked users</h3><div class="social-list" id="blocked-list"><p>No blocked users</p></div>
@@ -510,7 +512,7 @@
     <script src="ui-polish.js?v=1"></script>
     <script type="module" src="owner-announcement.js?v=servers1"></script>
     <script type="module" src="community-spotlight.js?v=nocranberry1"></script>
-    <script type="module" src="social.js?v=bannerfit2"></script>
+    <script type="module" src="social.js?v=settings1"></script>
 <script type="module" src="support.js?v=panel2"></script>
     <script type="module" src="community.js?v=servers1"></script>
     <script type="module" src="servers.js?v=notifications1"></script>
@@ -519,7 +521,7 @@
     <link rel="stylesheet" href="voice.css?v=2" />
 <link rel="stylesheet" href="theme-overrides.css?v=9" />
 <link rel="stylesheet" href="notification-fixes.css?v=1" />
-    <script type="module" src="voice.js?v=6"></script>
+    <script type="module" src="voice.js?v=settings1"></script>
   <link rel="stylesheet" href="autumn-panels.css?v=1" />
   <link rel="stylesheet" href="account-layout.css?v=3" />
     <script type="module" src="staff-panel.js?v=servers1"></script>

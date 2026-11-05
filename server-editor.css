@@ -56,3 +56,5 @@
 .channel-editor input:not([type="checkbox"]), .channel-editor select { width: 100%; box-sizing: border-box; }
 
 .server-notification-settings{display:grid;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}.server-notification-settings[hidden]{display:none}.server-notification-settings select{width:100%;box-sizing:border-box;padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--background);color:var(--text);font:inherit}
+
+.call-settings{display:grid;gap:12px}.call-settings>button{justify-self:start}.settings-card>.check-setting{gap:9px}

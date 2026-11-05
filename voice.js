@@ -2,7 +2,7 @@ import './firebase-client.js?v=1';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {getFirestore,collection,doc,getDoc,addDoc,updateDoc,onSnapshot,query,where,arrayUnion,Timestamp} from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
-import {installRingtone} from './voice-ringtone.js?v=1';
+import {installRingtone} from './voice-ringtone.js?v=2';
 import {cameraTiles} from './voice-camera.js?v=1';
 const auth=getAuth(getApp()),db=getFirestore(getApp()),endpoint='https://simple-games-voice.maylarpp.workers.dev/token';
 let context=null,current=null,room=null,busy=false,stopIncoming=()=>{},stopCall=()=>{},muted=true,deaf=false;
@@ -18,8 +18,8 @@ const camera=button('Turn camera on',async()=>{const selected=room;if(!selected)
 const cameraStyle=document.createElement('style');cameraStyle.textContent='.voice-dock{max-height:85vh;overflow:auto}.voice-cameras{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}.voice-camera-tile{margin:8px 0;background:#111;border:1px solid var(--accent,#153a63);border-radius:10px;overflow:hidden}.voice-camera-tile video{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}.voice-camera-tile figcaption{padding:5px 8px}.voice-camera-local{transform:scaleX(-1)}';document.head.append(cameraStyle);
 const play=button('Enable audio',()=>room?.startAudio()),leave=button('Leave call',()=>disconnect());dock.append(heading,status,people,mic,ears,share,play,leave,cameras,screens,audio);document.body.append(dock);
 const invites=document.createElement('section');invites.className='voice-incoming';invites.setAttribute('aria-label','Incoming calls');document.body.append(invites);
-installRingtone(invites,document.querySelector('#account-settings-view'));
-const toggle=document.createElement('label'),setting=document.createElement('input');setting.type='checkbox';setting.checked=localStorage.getItem('sg-incoming-calls')!=='off';toggle.append(setting,' Allow incoming calls');document.querySelector('#account-settings-view')?.append(toggle);setting.onchange=()=>{localStorage.setItem('sg-incoming-calls',setting.checked?'on':'off');if(!setting.checked)invites.replaceChildren();};
+installRingtone(invites,document.querySelector('#call-settings'));
+const toggle=document.createElement('label'),setting=document.createElement('input');toggle.className='check-setting';setting.type='checkbox';setting.checked=localStorage.getItem('sg-incoming-calls')!=='off';toggle.append(setting,' Allow incoming calls');document.querySelector('#call-settings')?.append(toggle);setting.onchange=()=>{localStorage.setItem('sg-incoming-calls',setting.checked?'on':'off');if(!setting.checked)invites.replaceChildren();};
 const callButton=button('☎ Call',()=>startCall());callButton.classList.add('voice-friend-call');document.querySelector('#chat-actions')?.prepend(callButton);
 document.addEventListener('simplegames:voice-conversation',e=>context=e.detail);
 function participants(){if(!room)return;people.replaceChildren();for(const p of [room.localParticipant,...room.remoteParticipants.values()]){const name=document.createElement('span');name.className='voice-person';name.classList.toggle('speaking',p.isSpeaking);name.textContent=p.identity===auth.currentUser?.uid?'You':p.identity.slice(0,6);people.append(name);getDoc(doc(db,'users',p.identity)).then(s=>{if(name.isConnected)name.textContent=p.identity===auth.currentUser?.uid?'You':s.data()?.displayName||s.data()?.username||'Member';}).catch(()=>{});}}
