@@ -33,3 +33,8 @@
 @keyframes pumpkin-glow{0%,100%{box-shadow:0 0 0 3px #5d3016,0 0 10px #ff922b44}50%{box-shadow:0 0 0 3px #5d3016,0 0 17px #ff922b77}}
 @keyframes phantom-hover{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-3px) rotate(4deg)}}
 @media(prefers-reduced-motion:reduce){[data-cosmetic^="halloween-"],[data-cosmetic^="halloween-"]::after{animation:none!important}[data-cosmetic="halloween-ember"]::after{opacity:.5}}
+
+/* Effect names use their text width, so their block needs explicit centering. */
+.real-shop aside>#real-shop-name{display:block;width:fit-content;max-width:100%;margin:12px auto 0;text-align:center;overflow-wrap:anywhere;line-height:1.5;overflow:visible}
+.real-shop-name-sample{max-width:100%;text-align:center;overflow-wrap:anywhere;line-height:1.5}
+.real-shop-item-visual:has(.real-shop-name-sample){padding:8px 10px;box-sizing:border-box}
