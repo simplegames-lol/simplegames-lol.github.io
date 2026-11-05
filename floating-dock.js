@@ -6,7 +6,6 @@
  const definitions=[
   ['#game-overlay','#game-title','#game-close','#game-player'],
   ['.staff-panel','#staff-panel-title','[data-staff-close]'],
-  ['.snapchat-panel','#snapchat-title','[data-snap-home]','iframe'],
   ['.movies-panel','.movies-bar strong','.movies-bar>button:first-child','.movies-frame'],
   ['.music-panel','.music-bar strong','.music-bar>button:first-child','.music-frame'],
   ['#support-panel','.support-heading h1','#support-close'],
