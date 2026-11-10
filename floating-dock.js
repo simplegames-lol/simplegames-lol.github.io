@@ -31,7 +31,7 @@
  function schedule(){if(!scheduled){scheduled=true;requestAnimationFrame(refresh)}}
  const observer=new MutationObserver(records=>{if(records.some(record=>record.target!==dock&&!dock.contains(record.target)))schedule()});
  observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','class','src']});
- function zoom(delta){if(!currentTarget)return;const value=delta===0?1:Math.min(1.4,Math.max(.7,Math.round(((scales.get(currentTarget)||1)+delta)*10)/10));scales.set(currentTarget,value);currentTarget.style.zoom=String(value);if(currentTarget===frame)currentTarget.style.width=(100/value)+'%';dock.querySelector('[data-dock="reset"]').textContent=Math.round(value*100)+'%'}
+ function zoom(delta){if(!currentTarget)return;const value=delta===0?1:Math.min(1.4,Math.max(.7,Math.round(((scales.get(currentTarget)||1)+delta)*10)/10));scales.set(currentTarget,value);currentTarget.style.zoom=value===1?'':String(value);if(currentTarget===frame)currentTarget.style.width=value===1?'':(100/value)+'%';dock.querySelector('[data-dock="reset"]').textContent=Math.round(value*100)+'%'}
  function home(){for(const [selector,,close]of definitions){const element=document.querySelector(selector);if(visible(element))element.querySelector(close)?.click()}document.querySelector('.brand')?.click();schedule()}
  dock.addEventListener('click',async event=>{
   const action=event.target.closest('[data-dock]')?.dataset.dock;if(!action)return;
@@ -39,7 +39,7 @@
   if(dock.classList.contains('dock-collapsed')){dock.classList.remove('dock-collapsed');dock.querySelector('[data-dock="collapse"]').setAttribute('aria-label','Collapse toolbar');return}
   if(action==='home')home();
   if(action==='back'){if(closeButton)closeButton.click();else home()}
-  if(action==='reload'){if(frame){if(confirm('Reload this player? Unsaved progress may be lost.')){const reload=active.querySelector('.music-bar>button:last-child,.movies-bar>button:nth-of-type(3)');if(reload&&!reload.hidden)reload.click();else frame.src=frame.src}}else if(confirm('Reload the website? Unsaved changes may be lost.'))location.reload()}
+  if(action==='reload'){if(frame){if(confirm('Reload this player? Unsaved progress may be lost.')){const reload=active.querySelector('#game-retry,.music-bar>button:last-child,.movies-bar>button:nth-of-type(3)');if(reload&&!reload.hidden)reload.click();else frame.src=frame.src}}else if(confirm('Reload the website? Unsaved changes may be lost.'))location.reload()}
   if(action==='in')zoom(.1);if(action==='out')zoom(-.1);if(action==='reset')zoom(0);
   if(action==='collapse'){dock.classList.add('dock-collapsed');dock.querySelector('[data-dock="collapse"]').setAttribute('aria-label','Expand toolbar');}
   if(action==='full'){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{dock.querySelector('.dock-status').textContent='Fullscreen is unavailable in this browser.'}}

@@ -153,6 +153,7 @@ if (window.location.pathname.endsWith("/index.html")) {
 }
 
 document.querySelector(".game-grid")?.addEventListener("click", (event) => {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   const link = event.target.closest("a");
   if (!link) return;
 
@@ -167,29 +168,16 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   player.title = cardTitle;
   if(path==='/skate-3/'&&!geometryAcknowledged){
     geometryNotice.querySelector('p').textContent='This game only works in Google Chrome browser';
-    clearTimeout(loadTimer);stopLoadingSound();player.src='about:blank';loader.hidden=true;
+    currentGameUrl="";clearTimeout(loadTimer);stopLoadingSound();player.src='about:blank';loader.hidden=true;
     overlay.hidden=false;document.body.classList.add('game-is-open');geometryNotice.hidden=false;
     geometryNotice.querySelector('button').onclick=()=>{geometryAcknowledged=true;geometryNotice.hidden=true;link.click()};
     geometryNotice.querySelector('button').focus();return;
   }
   geometryAcknowledged=false;geometryNotice.hidden=true;
   currentGameUrl = gameUrl;
-  player.src = gameUrl;
-  loaderStatus.textContent = "Loading game…";
-  loaderSpinner.hidden = false;
-  loaderActions.hidden = true;
-  loader.hidden = false;
-  startLoadingSound();
-  clearTimeout(loadTimer);
-  loadTimer = setTimeout(() => {
-    stopLoadingSound();
-    loader.hidden = false;
-    loaderSpinner.hidden = true;
-    loaderStatus.textContent = "This game is taking too long to load. It may be blocked or temporarily unavailable.";
-    loaderActions.hidden = false;
-  }, 15000);
   overlay.hidden = false;
   document.body.classList.add("game-is-open");
+  loadGame("Loading game…", "This game is taking too long to load. It may be blocked or temporarily unavailable.");
   if(path==='/roblox/'&&!document.fullscreenElement){
     overlay.requestFullscreen?.().catch(()=>{loaderStatus.textContent='Use the fullscreen button to expand Roblox.'});
   }
@@ -197,27 +185,53 @@ document.querySelector(".game-grid")?.addEventListener("click", (event) => {
   closeButton.focus();
 });
 
+function loadGame(message, timeoutMessage) {
+  clearTimeout(loadTimer);
+  loaderStatus.textContent = message;
+  loaderSpinner.hidden = false;
+  loaderActions.hidden = true;
+  loader.hidden = false;
+  startLoadingSound();
+  loadTimer = setTimeout(() => {
+    stopLoadingSound();
+    loaderSpinner.hidden = true;
+    loaderStatus.textContent = timeoutMessage;
+    loaderActions.hidden = false;
+  }, 15000);
+  player.src = currentGameUrl;
+}
+
 function closeGame() {
   geometryAcknowledged=false;geometryNotice.hidden=true;geometryNotice.querySelector('button').onclick=null;
   if(document.fullscreenElement===overlay)document.exitFullscreen().catch(()=>{});
   clearTimeout(loadTimer);
   stopLoadingSound();
   overlay.hidden = true;
+  currentGameUrl = "";
   player.src = "about:blank";
   document.querySelector("#game-loader").hidden = true;
   document.body.classList.remove("game-is-open");
   window.dispatchEvent(new CustomEvent("simplegames:stop-playing"));
 }
 
-player.addEventListener("load", () => { if(player.getAttribute("src")==="about:blank")return;clearTimeout(loadTimer); loader.hidden = true; stopLoadingSound(true); });
-player.addEventListener("error",()=>{clearTimeout(loadTimer);stopLoadingSound();loader.hidden=false;loaderSpinner.hidden=true;loaderStatus.textContent="This game couldn’t load. Try again or return home.";loaderActions.hidden=false});
+player.addEventListener("load", () => {
+  if (overlay.hidden || !currentGameUrl) return;
+  clearTimeout(loadTimer);
+  loader.hidden = true;
+  stopLoadingSound(true);
+});
+player.addEventListener("error", () => {
+  if (overlay.hidden || !currentGameUrl) return;
+  clearTimeout(loadTimer);
+  stopLoadingSound();
+  loader.hidden = false;
+  loaderSpinner.hidden = true;
+  loaderStatus.textContent = "This game couldn’t load. Try again or return home.";
+  loaderActions.hidden = false;
+});
 document.querySelector("#game-retry")?.addEventListener("click", () => {
-  loaderStatus.textContent = "Trying again…";
-  startLoadingSound();
-  loaderSpinner.hidden = false;
-  loaderActions.hidden = true;
-  player.src = "about:blank";
-  setTimeout(() => { loader.hidden = false; player.src = currentGameUrl; loadTimer = setTimeout(() => { loader.hidden = false; loaderSpinner.hidden = true; loaderStatus.textContent = "The game still could not load. Try again later."; loaderActions.hidden = false; }, 15000); }, 100);
+  if (overlay.hidden || !currentGameUrl) return;
+  loadGame("Trying again…", "The game still could not load. Try again later.");
 });
 document.querySelector("#game-error-close")?.addEventListener("click",()=>{closeGame();document.querySelector(".header-right .rail-link[href='/']")?.click()});
 
