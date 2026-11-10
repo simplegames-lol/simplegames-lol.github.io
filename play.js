@@ -149,7 +149,8 @@ function stopLoadingSound(done=false){clearInterval(soundTimer);soundTimer=0;if(
 loaderSound?.addEventListener("click",()=>{soundOn=!soundOn;loaderSound.setAttribute("aria-pressed",String(soundOn));loaderSound.textContent=soundOn?"🔊":"🔇";loaderSound.setAttribute("aria-label",soundOn?"Mute loading sound":"Turn on loading sound");if(soundOn)startLoadingSound();else stopLoadingSound()});
 
 if (window.location.pathname.endsWith("/index.html")) {
-  history.replaceState(null, "", "/");
+  const { pathname, search, hash } = window.location;
+  history.replaceState(history.state, "", pathname.slice(0, -"index.html".length) + search + hash);
 }
 
 document.querySelector(".game-grid")?.addEventListener("click", (event) => {
